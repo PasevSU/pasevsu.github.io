@@ -116,6 +116,10 @@ const translations = {
         // Support
         "support.title": "Support",
         "support.description": "If you like this project, check out more of my repositories here.",
+        "support.generators.title": "Generators",
+        "support.generators.item1": "ntfy notifications generator",
+        "support.generators.item2": "Mobile app notification generator",
+        "support.generators.item3": "Command shell code generator",
         // Footer
         "footer.title": "Home Assistant Projects",
         "footer.description": "Simplifying daily routines, enhancing comfort, and saving energy in the smart home environment.",
@@ -240,6 +244,10 @@ const translations = {
         // Support
         "support.title": "Поддръжка",
         "support.description": "Ако харесвате проекта, разгледайте още мои хранилища тук.",
+        "support.generators.title": "Генератори",
+        "support.generators.item1": "Генератор за ntfy известия",
+        "support.generators.item2": "Генератор на известия до mobile app",
+        "support.generators.item3": "Генератор на command shell кодове",
         // Footer
         "footer.title": "Home Assistant Проекти",
         "footer.description": "Оптимизиране на ежедневието, повишаване на комфорта и пестене на енергия в интелигентния дом.",
@@ -364,6 +372,10 @@ const translations = {
         // Support
         "support.title": "Support",
         "support.description": "Wenn Ihnen dieses Projekt gefällt, schauen Sie sich weitere meiner Repositories an.",
+        "support.generators.title": "Generatoren",
+        "support.generators.item1": "Generator für ntfy-Benachrichtigungen",
+        "support.generators.item2": "Generator für Mobile-App-Benachrichtigungen",
+        "support.generators.item3": "Generator für command shell-Code",
         // Footer
         "footer.title": "Home Assistant Projekte",
         "footer.description": "Vereinfachung des Alltags, Erhöhung des Komforts und Einsparung von Energie im Smart Home.",

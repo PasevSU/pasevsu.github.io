@@ -1,0 +1,744 @@
+<!DOCTYPE html>
+<html lang="bg">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Генератор за shell_command в Home Assistant</title>
+    <style>
+        :root {
+            --primary-color: #4a6fa5;
+            --secondary-color: #166088;
+            --background-color: #f5f7fa;
+            --card-color: #ffffff;
+            --text-color: #333333;
+            --border-color: #dddddd;
+            --error-color: #e74c3c;
+            --success-color: #2ecc71;
+        }
+        
+        .dark-mode {
+            --primary-color: #5d8cc9;
+            --secondary-color: #2a7bb8;
+            --background-color: #1a1a1a;
+            --card-color: #2d2d2d;
+            --text-color: #e0e0e0;
+            --border-color: #444444;
+            --error-color: #ff6b6b;
+            --success-color: #51cf66;
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: var(--text-color);
+            background-color: var(--background-color);
+            padding: 20px;
+            transition: all 0.3s ease;
+        }
+        
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid var(--border-color);
+            position: relative;
+        }
+        
+        h1 {
+            color: var(--primary-color);
+            margin-bottom: 10px;
+        }
+        
+        .description {
+            color: var(--text-color);
+            opacity: 0.8;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .header-buttons {
+            position: absolute;
+            top: 0;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+        
+        .theme-toggle, .language-toggle {
+            background: var(--card-color);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            padding: 8px 15px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            color: var(--text-color);
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+        
+        .theme-toggle {
+            left: 0;
+        }
+        
+        .language-toggle {
+            right: 0;
+        }
+        
+        .theme-toggle:hover, .language-toggle:hover {
+            background: var(--primary-color);
+            color: white;
+        }
+        
+        .info-banner {
+            background-color: var(--card-color);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 30px;
+            grid-column: 1 / -1;
+        }
+        
+        .info-banner h3 {
+            margin-top: 0;
+            color: var(--primary-color);
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 10px;
+        }
+        
+        .info-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        
+        .info-section {
+            margin-bottom: 15px;
+        }
+        
+        .info-section h4 {
+            margin: 0 0 10px 0;
+            color: var(--secondary-color);
+        }
+        
+        .info-section ul {
+            padding-left: 20px;
+            margin: 0;
+        }
+        
+        .info-section li {
+            margin-bottom: 5px;
+            font-size: 0.9rem;
+        }
+        
+        .config-example {
+            background-color: var(--background-color);
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            padding: 10px;
+            font-family: monospace;
+            font-size: 0.85rem;
+            margin-top: 5px;
+        }
+        
+        .generator-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+        
+        @media (max-width: 768px) {
+            .generator-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .info-content {
+                grid-template-columns: 1fr;
+            }
+            
+            .examples-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .header-buttons {
+                position: static;
+                justify-content: space-between;
+                margin-top: 15px;
+            }
+        }
+        
+        .form-section, .preview-section {
+            background-color: var(--card-color);
+            border-radius: 8px;
+            padding: 25px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .section-title {
+            font-size: 1.3rem;
+            margin-bottom: 20px;
+            color: var(--secondary-color);
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+        
+        input, textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            font-size: 1rem;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            transition: border-color 0.3s ease;
+        }
+        
+        input:focus, textarea:focus {
+            outline: none;
+            border-color: var(--primary-color);
+        }
+        
+        textarea {
+            min-height: 120px;
+            resize: vertical;
+            font-family: monospace;
+        }
+        
+        .btn {
+            display: inline-block;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 10px 20px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        
+        .btn:hover {
+            background-color: var(--secondary-color);
+        }
+        
+        .btn:disabled {
+            background-color: #6c757d;
+            cursor: not-allowed;
+        }
+        
+        .btn:disabled:hover {
+            background-color: #6c757d;
+        }
+        
+        .btn-success {
+            background-color: var(--success-color);
+        }
+        
+        .btn-success:hover {
+            background-color: #27ae60;
+        }
+        
+        .btn-secondary {
+            background-color: #6c757d;
+        }
+        
+        .btn-secondary:hover {
+            background-color: #5a6268;
+        }
+        
+        .buttons-container {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .preview-code {
+            background-color: var(--background-color);
+            color: var(--text-color);
+            padding: 15px;
+            border-radius: 4px;
+            overflow-x: auto;
+            font-family: monospace;
+            white-space: pre-wrap;
+            margin-top: 15px;
+            max-height: 400px;
+            overflow-y: auto;
+            border: 1px solid var(--border-color);
+        }
+        
+        .error-message {
+            color: var(--error-color);
+            font-size: 0.9rem;
+            margin-top: 5px;
+            display: none;
+        }
+        
+        .filename-input {
+            margin-bottom: 15px;
+        }
+        
+        .download-disabled {
+            background-color: #6c757d;
+            cursor: not-allowed;
+        }
+        
+        .download-disabled:hover {
+            background-color: #6c757d;
+        }
+        
+        .examples-banner {
+            background-color: var(--card-color);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 20px;
+            grid-column: 1 / -1;
+        }
+        
+        .examples-banner h3 {
+            margin-top: 0;
+            color: var(--primary-color);
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 10px;
+        }
+        
+        .examples-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+        
+        .example-item {
+            background-color: var(--card-color);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            padding: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .example-item:hover {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        
+        .example-item:hover .example-title,
+        .example-item:hover .example-description,
+        .example-item:hover .example-command {
+            color: white;
+        }
+        
+        .example-title {
+            font-weight: bold;
+            margin-bottom: 5px;
+            color: var(--secondary-color);
+        }
+        
+        .example-description {
+            color: var(--text-color);
+            opacity: 0.8;
+            font-size: 0.9rem;
+            margin-bottom: 10px;
+        }
+        
+        .example-command {
+            background-color: var(--background-color);
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            padding: 8px;
+            font-family: monospace;
+            font-size: 0.8rem;
+            color: var(--text-color);
+            word-break: break-all;
+            overflow-wrap: break-word;
+        }
+        
+        small {
+            color: var(--text-color);
+            opacity: 0.7;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="header-buttons">
+                <button class="theme-toggle" id="themeToggle">🌙 Dark Mode</button>
+                <a href="command_shell_GEN_v1.0е.html" class="language-toggle">🇺🇸 English</a>
+            </div>
+            <h1>Генератор за shell_command в Home Assistant</h1>
+            <p class="description">Този инструмент ви помага да генерирате YAML файлове за shell_command интеграцията в Home Assistant</p>
+        </header>
+        
+        <div class="info-banner">
+            <h3>Важна информация за използване</h3>
+            <div class="info-content">
+                <div class="info-section">
+                    <h4>Формат на конфигурацията</h4>
+                    <p>Този генератор създава файлове за използване с <code>!include_dir_named</code>:</p>
+                    <div class="config-example">
+                        # configuration.yaml<br>
+                        shell_command: !include_dir_named yaml/shell_command
+                    </div>
+                    <p><strong>Всеки файл трябва да съдържа само командата, без <code>shell_command:</code> префикс!</strong></p>
+                </div>
+                
+                <div class="info-section">
+                    <h4>Инструкции за shell_command</h4>
+                    <ul>
+                        <li>Shell командите се изпълняват в средата на Home Assistant</li>
+                        <li>Използвайте пълни пътища към изпълними файлове</li>
+                        <li>За сложни команди, създайте скрипт и го извикайте</li>
+                        <li>Името на командата не трябва да съдържа интервали</li>
+                        <li>Файловете се запазват в <code>yaml/shell_command/</code> директория</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        
+        <div class="generator-container">
+            <div class="form-section">
+                <h2 class="section-title">Настройки на командата</h2>
+                
+                <div class="form-group">
+                    <label for="command-name">Име на командата:</label>
+                    <input type="text" id="command-name" placeholder="Въведете име на командата (без интервали)" pattern="[^\s]+" title="Името не трябва да съдържа интервали" required>
+                    <div class="error-message" id="name-error">Името не трябва да съдържа интервали!</div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="command">Команда за изпълнение:</label>
+                    <textarea id="command" placeholder="Въведете командата, която да се изпълни (без кавички)" required></textarea>
+                    <div class="error-message" id="command-error">Командата е задължителна!</div>
+                </div>
+                
+                <div class="buttons-container">
+                    <button type="button" class="btn btn-success" id="generate" disabled>Генерирай конфигурация</button>
+                    <button type="button" class="btn btn-secondary" id="reset">Изчисти формата</button>
+                </div>
+            </div>
+            
+            <div class="preview-section">
+                <h2 class="section-title">Преглед на конфигурацията</h2>
+                
+                <div class="form-group filename-input">
+                    <label for="filename">Име на файла:</label>
+                    <input type="text" id="filename" placeholder="Въведете име на файла (без разширение)" required>
+                    <small>Файлът ще бъде изтеглен с разширение .yaml</small>
+                </div>
+                
+                <div class="preview-code" id="preview">
+                    Конфигурацията ще се появи тук след като кликнете на "Генерирай конфигурация"
+                </div>
+                
+                <div class="buttons-container">
+                    <button type="button" class="btn download-disabled" id="download" disabled>Изтегли файл</button>
+                    <button type="button" class="btn btn-secondary" id="copy">Копирай в клипборда</button>
+                </div>
+            </div>
+        </div>
+        
+        <div class="examples-banner">
+            <h3>Готови примери</h3>
+            <p>Кликнете на всеки пример, за да го заредите в генератора:</p>
+            
+            <div class="examples-grid">
+                <div class="example-item" data-example="1">
+                    <div class="example-title">Пример 1: Рестартиране на услуга</div>
+                    <div class="example-description">Рестартиране на Docker контейнер</div>
+                    <div class="example-command">docker restart addon_db21ed7f_qbittorrent</div>
+                </div>
+                
+                <div class="example-item" data-example="2">
+                    <div class="example-title">Пример 2: Копиране на файл</div>
+                    <div class="example-description">Копиране на конфигурационен файл между контейнери</div>
+                    <div class="example-command">docker cp /config/openvpn/config.ovpn addon_db21ed7f_qbittorrent:/config/openvpn/config.ovpn</div>
+                </div>
+                
+                <div class="example-item" data-example="3">
+                    <div class="example-title">Пример 3: Изпълнение на скрипт</div>
+                    <div class="example-description">Изпълнение на Python скрипт</div>
+                    <div class="example-command">python3 /config/scripts/backup.py</div>
+                </div>
+                
+                <div class="example-item" data-example="4">
+                    <div class="example-title">Пример 4: Проверка на мрежата</div>
+                    <div class="example-description">Ping тест към устройство</div>
+                    <div class="example-command">ping -c 3 192.168.1.1</div>
+                </div>
+                
+                <div class="example-item" data-example="5">
+                    <div class="example-title">Пример 5: Бекап на база данни</div>
+                    <div class="example-description">Създаване на резервно копие на база данни</div>
+                    <div class="example-command">pg_dump -U homeassistant -h localhost homeassistant > /backup/ha_backup_$(date +%Y%m%d_%H%M%S).sql</div>
+                </div>
+                
+                <div class="example-item" data-example="6">
+                    <div class="example-title">Пример 6: Проверка на дисково пространство</div>
+                    <div class="example-description">Показване на използваното дисково пространство</div>
+                    <div class="example-command">df -h /config</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Елементи от формата
+            const commandNameInput = document.getElementById('command-name');
+            const commandInput = document.getElementById('command');
+            const filenameInput = document.getElementById('filename');
+            const generateButton = document.getElementById('generate');
+            const resetButton = document.getElementById('reset');
+            const copyButton = document.getElementById('copy');
+            const downloadButton = document.getElementById('download');
+            const previewElement = document.getElementById('preview');
+            const nameError = document.getElementById('name-error');
+            const commandError = document.getElementById('command-error');
+            const themeToggle = document.getElementById('themeToggle');
+            
+            // Dark Mode функционалност
+            themeToggle.addEventListener('click', function() {
+                document.body.classList.toggle('dark-mode');
+                if (document.body.classList.contains('dark-mode')) {
+                    themeToggle.textContent = '☀️ Light Mode';
+                } else {
+                    themeToggle.textContent = '🌙 Dark Mode';
+                }
+            });
+            
+            // Валидация на формата
+            function validateForm() {
+                const commandName = commandNameInput.value.trim();
+                const command = commandInput.value.trim();
+                const hasSpaces = /\s/.test(commandName);
+                const isValid = commandName !== '' && !hasSpaces && command !== '';
+                
+                generateButton.disabled = !isValid;
+                
+                // Показване/скриване на грешки
+                if (commandName === '' || hasSpaces) {
+                    nameError.style.display = 'block';
+                } else {
+                    nameError.style.display = 'none';
+                }
+                
+                if (command === '') {
+                    commandError.style.display = 'block';
+                } else {
+                    commandError.style.display = 'none';
+                }
+                
+                return isValid;
+            }
+            
+            // Валидация на името (без интервали)
+            commandNameInput.addEventListener('input', function() {
+                validateForm();
+                
+                // Автоматично попълване на името на файла
+                if (filenameInput.value.trim() === '' && this.value.trim() !== '') {
+                    filenameInput.value = this.value.trim();
+                    updateDownloadButton();
+                }
+            });
+            
+            // Валидация на командата
+            commandInput.addEventListener('input', function() {
+                validateForm();
+            });
+            
+            // Валидация на името на файла за бутона за изтегляне
+            filenameInput.addEventListener('input', updateDownloadButton);
+            
+            function updateDownloadButton() {
+                if (filenameInput.value.trim() !== '') {
+                    downloadButton.disabled = false;
+                    downloadButton.classList.remove('download-disabled');
+                } else {
+                    downloadButton.disabled = true;
+                    downloadButton.classList.add('download-disabled');
+                }
+            }
+            
+            // Генериране на конфигурация
+            generateButton.addEventListener('click', function() {
+                if (!validateForm()) {
+                    alert('Моля, попълнете правилно всички полета!');
+                    return;
+                }
+                
+                const commandName = commandNameInput.value.trim();
+                const command = commandInput.value.trim();
+                
+                // Генериране на YAML - САМО КОМАНДАТА, без shell_command:
+                // Ескейпваме единични кавички в командата
+                const escapedCommand = command.replace(/'/g, "''");
+                const yamlConfig = `${commandName}: '${escapedCommand}'`;
+                
+                // Показване на прегледа
+                previewElement.textContent = yamlConfig;
+                
+                // Автоматично попълване на името на файла, ако е празно
+                if (filenameInput.value.trim() === '') {
+                    filenameInput.value = commandName;
+                    updateDownloadButton();
+                }
+            });
+            
+            // Изчистване на формата
+            resetButton.addEventListener('click', function() {
+                if (confirm('Сигурни ли сте, че искате да изчистите формата?')) {
+                    resetForm();
+                }
+            });
+            
+            // Копиране в клипборда
+            copyButton.addEventListener('click', function() {
+                const previewText = previewElement.textContent;
+                
+                if (previewText === 'Конфигурацията ще се появи тук след като кликнете на "Генерирай конфигурация"') {
+                    alert('Първо генерирайте конфигурация!');
+                    return;
+                }
+                
+                navigator.clipboard.writeText(previewText).then(function() {
+                    alert('Конфигурацията е копирана в клипборда!');
+                }, function(err) {
+                    console.error('Грешка при копиране: ', err);
+                    alert('Грешка при копиране в клипборда!');
+                });
+            });
+            
+            // Изтегляне на файл
+            downloadButton.addEventListener('click', function() {
+                const previewText = previewElement.textContent;
+                const filename = filenameInput.value.trim();
+                
+                if (previewText === 'Конфигурацията ще се появи тук след като кликнете на "Генерирай конфигурация"') {
+                    alert('Първо генерирайте конфигурация!');
+                    return;
+                }
+                
+                if (!filename) {
+                    alert('Моля, въведете име на файла!');
+                    return;
+                }
+                
+                const blob = new Blob([previewText], { type: 'text/yaml' });
+                const url = URL.createObjectURL(blob);
+                
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `${filename}.yaml`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+            });
+            
+            // Зареждане на примери
+            const exampleItems = document.querySelectorAll('.example-item');
+            exampleItems.forEach(item => {
+                item.addEventListener('click', function() {
+                    const exampleId = this.getAttribute('data-example');
+                    loadExample(exampleId);
+                });
+            });
+            
+            // Функция за зареждане на пример
+            function loadExample(exampleId) {
+                // Първо изчистваме формата
+                resetForm();
+                
+                // След това попълваме със стойности от примера
+                switch(exampleId) {
+                    case '1':
+                        // Пример 1: Рестартиране на услуга
+                        commandNameInput.value = 'restart_qbittorrent';
+                        commandInput.value = 'docker restart addon_db21ed7f_qbittorrent';
+                        break;
+                        
+                    case '2':
+                        // Пример 2: Копиране на файл
+                        commandNameInput.value = 'copy_openvpn_config';
+                        commandInput.value = 'docker cp /config/openvpn/config.ovpn addon_db21ed7f_qbittorrent:/config/openvpn/config.ovpn';
+                        break;
+                        
+                    case '3':
+                        // Пример 3: Изпълнение на скрипт
+                        commandNameInput.value = 'run_backup_script';
+                        commandInput.value = 'python3 /config/scripts/backup.py';
+                        break;
+                        
+                    case '4':
+                        // Пример 4: Проверка на мрежата
+                        commandNameInput.value = 'ping_router';
+                        commandInput.value = 'ping -c 3 192.168.1.1';
+                        break;
+                        
+                    case '5':
+                        // Пример 5: Бекап на база данни
+                        commandNameInput.value = 'backup_database';
+                        commandInput.value = 'pg_dump -U homeassistant -h localhost homeassistant > /backup/ha_backup_$(date +%Y%m%d_%H%M%S).sql';
+                        break;
+                        
+                    case '6':
+                        // Пример 6: Проверка на дисково пространство
+                        commandNameInput.value = 'check_disk_space';
+                        commandInput.value = 'df -h /config';
+                        break;
+                }
+                
+                // Валидираме и активираме бутона
+                validateForm();
+                
+                // Генерираме конфигурацията
+                generateButton.click();
+            }
+            
+            // Помощна функция за изчистване на формата
+            function resetForm() {
+                commandNameInput.value = '';
+                commandInput.value = '';
+                filenameInput.value = '';
+                previewElement.textContent = 'Конфигурацията ще се появи тук след като кликнете на "Генерирай конфигурация"';
+                nameError.style.display = 'none';
+                commandError.style.display = 'none';
+                generateButton.disabled = true;
+                downloadButton.disabled = true;
+                downloadButton.classList.add('download-disabled');
+            }
+            
+            // Инициализиране на формата
+            validateForm();
+        });
+    </script>
+</body>
+</html>

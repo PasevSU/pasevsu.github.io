@@ -1,0 +1,2048 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ntfy Notifications Generator</title>
+    <style>
+        :root {
+            --primary-color: #4a6fa5;
+            --secondary-color: #166088;
+            --background-color: #f5f7fa;
+            --card-color: #ffffff;
+            --text-color: #333333;
+            --border-color: #dddddd;
+            --error-color: #e74c3c;
+            --success-color: #2ecc71;
+        }
+        
+        /* Dark mode styles */
+        .dark-mode {
+            --primary-color: #5a8fd8;
+            --secondary-color: #2a7bbf;
+            --background-color: #1a1a1a;
+            --card-color: #2d2d2d;
+            --text-color: #e0e0e0;
+            --border-color: #444444;
+            --error-color: #e74c3c;
+            --success-color: #2ecc71;
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: var(--text-color);
+            background-color: var(--background-color);
+            padding: 20px;
+            transition: background-color 0.3s, color 0.3s;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid var(--border-color);
+            position: relative;
+        }
+        
+        .header-buttons {
+            position: absolute;
+            top: 0;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+        
+        .theme-toggle, .version-switch {
+            background: var(--card-color);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            padding: 8px 15px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            color: var(--text-color);
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+        
+        .theme-toggle {
+            left: 0;
+        }
+        
+        .version-switch {
+            right: 0;
+        }
+        
+        .theme-toggle:hover, .version-switch:hover {
+            background: var(--primary-color);
+            color: white;
+        }
+        
+        h1 {
+            color: var(--primary-color);
+            margin-bottom: 10px;
+        }
+        
+        .description {
+            color: #666;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .description a {
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: bold;
+        }
+        
+        .description a:hover {
+            text-decoration: underline;
+        }
+        
+        .dark-mode .description {
+            color: #aaa;
+        }
+
+        /* Info Banner Styles */
+        .info-banner {
+            background-color: var(--card-color);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 30px;
+            grid-column: 1 / -1;
+        }
+        
+        .info-banner h3 {
+            margin-top: 0;
+            color: var(--primary-color);
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 10px;
+        }
+        
+        .info-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        
+        .info-section {
+            margin-bottom: 15px;
+        }
+        
+        .info-section h4 {
+            margin: 0 0 10px 0;
+            color: var(--secondary-color);
+        }
+        
+        .info-section ul {
+            padding-left: 20px;
+            margin: 0;
+        }
+        
+        .info-section li {
+            margin-bottom: 5px;
+            font-size: 0.9rem;
+        }
+        
+        .config-example {
+            background-color: var(--background-color);
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            padding: 10px;
+            font-family: monospace;
+            font-size: 0.85rem;
+            margin-top: 5px;
+        }
+        
+        .external-link {
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: bold;
+        }
+        
+        .external-link:hover {
+            text-decoration: underline;
+        }
+        
+        .generator-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+        }
+        
+        @media (max-width: 768px) {
+            .generator-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .info-content {
+                grid-template-columns: 1fr;
+            }
+            
+            .header-buttons {
+                position: static;
+                justify-content: space-between;
+                margin-top: 15px;
+            }
+        }
+        
+        .form-section, .preview-section {
+            background-color: var(--card-color);
+            border-radius: 8px;
+            padding: 25px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            transition: background-color 0.3s;
+        }
+        
+        .section-title {
+            font-size: 1.3rem;
+            margin-bottom: 20px;
+            color: var(--secondary-color);
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+        
+        input, select, textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            font-size: 1rem;
+            background-color: var(--card-color);
+            color: var(--text-color);
+            transition: border-color 0.3s, background-color 0.3s, color 0.3s;
+        }
+        
+        textarea {
+            min-height: 100px;
+            resize: vertical;
+            font-family: monospace;
+        }
+        
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        
+        .checkbox-group input {
+            width: auto;
+            margin-right: 10px;
+        }
+        
+        .actions-container {
+            margin-top: 20px;
+        }
+        
+        .action-item {
+            background-color: #f9f9f9;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            padding: 15px;
+            margin-bottom: 15px;
+        }
+        
+        .dark-mode .action-item {
+            background-color: #3a3a3a;
+        }
+        
+        .action-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        
+        .action-title {
+            font-weight: bold;
+        }
+        
+        .remove-action {
+            background-color: var(--error-color);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 5px 10px;
+            cursor: pointer;
+        }
+        
+        .btn {
+            display: inline-block;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 10px 20px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        
+        .btn:hover {
+            background-color: var(--secondary-color);
+        }
+        
+        .btn-secondary {
+            background-color: #6c757d;
+        }
+        
+        .btn-secondary:hover {
+            background-color: #5a6268;
+        }
+        
+        .btn-success {
+            background-color: var(--success-color);
+        }
+        
+        .btn-success:hover {
+            background-color: #27ae60;
+        }
+        
+        .btn-danger {
+            background-color: var(--error-color);
+        }
+        
+        .btn-danger:hover {
+            background-color: #c0392b;
+        }
+        
+        .btn-small {
+            padding: 5px 10px;
+            font-size: 0.8rem;
+        }
+        
+        .buttons-container {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .preview-code {
+            background-color: #2d2d2d;
+            color: #f8f8f2;
+            padding: 15px;
+            border-radius: 4px;
+            overflow-x: auto;
+            font-family: monospace;
+            white-space: pre-wrap;
+            margin-top: 15px;
+            max-height: 500px;
+            overflow-y: auto;
+        }
+        
+        .examples-container {
+            margin-top: 30px;
+        }
+        
+        .example-item {
+            background-color: #f0f8ff;
+            border-left: 4px solid var(--primary-color);
+            padding: 15px;
+            margin-bottom: 15px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        
+        .dark-mode .example-item {
+            background-color: #2a3a4a;
+        }
+        
+        .example-item:hover {
+            background-color: #e1f0ff;
+        }
+        
+        .dark-mode .example-item:hover {
+            background-color: #3a4a5a;
+        }
+        
+        .example-title {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        .example-description {
+            color: #666;
+            font-size: 0.9rem;
+        }
+        
+        .dark-mode .example-description {
+            color: #aaa;
+        }
+        
+        .hidden {
+            display: none;
+        }
+        
+        .tabs {
+            display: flex;
+            margin-bottom: 20px;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .tab {
+            padding: 10px 20px;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+        }
+        
+        .tab.active {
+            border-bottom-color: var(--primary-color);
+            font-weight: bold;
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        .loading {
+            color: #666;
+            font-style: italic;
+        }
+        
+        .optional-section {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px dashed var(--border-color);
+        }
+        
+        .optional-toggle {
+            margin-bottom: 15px;
+        }
+        
+        .filename-input {
+            margin-bottom: 15px;
+        }
+        
+        .download-disabled {
+            background-color: #6c757d;
+            cursor: not-allowed;
+        }
+        
+        .download-disabled:hover {
+            background-color: #6c757d;
+        }
+        
+        .output-format {
+            margin-bottom: 15px;
+        }
+        
+        .format-option {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        
+        .format-option input {
+            width: auto;
+            margin-right: 10px;
+        }
+        
+        .format-description {
+            color: #666;
+            font-size: 0.9rem;
+            margin-left: 24px;
+        }
+
+        .dark-mode .format-description {
+            color: #aaa;
+        }
+
+        .image-preview {
+            max-width: 100%;
+            max-height: 200px;
+            margin-top: 10px;
+            border-radius: 4px;
+            display: none;
+        }
+
+        .image-preview.visible {
+            display: block;
+        }
+
+        .url-input-group {
+            display: flex;
+            gap: 10px;
+        }
+
+        .url-input-group input {
+            flex: 1;
+        }
+
+        .test-image-btn {
+            white-space: nowrap;
+        }
+        
+        /* Placeholder text styling */
+        select option[disabled] {
+            color: #999;
+            font-style: italic;
+        }
+        
+        .dark-mode select option[disabled] {
+            color: #777;
+        }
+
+        .required-field::after {
+            content: " *";
+            color: var(--error-color);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="header-buttons">
+                <button class="theme-toggle" id="theme-toggle">🌙 Dark Mode</button>
+                <a href="ntfy_GEN_v1.0b.html" class="version-switch">бг Български</a>
+            </div>
+            <h1>ntfy Notifications Generator for Home Assistant</h1>
+            <p class="description">
+                This tool helps you generate configurations for notifications sent from Home Assistant through the ntfy.sh integration.
+                Visit <a href="https://pasevsu.github.io/" target="_blank">pasevsu.github.io</a> for more generators and projects.
+            </p>
+        </header>
+
+        <!-- Added information section -->
+        <div class="info-banner">
+            <h3>Important Usage Information</h3>
+            <div class="info-content">
+                <div class="info-section">
+                    <h4>Basic Settings</h4>
+                    <ul>
+                        <li><strong>Server:</strong> Use the public ntfy.sh or your own server</li>
+                        <li><strong>Topic:</strong> Unique name that will identify your notifications</li>
+                        <li><strong>Title & Message:</strong> Required fields for every notification</li>
+                        <li><strong>Method:</strong> POST for most cases, PUT for specific scenarios</li>
+                    </ul>
+                </div>
+                
+                <div class="info-section">
+                    <h4>Additional Options</h4>
+                    <ul>
+                        <li><strong>Priority:</strong> Determines the importance of the notification (min, low, default, high, urgent, max)</li>
+                        <li><strong>Tags:</strong> Add emojis for visual recognition</li>
+                        <li><strong>Icon & Image:</strong> URL to images for visual enrichment</li>
+                        <li><strong>Attachment:</strong> Link to files for download</li>
+                        <li><strong>Click URL:</strong> Opens when the notification is clicked</li>
+                    </ul>
+                </div>
+
+                <div class="info-section">
+                    <h4>Actions (Action Buttons)</h4>
+                    <ul>
+                        <li><strong>View:</strong> Button that opens a URL in the browser</li>
+                        <li><strong>HTTP:</strong> Sends an HTTP request to a specific endpoint</li>
+                        <li><strong>Clear:</strong> Automatically deletes the notification after clicking</li>
+                    </ul>
+                </div>
+
+                <div class="info-section">
+                    <h4>Configuration Formats</h4>
+                    <ul>
+                        <li><strong>REST Command:</strong> For use in <code>rest_command</code> in configuration.yaml</li>
+                        <li><strong>Service Format:</strong> For direct use in automations and scripts</li>
+                    </ul>
+                    <div class="config-example">
+                        # Example of REST Command usage:<br>
+                        rest_command:<br>
+                        &nbsp;&nbsp;ntfy_notification:<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;url: !include yaml/ntfy/notification.yaml
+                    </div>
+                </div>
+
+                <div class="info-section">
+                    <h4>Usage Tips</h4>
+                    <ul>
+                        <li>Detailed information about "ntfy", usage methods, configuration and documentation can be found on the official website <a href="https://docs.ntfy.sh/" target="_blank" class="external-link">https://docs.ntfy.sh/</a></li>
+                        <li>Test your notifications before implementing them in automations</li>
+                        <li>Use unique topics for different types of notifications</li>
+                        <li>Combine actions and additional options for complex scenarios</li>
+                        <li>We haven't added a field to enter your own tag, but after generating the code you can replace it with your desired one from the large list: <a href="https://docs.ntfy.sh/emojis/" target="_blank" class="external-link">list of tags</a></li>
+                    </ul>
+                </div>
+
+                <div class="info-section">
+                    <h4>Common Uses</h4>
+                    <ul>
+                        <li>🔔 Home Assistant automation notifications</li>
+                        <li>🚨 System alarms and warnings</li>
+                        <li>📊 Device and sensor status reports</li>
+                        <li>🔗 Quick access links to panels and tools</li>
+                        <li>📎 File and image sharing</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        
+        <div class="tabs">
+            <div class="tab active" data-tab="basic">Basic Settings</div>
+            <div class="tab" data-tab="actions">Actions</div>
+        </div>
+        
+        <div class="generator-container">
+            <div class="form-section">
+                <div class="tab-content active" id="basic-tab">
+                    <h2 class="section-title">Basic Settings</h2>
+                    
+                    <!-- 1.01.000: Required fields -->
+                    <div class="form-group">
+                        <label for="server" class="required-field">Server:</label>
+                        <select id="server">
+                            <option value="" disabled selected>Example: https://ntfy.sh</option>
+                            <option value="https://ntfy.sh/">https://ntfy.sh/</option>
+                            <option value="custom">Custom Server</option>
+                        </select>
+                        <input type="text" id="custom-server" class="hidden" placeholder="Enter custom server (e.g. https://ntfy.example.com/)">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="topic" class="required-field">Topic:</label>
+                        <input type="text" id="topic" placeholder="Enter unique name (Topic) Example: this_is_a_unique_name" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="method">Method:</label>
+                        <select id="method">
+                            <option value="POST" selected>POST</option>
+                            <option value="PUT">PUT</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="title" class="required-field">Title:</label>
+                        <input type="text" id="title" placeholder="Enter title Example: HASS Service, HASS Calendar, System" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="message" class="required-field">Message:</label>
+                        <textarea id="message" placeholder="Enter the notification message" required></textarea>
+                    </div>
+                    
+                    <!-- 1.02.000: Moved optional fields with checkboxes -->
+                    <div class="optional-section">
+                        <h3 class="section-title">Additional Options</h3>
+                        
+                        <!-- 1.02.001: Icon with checkbox -->
+                        <div class="optional-toggle">
+                            <div class="checkbox-group">
+                                <input type="checkbox" id="enable-icon">
+                                <label for="enable-icon">Icon</label>
+                            </div>
+                        </div>
+                        <div class="form-group hidden" id="icon-group">
+                            <label for="icon-url">Icon URL:</label>
+                            <input type="text" id="icon-url" placeholder="https://example.com/icon.png">
+                            <small>Enter full URL to the image for the icon</small>
+                        </div>
+                        
+                        <!-- 1.02.002: Attachment with checkbox -->
+                        <div class="optional-toggle">
+                            <div class="checkbox-group">
+                                <input type="checkbox" id="enable-attach">
+                                <label for="enable-attach">Attachment</label>
+                            </div>
+                        </div>
+                        <div class="form-group hidden" id="attach-group">
+                            <label for="attach-url">File URL:</label>
+                            <input type="text" id="attach-url" placeholder="https://example.com/file.pdf">
+                            <small>Enter full URL to the file for attachment</small>
+                            <div class="form-group">
+                                <label for="attach-filename">Filename (optional):</label>
+                                <input type="text" id="attach-filename" placeholder="Enter filename (e.g. F-droid.apk)">
+                                <small>If not specified, the original filename from the URL will be used</small>
+                            </div>
+                        </div>
+
+                        <!-- 1.02.009: Image with checkbox -->
+                        <div class="optional-toggle">
+                            <div class="checkbox-group">
+                                <input type="checkbox" id="enable-image">
+                                <label for="enable-image">Image</label>
+                            </div>
+                        </div>
+                        <div class="form-group hidden" id="image-group">
+                            <label for="image-url">Image URL:</label>
+                            <div class="url-input-group">
+                                <input type="text" id="image-url" placeholder="https://example.com/image.jpg">
+                                <button type="button" class="btn btn-secondary test-image-btn" id="test-image">Test</button>
+                            </div>
+                            <small>Enter full URL to the image</small>
+                            <img id="image-preview" class="image-preview" alt="Image preview">
+                        </div>
+                        
+                        <!-- 1.02.003: Click URL with checkbox -->
+                        <div class="optional-toggle">
+                            <div class="checkbox-group">
+                                <input type="checkbox" id="enable-click">
+                                <label for="enable-click">Click URL</label>
+                            </div>
+                        </div>
+                        <div class="form-group hidden" id="click-group">
+                            <input type="text" id="click" placeholder="URL to open when clicked">
+                        </div>
+                        
+                        <!-- 1.02.004: Priority with checkbox -->
+                        <div class="optional-toggle">
+                            <div class="checkbox-group">
+                                <input type="checkbox" id="enable-priority">
+                                <label for="enable-priority">Priority</label>
+                            </div>
+                        </div>
+                        <div class="form-group hidden" id="priority-group">
+                            <select id="priority">
+                                <option value="" disabled selected>Select notification priority</option>
+                                <option value="min">min - Minimum</option>
+                                <option value="low">low - Low</option>
+                                <option value="default">default - Default</option>
+                                <option value="high">high - High</option>
+                                <option value="urgent">urgent - Urgent</option>
+                                <option value="max">max - Maximum</option>
+                            </select>
+                        </div>
+                        
+                        <!-- 1.02.005: Tags with checkbox -->
+                        <div class="optional-toggle">
+                            <div class="checkbox-group">
+                                <input type="checkbox" id="enable-tags">
+                                <label for="enable-tags">Tags</label>
+                            </div>
+                        </div>
+                        <div class="form-group hidden" id="tags-group">
+                            <select id="tags">
+                                <option value="" disabled selected>Select tag for the notification</option>
+                                <option value="warning">⚠️ warning</option>
+                                <option value="rotating_light">🚨 rotating_light</option>
+                                <option value="construction">🚧 construction</option>
+                                <option value="closed_lock_with_key">🔐 closed_lock_with_key</option>
+                                <option value="key">🔑 key</option>
+                                <option value="fire">🔥 fire</option>
+                                <option value="ambulance">🚑 ambulance</option>
+                                <option value="police_car">🚓 police_car</option>
+                                <option value="house">🏠 house</option>
+                                <option value="office">🏢 office</option>
+                                <option value="globe_with_meridians">🌐 globe_with_meridians</option>
+                                <option value="desktop_computer">🖥️ desktop_computer</option>
+                                <option value="computer">💻 computer</option>
+                                <option value="iphone">📱 iphone</option>
+                                <option value="telephone">☎️ telephone</option>
+                                <option value="bell">🔔 bell</option>
+                                <option value="alarm_clock">⏰ alarm_clock</option>
+                                <option value="stopwatch">⏱️ stopwatch</option>
+                                <option value="timer_clock">⏲️ timer_clock</option>
+                                <option value="moneybag">💰 moneybag</option>
+                                <option value="credit_card">💳 credit_card</option>
+                                <option value="chart_with_upwards_trend">📈 chart_with_upwards_trend</option>
+                                <option value="chart_with_downwards_trend">📉 chart_with_downwards_trend</option>
+                                <option value="battery">🔋 battery</option>
+                                <option value="electric_plug">🔌 electric_plug</option>
+                                <option value="mag">🔍 mag</option>
+                                <option value="wrench">🔧 wrench</option>
+                                <option value="hammer">🔨 hammer</option>
+                                <option value="nut_and_bolt">🔩 nut_and_bolt</option>
+                                <option value="gear">⚙️ gear</option>
+                                <option value="link">🔗 link</option>
+                                <option value="cloud">☁️ cloud</option>
+                                <option value="sunny">☀️ sunny</option>
+                                <option value="umbrella_with_rain_drops">☔ umbrella_with_rain_drops</option>
+                                <option value="snowflake">❄️ snowflake</option>
+                                <option value="partly_sunny">⛅ partly_sunny</option>
+                                <option value="thunder_cloud_and_rain">⛈️ thunder_cloud_and_rain</option>
+                                <option value="fog">🌫️ fog</option>
+                                <option value="wind_blowing_face">🌬️ wind_blowing_face</option>
+                                <option value="cyclone">🌀 cyclone</option>
+                                <option value="rainbow">🌈 rainbow</option>
+                                <option value="water_wave">🌊 water_wave</option>
+                                <option value="car">🚗 car</option>
+                                <option value="truck">🚚 truck</option>
+                                <option value="airplane">✈️ airplane</option>
+                                <option value="rocket">🚀 rocket</option>
+                                <option value="satellite">🛰️ satellite</option>
+                                <option value="bulb">💡 bulb</option>
+                                <option value="flashlight">🔦 flashlight</option>
+                                <option value="camera">📷 camera</option>
+                                <option value="video_camera">📹 video_camera</option>
+                                <option value="movie_camera">🎥 movie_camera</option>
+                                <option value="clapper">🎬 clapper</option>
+                                <option value="tv">📺 tv</option>
+                                <option value="radio">📻 radio</option>
+                                <option value="videocassette">📼 videocassette</option>
+                                <option value="prayer_beads">📿 prayer_beads</option>
+                                <option value="shopping_cart">🛒 shopping_cart</option>
+                                <option value="package">📦 package</option>
+                                <option value="envelope">✉️ envelope</option>
+                                <option value="email">📧 email</option>
+                                <option value="incoming_envelope">📨 incoming_envelope</option>
+                                <option value="e-mail">📩 e-mail</option>
+                                <option value="love_letter">💌 love_letter</option>
+                                <option value="inbox_tray">📥 inbox_tray</option>
+                                <option value="outbox_tray">📤 outbox_tray</option>
+                                <option value="scroll">📜 scroll</option>
+                                <option value="page_with_curl">📃 page_with_curl</option>
+                                <option value="bookmark_tabs">📑 bookmark_tabs</option>
+                                <option value="bar_chart">📊 bar_chart</option>
+                                <option value="date">📅 date</option>
+                                <option value="calendar">📆 calendar</option>
+                                <option value="spiral_calendar">🗓️ spiral_calendar</option>
+                                <option value="card_index">📇 card_index</option>
+                                <option value="file_folder">📁 file_folder</option>
+                                <option value="open_file_folder">📂 open_file_folder</option>
+                                <option value="scissors">✂️ scissors</option>
+                                <option value="paperclip">📎 paperclip</option>
+                                <option value="black_nib">✒️ black_nib</option>
+                                <option value="pencil2">✏️ pencil2</option>
+                                <option value="paintbrush">🖌️ paintbrush</option>
+                                <option value="crayon">🖍️ crayon</option>
+                                <option value="memo">📝 memo</option>
+                                <option value="briefcase">💼 briefcase</option>
+                                <option value="minidisc">💽 minidisc</option>
+                                <option value="floppy_disk">💾 floppy_disk</option>
+                                <option value="cd">💿 cd</option>
+                                <option value="dvd">📀 dvd</option>
+                                <option value="computer_mouse">🖱️ computer_mouse</option>
+                                <option value="trackball">🖲️ trackball</option>
+                                <option value="joystick">🕹️ joystick</option>
+                                <option value="chess_pawn">♟️ chess_pawn</option>
+                                <option value="jigsaw">🧩 jigsaw</option>
+                                <option value="teddy_bear">🧸 teddy_bear</option>
+                                <option value="spades">♠️ spades</option>
+                                <option value="hearts">♥️ hearts</option>
+                                <option value="diamonds">♦️ diamonds</option>
+                                <option value="clubs">♣️ clubs</option>
+                                <option value="black_joker">🃏 black_joker</option>
+                                <option value="mahjong">🀄 mahjong</option>
+                                <option value="flower_playing_cards">🎴 flower_playing_cards</option>
+                                <option value="mute">🔇 mute</option>
+                                <option value="speaker">🔈 speaker</option>
+                                <option value="sound">🔉 sound</option>
+                                <option value="loud_sound">🔊 loud_sound</option>
+                                <option value="mega">📣 mega</option>
+                                <option value="loudspeaker">📢 loudspeaker</option>
+                                <option value="bell">🔔 bell</option>
+                                <option value="no_bell">🔕 no_bell</option>
+                                <option value="musical_score">🎼 musical_score</option>
+                                <option value="musical_note">🎵 musical_note</option>
+                                <option value="notes">🎶 notes</option>
+                                <option value="studio_microphone">🎙️ studio_microphone</option>
+                                <option value="level_slider">🎚️ level_slider</option>
+                                <option value="control_knobs">🎛️ control_knobs</option>
+                                <option value="microphone">🎤 microphone</option>
+                                <option value="headphone">🎧 headphone</option>
+                                <option value="radio">📻 radio</option>
+                                <option value="saxophone">🎷 saxophone</option>
+                                <option value="guitar">🎸 guitar</option>
+                                <option value="musical_keyboard">🎹 musical_keyboard</option>
+                                <option value="trumpet">🎺 trumpet</option>
+                                <option value="violin">🎻 violin</option>
+                                <option value="drum">🥁 drum</option>
+                                <option value="mobile_phone">📱 mobile_phone</option>
+                                <option value="calling">📲 calling</option>
+                                <option value="phone">☎️ phone</option>
+                                <option value="telephone_receiver">📞 telephone_receiver</option>
+                                <option value="pager">📟 pager</option>
+                                <option value="fax">📠 fax</option>
+                                <option value="battery">🔋 battery</option>
+                                <option value="electric_plug">🔌 electric_plug</option>
+                                <option value="computer">💻 computer</option>
+                                <option value="desktop_computer">🖥️ desktop_computer</option>
+                                <option value="printer">🖨️ printer</option>
+                                <option value="keyboard">⌨️ keyboard</option>
+                                <option value="computer_mouse">🖱️ computer_mouse</option>
+                                <option value="trackball">🖲️ trackball</option>
+                                <option value="minidisc">💽 minidisc</option>
+                                <option value="floppy_disk">💾 floppy_disk</option>
+                                <option value="cd">💿 cd</option>
+                                <option value="dvd">📀 dvd</option>
+                                <option value="abacus">🧮 abacus</option>
+                                <option value="movie_camera">🎥 movie_camera</option>
+                                <option value="film_strip">🎞️ film_strip</option>
+                                <option value="film_projector">📽️ film_projector</option>
+                                <option value="clapper">🎬 clapper</option>
+                                <option value="tv">📺 tv</option>
+                                <option value="camera">📷 camera</option>
+                                <option value="camera_with_flash">📸 camera_with_flash</option>
+                                <option value="video_camera">📹 video_camera</option>
+                                <option value="vhs">📼 vhs</option>
+                                <option value="mag">🔍 mag</option>
+                                <option value="mag_right">🔎 mag_right</option>
+                                <option value="candle">🕯️ candle</option>
+                                <option value="bulb">💡 bulb</option>
+                                <option value="flashlight">🔦 flashlight</option>
+                                <option value="red_paper_lantern">🏮 red_paper_lantern</option>
+                                <option value="notebook_with_decorative_cover">📔 notebook_with_decorative_cover</option>
+                                <option value="closed_book">📕 closed_book</option>
+                                <option value="book">📖 book</option>
+                                <option value="green_book">📗 green_book</option>
+                                <option value="blue_book">📘 blue_book</option>
+                                <option value="orange_book">📙 orange_book</option>
+                                <option value="books">📚 books</option>
+                                <option value="notebook">📓 notebook</option>
+                                <option value="ledger">📒 ledger</option>
+                                <option value="page_with_curl">📃 page_with_curl</option>
+                                <option value="scroll">📜 scroll</option>
+                                <option value="page_facing_up">📄 page_facing_up</option>
+                                <option value="newspaper">📰 newspaper</option>
+                                <option value="newspaper_roll">🗞️ newspaper_roll</option>
+                                <option value="bookmark_tabs">📑 bookmark_tabs</option>
+                                <option value="bookmark">🔖 bookmark</option>
+                                <option value="label">🏷️ label</option>
+                                <option value="moneybag">💰 moneybag</option>
+                                <option value="yen">💴 yen</option>
+                                <option value="dollar">💵 dollar</option>
+                                <option value="euro">💶 euro</option>
+                                <option value="pound">💷 pound</option>
+                                <option value="money_with_wings">💸 money_with_wings</option>
+                                <option value="credit_card">💳 credit_card</option>
+                                <option value="receipt">🧾 receipt</option>
+                                <option value="chart">💹 chart</option>
+                                <option value="currency_exchange">💱 currency_exchange</option>
+                                <option value="heavy_dollar_sign">💲 heavy_dollar_sign</option>
+                                <option value="envelope">✉️ envelope</option>
+                                <option value="e-mail">📧 e-mail</option>
+                                <option value="incoming_envelope">📨 incoming_envelope</option>
+                                <option value="envelope_with_arrow">📩 envelope_with_arrow</option>
+                                <option value="outbox_tray">📤 outbox_tray</option>
+                                <option value="inbox_tray">📥 inbox_tray</option>
+                                <option value="package">📦 package</option>
+                                <option value="mailbox">📫 mailbox</option>
+                                <option value="mailbox_closed">📪 mailbox_closed</option>
+                                <option value="mailbox_with_mail">📬 mailbox_with_mail</option>
+                                <option value="mailbox_with_no_mail">📭 mailbox_with_no_mail</option>
+                                <option value="postbox">📮 postbox</option>
+                                <option value="ballot_box">🗳️ ballot_box</option>
+                                <option value="pencil">✏️ pencil</option>
+                                <option value="black_nib">✒️ black_nib</option>
+                                <option value="fountain_pen">🖋️ fountain_pen</option>
+                                <option value="pen">🖊️ pen</option>
+                                <option value="paintbrush">🖌️ paintbrush</option>
+                                <option value="crayon">🖍️ crayon</option>
+                                <option value="memo">📝 memo</option>
+                                <option value="briefcase">💼 briefcase</option>
+                                <option value="file_folder">📁 file_folder</option>
+                                <option value="open_file_folder">📂 open_file_folder</option>
+                                <option value="card_index_dividers">🗂️ card_index_dividers</option>
+                                <option value="date">📅 date</option>
+                                <option value="calendar">📆 calendar</option>
+                                <option value="spiral_notepad">🗒️ spiral_notepad</option>
+                                <option value="spiral_calendar">🗓️ spiral_calendar</option>
+                                <option value="card_index">📇 card_index</option>
+                                <option value="chart_with_upwards_trend">📈 chart_with_upwards_trend</option>
+                                <option value="chart_with_downwards_trend">📉 chart_with_downwards_trend</option>
+                                <option value="bar_chart">📊 bar_chart</option>
+                                <option value="clipboard">📋 clipboard</option>
+                                <option value="pushpin">📌 pushpin</option>
+                                <option value="round_pushpin">📍 round_pushpin</option>
+                                <option value="paperclip">📎 paperclip</option>
+                                <option value="linked_paperclips">🖇️ linked_paperclips</option>
+                                <option value="straight_ruler">📏 straight_ruler</option>
+                                <option value="triangular_ruler">📐 triangular_ruler</option>
+                                <option value="scissors">✂️ scissors</option>
+                                <option value="card_file_box">🗃️ card_file_box</option>
+                                <option value="file_cabinet">🗄️ file_cabinet</option>
+                                <option value="wastebasket">🗑️ wastebasket</option>
+                                <option value="lock">🔒 lock</option>
+                                <option value="unlock">🔓 unlock</option>
+                                <option value="lock_with_ink_pen">🔏 lock_with_ink_pen</option>
+                                <option value="closed_lock_with_key">🔐 closed_lock_with_key</option>
+                                <option value="key">🔑 key</option>
+                                <option value="old_key">🗝️ old_key</option>
+                                <option value="hammer">🔨 hammer</option>
+                                <option value="pick">⛏️ pick</option>
+                                <option value="hammer_and_pick">⚒️ hammer_and_pick</option>
+                                <option value="hammer_and_wrench">🛠️ hammer_and_wrench</option>
+                                <option value="dagger">🗡️ dagger</option>
+                                <option value="crossed_swords">⚔️ crossed_swords</option>
+                                <option value="gun">🔫 gun</option>
+                                <option value="bow_and_arrow">🏹 bow_and_arrow</option>
+                                <option value="shield">🛡️ shield</option>
+                                <option value="wrench">🔧 wrench</option>
+                                <option value="nut_and_bolt">🔩 nut_and_bolt</option>
+                                <option value="gear">⚙️ gear</option>
+                                <option value="clamp">🗜️ clamp</option>
+                                <option value="balance_scale">⚖️ balance_scale</option>
+                                <option value="probing_cane">🦯 probing_cane</option>
+                                <option value="link">🔗 link</option>
+                                <option value="chains">⛓️ chains</option>
+                                <option value="hook">🪝 hook</option>
+                                <option value="toolbox">🧰 toolbox</option>
+                                <option value="magnet">🧲 magnet</option>
+                                <option value="ladder">🪜 ladder</option>
+                                <option value="alembic">⚗️ alembic</option>
+                                <option value="test_tube">🧪 test_tube</option>
+                                <option value="petri_dish">🧫 petri_dish</option>
+                                <option value="dna">🧬 dna</option>
+                                <option value="microscope">🔬 microscope</option>
+                                <option value="telescope">🔭 telescope</option>
+                                <option value="satellite_antenna">📡 satellite_antenna</option>
+                                <option value="syringe">💉 syringe</option>
+                                <option value="drop_of_blood">🩸 drop_of_blood</option>
+                                <option value="pill">💊 pill</option>
+                                <option value="adhesive_bandage">🩹 adhesive_bandage</option>
+                                <option value="stethoscope">🩺 stethoscope</option>
+                                <option value="door">🚪 door</option>
+                                <option value="elevator">🛗 elevator</option>
+                                <option value="mirror">🪞 mirror</option>
+                                <option value="window">🪟 window</option>
+                                <option value="bed">🛏️ bed</option>
+                                <option value="couch_and_lamp">🛋️ couch_and_lamp</option>
+                                <option value="chair">🪑 chair</option>
+                                <option value="toilet">🚽 toilet</option>
+                                <option value="plunger">🪠 plunger</option>
+                                <option value="shower">🚿 shower</option>
+                                <option value="bathtub">🛁 bathtub</option>
+                                <option value="mouse_trap">🪤 mouse_trap</option>
+                                <option value="razor">🪒 razor</option>
+                                <option value="lotion_bottle">🧴 lotion_bottle</option>
+                                <option value="safety_pin">🧷 safety_pin</option>
+                                <option value="broom">🧹 broom</option>
+                                <option value="basket">🧺 basket</option>
+                                <option value="roll_of_paper">🧻 roll_of_paper</option>
+                                <option value="bucket">🪣 bucket</option>
+                                <option value="soap">🧼 soap</option>
+                                <option value="toothbrush">🪥 toothbrush</option>
+                                <option value="sponge">🧽 sponge</option>
+                                <option value="fire_extinguisher">🧯 fire_extinguisher</option>
+                                <option value="shopping_cart">🛒 shopping_cart</option>
+                                <option value="smoking">🚬 smoking</option>
+                                <option value="coffin">⚰️ coffin</option>
+                                <option value="headstone">🪦 headstone</option>
+                                <option value="funeral_urn">⚱️ funeral_urn</option>
+                                <option value="moyai">🗿 moyai</option>
+                                <option value="placard">🪧 placard</option>
+                                <option value="identification_card">🪪 identification_card</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="tab-content" id="actions-tab">
+                    <h2 class="section-title">Actions</h2>
+                    <p>Add action buttons to your notification</p>
+                    
+                    <div class="actions-container" id="actions-container">
+                        <!-- Actions will be added here dynamically -->
+                    </div>
+                    
+                    <button type="button" class="btn" id="add-action">Add Action</button>
+                </div>
+                
+                <div class="buttons-container">
+                    <button type="button" class="btn btn-success" id="generate">Generate Configuration</button>
+                    <button type="button" class="btn btn-secondary" id="reset">Clear Form</button>
+                </div>
+            </div>
+            
+            <div class="preview-section">
+                <h2 class="section-title">Configuration Preview</h2>
+                
+                <!-- 1.03.000: Output format -->
+                <div class="form-group output-format">
+                    <label>Configuration Format:</label>
+                    <div class="format-option">
+                        <input type="radio" id="format-rest" name="output-format" value="rest" checked>
+                        <label for="format-rest">REST Command (for download)</label>
+                    </div>
+                    <div class="format-option">
+                        <input type="radio" id="format-service" name="output-format" value="service">
+                        <label for="format-service">Service Format</label>
+                    </div>
+                    <div class="format-description">
+                        <strong>REST Command:</strong> For use with rest_command in configuration.yaml<br>
+                        <strong>Service Format:</strong> For direct use in automations
+                    </div>
+                </div>
+                
+                <!-- 1.03.001: Filename field -->
+                <div class="form-group filename-input">
+                    <label for="filename">Filename (required for download):</label>
+                    <input type="text" id="filename" placeholder="Enter filename (without extension)">
+                    <small>The file will be downloaded with .yaml extension</small>
+                </div>
+                
+                <div class="preview-code" id="preview">
+                    Configuration will appear here after clicking "Generate Configuration"
+                </div>
+                
+                <div class="buttons-container">
+                    <button type="button" class="btn download-disabled" id="download" disabled>Download File</button>
+                    <button type="button" class="btn btn-secondary" id="copy">Copy to Clipboard</button>
+                </div>
+                
+                <div class="examples-container">
+                    <h2 class="section-title">Ready Examples</h2>
+                    
+                    <div class="example-item" data-example="1">
+                        <div class="example-title">Example 1: Standard Notification</div>
+                        <div class="example-description">Title, tags, priority and click URL</div>
+                    </div>
+                    
+                    <div class="example-item" data-example="2">
+                        <div class="example-title">Example 2: File Attachment</div>
+                        <div class="example-description">File attachment with custom name</div>
+                    </div>
+                    
+                    <div class="example-item" data-example="3">
+                        <div class="example-title">Example 3: "View" Action</div>
+                        <div class="example-description">Button to open URL</div>
+                    </div>
+                    
+                    <div class="example-item" data-example="4">
+                        <div class="example-title">Example 4: HTTP Action</div>
+                        <div class="example-description">Interaction with Home Assistant via HTTP request</div>
+                    </div>
+
+                    <div class="example-item" data-example="5">
+                        <div class="example-title">Example 5: Notification with Image</div>
+                        <div class="example-description">Notification with external image and preview</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 1.00.000: Basic data for options
+        let optionsData = {
+            server: [
+                {value: "https://ntfy.sh/", label: "https://ntfy.sh/", system: true},
+                {value: "custom", label: "Custom Server", system: true}
+            ],
+            priority: [
+                {value: "min", label: "min - Minimum", system: true},
+                {value: "low", label: "low - Low", system: true},
+                {value: "default", label: "default - Default", system: true},
+                {value: "high", label: "high - High", system: true},
+                {value: "urgent", label: "urgent - Urgent", system: true},
+                {value: "max", label: "max - Maximum", system: true}
+            ],
+            tags: [
+                {value: "", label: "-- No tag --", system: true},
+                {value: "warning", label: "⚠️ warning", system: true},
+                {value: "rotating_light", label: "🚨 rotating_light", system: true},
+                {value: "construction", label: "🚧 construction", system: true},
+                {value: "closed_lock_with_key", label: "🔐 closed_lock_with_key", system: true},
+                {value: "key", label: "🔑 key", system: true},
+                {value: "fire", label: "🔥 fire", system: true},
+                {value: "ambulance", label: "🚑 ambulance", system: true},
+                {value: "police_car", label: "🚓 police_car", system: true},
+                {value: "house", label: "🏠 house", system: true},
+                {value: "office", label: "🏢 office", system: true},
+                {value: "globe_with_meridians", label: "🌐 globe_with_meridians", system: true},
+                {value: "desktop_computer", label: "🖥️ desktop_computer", system: true},
+                {value: "computer", label: "💻 computer", system: true},
+                {value: "iphone", label: "📱 iphone", system: true},
+                {value: "telephone", label: "☎️ telephone", system: true},
+                {value: "bell", label: "🔔 bell", system: true},
+                {value: "alarm_clock", label: "⏰ alarm_clock", system: true},
+                {value: "stopwatch", label: "⏱️ stopwatch", system: true},
+                {value: "timer_clock", label: "⏲️ timer_clock", system: true},
+                {value: "moneybag", label: "💰 moneybag", system: true},
+                {value: "credit_card", label: "💳 credit_card", system: true},
+                {value: "chart_with_upwards_trend", label: "📈 chart_with_upwards_trend", system: true},
+                {value: "chart_with_downwards_trend", label: "📉 chart_with_downwards_trend", system: true},
+                {value: "battery", label: "🔋 battery", system: true},
+                {value: "electric_plug", label: "🔌 electric_plug", system: true},
+                {value: "mag", label: "🔍 mag", system: true},
+                {value: "wrench", label: "🔧 wrench", system: true},
+                {value: "hammer", label: "🔨 hammer", system: true},
+                {value: "nut_and_bolt", label: "🔩 nut_and_bolt", system: true},
+                {value: "gear", label: "⚙️ gear", system: true},
+                {value: "link", label: "🔗 link", system: true},
+                {value: "cloud", label: "☁️ cloud", system: true},
+                {value: "sunny", label: "☀️ sunny", system: true},
+                {value: "umbrella_with_rain_drops", label: "☔ umbrella_with_rain_drops", system: true},
+                {value: "snowflake", label: "❄️ snowflake", system: true},
+                {value: "partly_sunny", label: "⛅ partly_sunny", system: true},
+                {value: "thunder_cloud_and_rain", label: "⛈️ thunder_cloud_and_rain", system: true},
+                {value: "fog", label: "🌫️ fog", system: true},
+                {value: "wind_blowing_face", label: "🌬️ wind_blowing_face", system: true},
+                {value: "cyclone", label: "🌀 cyclone", system: true},
+                {value: "rainbow", label: "🌈 rainbow", system: true},
+                {value: "water_wave", label: "🌊 water_wave", system: true}
+            ]
+        };
+
+        // 0.00.000: Loading data from external sources
+        async function loadExternalData() {
+            try {
+                const response = await fetch('/local/ntfy/tags.json');
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                const externalData = await response.json();
+                
+                if (Array.isArray(externalData)) {
+                    optionsData.tags = [
+                        ...optionsData.tags,
+                        ...externalData.map(tag => ({
+                            value: tag.value,
+                            label: tag.label,
+                            system: false
+                        }))
+                    ];
+                }
+                
+                console.log('Data from tags.json loaded successfully');
+            } catch (error) {
+                console.error('Error loading tags.json:', error);
+                // We already have enough default tags
+            }
+        }
+        
+        // 1.00.001: Loaded options from localStorage
+        let userOptions = {};
+
+        // 4.00.000: Actions functionality
+        let actionCounter = 0;
+
+        // 1.00.002: DOM loaded event
+        document.addEventListener('DOMContentLoaded', async function() {
+            // 0.01.000: Load external data first
+            await loadExternalData();
+            
+            // 1.01.001: Load user options from localStorage
+            loadUserOptions();
+            
+            // 1.01.002: Load all options
+            loadAllOptions();
+            
+            // 1.01.003: Tab functionality
+            const tabs = document.querySelectorAll('.tab');
+            tabs.forEach(tab => {
+                tab.addEventListener('click', function() {
+                    const tabId = this.getAttribute('data-tab');
+                    
+                    // Remove active class from all tabs and contents
+                    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+                    
+                    // Add active class to current tab and content
+                    this.classList.add('active');
+                    document.getElementById(`${tabId}-tab`).classList.add('active');
+                });
+            });
+                        
+            // 1.02.009: Custom input toggles
+            setupCustomInputToggle('server', 'custom-server');
+            
+            // 1.02.010: Optional field toggles
+            setupOptionalFieldToggle('enable-icon', 'icon-group');
+            setupOptionalFieldToggle('enable-attach', 'attach-group');
+            setupOptionalFieldToggle('enable-image', 'image-group');
+            setupOptionalFieldToggle('enable-click', 'click-group');
+            setupOptionalFieldToggle('enable-priority', 'priority-group');
+            setupOptionalFieldToggle('enable-tags', 'tags-group');
+            
+            // 1.02.011: Image preview functionality
+            const imageUrlInput = document.getElementById('image-url');
+            const testImageBtn = document.getElementById('test-image');
+            const imagePreview = document.getElementById('image-preview');
+            
+            imageUrlInput.addEventListener('input', function() {
+                updateImagePreview(this.value, imagePreview);
+            });
+            
+            testImageBtn.addEventListener('click', function() {
+                updateImagePreview(imageUrlInput.value, imagePreview);
+            });
+            
+            // 1.03.002: Output format toggle
+            const formatRadios = document.querySelectorAll('input[name="output-format"]');
+            formatRadios.forEach(radio => {
+                radio.addEventListener('change', function() {
+                    // Regenerate configuration when format changes
+                    if (document.getElementById('preview').textContent !== 'Configuration will appear here after clicking "Generate Configuration"') {
+                        generateConfiguration();
+                    }
+                });
+            });
+            
+            // 1.03.003: Filename input validation for download button
+            const filenameInput = document.getElementById('filename');
+            const downloadButton = document.getElementById('download');
+            
+            filenameInput.addEventListener('input', function() {
+                if (this.value.trim() !== '') {
+                    downloadButton.disabled = false;
+                    downloadButton.classList.remove('download-disabled');
+                } else {
+                    downloadButton.disabled = true;
+                    downloadButton.classList.add('download-disabled');
+                }
+            });
+            
+            // 1.04.000: Actions functionality
+            document.getElementById('add-action').addEventListener('click', addAction);
+            
+            // 1.05.000: Generate configuration
+            const generateButton = document.getElementById('generate');
+            const previewElement = document.getElementById('preview');
+            
+            generateButton.addEventListener('click', generateConfiguration);
+            
+            // 1.06.000: Reset form
+            const resetButton = document.getElementById('reset');
+            resetButton.addEventListener('click', resetForm);
+            
+            // 1.07.000: Copy to clipboard
+            const copyButton = document.getElementById('copy');
+            copyButton.addEventListener('click', copyToClipboard);
+            
+            // 1.08.000: Download file
+            downloadButton.addEventListener('click', downloadFile);
+            
+            // 1.09.000: Examples
+            const exampleItems = document.querySelectorAll('.example-item');
+            exampleItems.forEach(item => {
+                item.addEventListener('click', function() {
+                    const exampleId = this.getAttribute('data-example');
+                    loadExample(exampleId);
+                });
+            });
+            
+            // 1.10.000: Dark mode toggle
+            const themeToggle = document.getElementById('theme-toggle');
+            themeToggle.addEventListener('click', toggleDarkMode);
+            
+            // Check for saved theme preference
+            if (localStorage.getItem('darkMode') === 'enabled') {
+                document.body.classList.add('dark-mode');
+                themeToggle.textContent = '☀️ Light Mode';
+            }
+        });
+
+        // 2.00.000: Options management functions
+        // 2.01.000: Load user options from localStorage
+        function loadUserOptions() {
+            const saved = localStorage.getItem('ntfyUserOptions');
+            if (saved) {
+                userOptions = JSON.parse(saved);
+            }
+        }
+
+        // 2.04.000: Load all options into select fields
+        function loadAllOptions() {
+            Object.entries(optionsData).forEach(([field, defaultOptions]) => {
+                const userFieldOptions = userOptions[field] || [];
+                const allOptions = [...defaultOptions, ...userFieldOptions];
+                populateSelect(field, allOptions);
+            });
+        }
+
+        // 2.05.000: Populate select field with options
+        function populateSelect(field, options) {
+            const select = document.getElementById(field);
+            if (!select) {
+                console.error(`Select element with id '${field}' not found`);
+                return;
+            }
+            
+            select.innerHTML = '';
+            
+            options.forEach(option => {
+                const optionElement = document.createElement('option');
+                optionElement.value = option.value;
+                optionElement.textContent = option.label;
+                select.appendChild(optionElement);
+            });
+        }
+
+        // 3.00.000: Helper functions
+        // 3.01.000: Setup toggle between select and custom input
+        function setupCustomInputToggle(selectId, inputId) {
+            const select = document.getElementById(selectId);
+            const input = document.getElementById(inputId);
+            
+            select.addEventListener('change', function() {
+                if (this.value === 'custom') {
+                    input.classList.remove('hidden');
+                } else {
+                    input.classList.add('hidden');
+                }
+            });
+        }
+
+        // 3.02.000: Setup toggle for optional fields
+        function setupOptionalFieldToggle(checkboxId, fieldGroupId) {
+            const checkbox = document.getElementById(checkboxId);
+            const fieldGroup = document.getElementById(fieldGroupId);
+            
+            checkbox.addEventListener('change', function() {
+                if (this.checked) {
+                    fieldGroup.classList.remove('hidden');
+                } else {
+                    fieldGroup.classList.add('hidden');
+                }
+            });
+        }
+
+        // 3.03.000: Get value from select or custom field
+        function getCustomValue(selectId, inputId) {
+            const select = document.getElementById(selectId);
+            const input = document.getElementById(inputId);
+            
+            if (select.value === 'custom') {
+                return input.value;
+            }
+            return select.value;
+        }
+
+        // 3.04.000: Image preview function
+        function updateImagePreview(url, previewElement) {
+            if (url && isValidUrl(url)) {
+                previewElement.src = url;
+                previewElement.classList.add('visible');
+                previewElement.alt = 'Image preview: ' + url;
+            } else {
+                previewElement.classList.remove('visible');
+                previewElement.src = '';
+                previewElement.alt = '';
+            }
+        }
+
+        // 3.05.000: Validate URL
+        function isValidUrl(string) {
+            try {
+                new URL(string);
+                return true;
+            } catch (_) {
+                return false;
+            }
+        }
+        
+        // 3.06.000: Toggle dark mode
+        function toggleDarkMode() {
+            const body = document.body;
+            const themeToggle = document.getElementById('theme-toggle');
+            
+            body.classList.toggle('dark-mode');
+            
+            if (body.classList.contains('dark-mode')) {
+                localStorage.setItem('darkMode', 'enabled');
+                themeToggle.textContent = '☀️ Light Mode';
+            } else {
+                localStorage.setItem('darkMode', 'disabled');
+                themeToggle.textContent = '🌙 Dark Mode';
+            }
+        }
+
+        // 4.01.000: Add new action
+        function addAction() {
+            actionCounter++;
+            const actionId = `action-${actionCounter}`;
+            
+            const actionItem = document.createElement('div');
+            actionItem.className = 'action-item';
+            actionItem.id = actionId;
+            
+            actionItem.innerHTML = `
+                <div class="action-header">
+                    <div class="action-title">Action ${actionCounter}</div>
+                    <button type="button" class="remove-action btn btn-danger btn-small" data-action="${actionId}">Remove</button>
+                </div>
+                <div class="form-group">
+                    <label for="${actionId}-action">Action Type:</label>
+                    <select id="${actionId}-action" class="action-type-select">
+                        <option value="view">View</option>
+                        <option value="http">HTTP</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="${actionId}-label">Label:</label>
+                    <input type="text" id="${actionId}-label" placeholder="Button text">
+                </div>
+                <div class="form-group">
+                    <label for="${actionId}-url">URL:</label>
+                    <input type="text" id="${actionId}-url" placeholder="URL for view or HTTP request">
+                </div>
+                <div class="form-group http-only">
+                    <label for="${actionId}-method">Method (HTTP only):</label>
+                    <select id="${actionId}-method">
+                        <option value="POST">POST</option>
+                        <option value="GET">GET</option>
+                        <option value="PUT">PUT</option>
+                        <option value="DELETE">DELETE</option>
+                    </select>
+                </div>
+                <div class="form-group http-only">
+                    <label for="${actionId}-headers">Headers (HTTP only):</label>
+                    <textarea id="${actionId}-headers" placeholder='Headers in JSON format, e.g. {"Authorization": "Bearer token"}'></textarea>
+                </div>
+                <div class="form-group http-only">
+                    <label for="${actionId}-body">Body (HTTP only):</label>
+                    <textarea id="${actionId}-body" placeholder="Request body (JSON or text)"></textarea>
+                </div>
+                <div class="form-group">
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="${actionId}-clear">
+                        <label for="${actionId}-clear">Clear notification after click</label>
+                    </div>
+                </div>
+            `;
+            
+            document.getElementById('actions-container').appendChild(actionItem);
+            
+            // Add remove event
+            const removeButton = actionItem.querySelector('.remove-action');
+            removeButton.addEventListener('click', function() {
+                const actionToRemove = document.getElementById(this.getAttribute('data-action'));
+                if (actionToRemove) {
+                    actionToRemove.remove();
+                    updateActionTitles();
+                }
+            });
+            
+            // Add action type change event
+            const actionTypeSelect = actionItem.querySelector('.action-type-select');
+            actionTypeSelect.addEventListener('change', function() {
+                toggleHttpFields(actionItem, this.value);
+            });
+            
+            // Initialize HTTP fields state
+            toggleHttpFields(actionItem, 'view');
+        }
+
+        // 4.02.000: Toggle HTTP fields
+        function toggleHttpFields(actionItem, actionType) {
+            const httpFields = actionItem.querySelectorAll('.http-only');
+            httpFields.forEach(field => {
+                if (actionType === 'http') {
+                    field.style.display = 'block';
+                } else {
+                    field.style.display = 'none';
+                }
+            });
+        }
+
+        // 4.03.000: Update action titles
+        function updateActionTitles() {
+            const actionItems = document.querySelectorAll('.action-item');
+            actionCounter = 0;
+            
+            actionItems.forEach((item, index) => {
+                actionCounter++;
+                const titleElement = item.querySelector('.action-title');
+                if (titleElement) {
+                    titleElement.textContent = `Action ${actionCounter}`;
+                }
+                // Update IDs if necessary
+                const newId = `action-${actionCounter}`;
+                item.id = newId;
+                
+                // Update remove button
+                const removeButton = item.querySelector('.remove-action');
+                if (removeButton) {
+                    removeButton.setAttribute('data-action', newId);
+                }
+            });
+        }
+
+        // 4.04.000: Get actions from form
+        function getActions() {
+            const actions = [];
+            const actionItems = document.querySelectorAll('.action-item');
+            
+            actionItems.forEach(item => {
+                const actionId = item.id;
+                const actionType = document.getElementById(`${actionId}-action`).value;
+                const label = document.getElementById(`${actionId}-label`).value;
+                const url = document.getElementById(`${actionId}-url`).value;
+                const clear = document.getElementById(`${actionId}-clear`).checked;
+                
+                if (label && url) {
+                    const action = {
+                        action: actionType,
+                        label: label,
+                        url: url,
+                        clear: clear
+                    };
+                    
+                    if (actionType === 'http') {
+                        const method = document.getElementById(`${actionId}-method`).value;
+                        const headersText = document.getElementById(`${actionId}-headers`).value;
+                        const body = document.getElementById(`${actionId}-body`).value;
+                        
+                        action.method = method;
+                        
+                        if (headersText) {
+                            try {
+                                action.headers = JSON.parse(headersText);
+                            } catch (e) {
+                                console.error('Error parsing headers:', e);
+                            }
+                        }
+                        
+                        if (body) {
+                            try {
+                                action.body = JSON.parse(body);
+                            } catch (e) {
+                                // If not valid JSON, keep as text
+                                action.body = body;
+                            }
+                        }
+                    }
+                    
+                    actions.push(action);
+                }
+            });
+            
+            return actions;
+        }
+
+        // 5.00.000: Configuration generation
+        // 5.01.000: Main configuration generation function
+        function generateConfiguration() {
+            // 5.01.001: Get values from form
+            const server = getCustomValue('server', 'custom-server');
+            const topic = document.getElementById('topic').value;
+            const method = document.getElementById('method').value;
+            const title = document.getElementById('title').value;
+            const message = document.getElementById('message').value;
+            
+            // 5.01.002: Get optional values
+            let priority = '';
+            let tags = '';
+            let icon = '';
+            let attach = '';
+            let attachFilename = '';
+            let click = '';
+            let image = '';
+            
+            if (document.getElementById('enable-priority').checked) {
+                priority = document.getElementById('priority').value;
+            }
+            
+            if (document.getElementById('enable-tags').checked) {
+                tags = document.getElementById('tags').value;
+            }
+            
+            if (document.getElementById('enable-icon').checked) {
+                icon = document.getElementById('icon-url').value;
+            }
+            
+            if (document.getElementById('enable-attach').checked) {
+                attach = document.getElementById('attach-url').value;
+                attachFilename = document.getElementById('attach-filename').value;
+            }
+
+            if (document.getElementById('enable-image').checked) {
+                image = document.getElementById('image-url').value;
+            }
+            
+            if (document.getElementById('enable-click').checked) {
+                click = document.getElementById('click').value;
+            }
+            
+            // 5.01.004: Get actions
+            const actions = getActions();
+            
+            // 5.01.005: Check output format
+            const outputFormat = document.querySelector('input[name="output-format"]:checked').value;
+            
+            // 5.01.006: Generate configuration according to selected format
+            if (outputFormat === 'rest') {
+                generateRestCommandConfig(server, topic, method, title, priority, tags, message, icon, attach, attachFilename, image, click, actions);
+            } else {
+                generateServiceConfig(server, topic, method, title, priority, tags, message, icon, attach, attachFilename, image, click, actions);
+            }
+        }
+
+        // 5.02.000: Generate REST Command configuration
+        function generateRestCommandConfig(server, topic, method, title, priority, tags, message, icon, attach, attachFilename, image, click, actions) {
+            let config = `url: "${server}${topic}"\n`;
+            config += `method: "${method}"\n`;
+            
+            // Headers section
+            let hasHeaders = false;
+            let headersConfig = '';
+            
+            if (title) {
+                headersConfig += `  Title: "${title}"\n`;
+                hasHeaders = true;
+            }
+            if (priority) {
+                headersConfig += `  Priority: "${priority}"\n`;
+                hasHeaders = true;
+            }
+            if (tags) {
+                headersConfig += `  Tags: "${tags}"\n`;
+                hasHeaders = true;
+            }
+            if (icon) {
+                headersConfig += `  Icon: "${icon}"\n`;
+                hasHeaders = true;
+            }
+            if (attach) {
+                headersConfig += `  Attach: "${attach}"\n`;
+                hasHeaders = true;
+            }
+            if (attachFilename) {
+                headersConfig += `  Filename: "${attachFilename}"\n`;
+                hasHeaders = true;
+            }
+            if (image) {
+                headersConfig += `  Image: "${image}"\n`;
+                hasHeaders = true;
+            }
+            
+            if (hasHeaders) {
+                config += `headers:\n${headersConfig}`;
+            }
+            
+            // Payload
+            if (message) {
+                config += `payload: "${message.replace(/\n/g, '\\n')}"\n`;
+            }
+            
+            // Data section for extended options
+            let hasData = false;
+            let dataConfig = '';
+            
+            if (click) {
+                dataConfig += `  click: "${click}"\n`;
+                hasData = true;
+            }
+            
+            if (actions.length > 0) {
+                dataConfig += `  actions:\n`;
+                actions.forEach(action => {
+                    dataConfig += `    - action: ${action.action}\n`;
+                    dataConfig += `      label: "${action.label}"\n`;
+                    if (action.clear) {
+                        dataConfig += `      clear: true\n`;
+                    }
+                    if (action.action === 'view') {
+                        dataConfig += `      url: "${action.url}"\n`;
+                    } else if (action.action === 'http') {
+                        dataConfig += `      url: "${action.url}"\n`;
+                        if (action.method) {
+                            dataConfig += `      method: ${action.method}\n`;
+                        }
+                        if (action.headers) {
+                            dataConfig += `      headers:\n`;
+                            Object.entries(action.headers).forEach(([key, value]) => {
+                                dataConfig += `        ${key}: "${value}"\n`;
+                            });
+                        }
+                        if (action.body) {
+                            dataConfig += `      body: '${typeof action.body === 'string' ? action.body : JSON.stringify(action.body)}'\n`;
+                        }
+                    }
+                });
+                hasData = true;
+            }
+            
+            if (hasData) {
+                config += `data:\n${dataConfig}`;
+            }
+            
+            displayConfiguration(config);
+        }
+
+        // 5.03.000: Generate Service configuration
+        function generateServiceConfig(server, topic, method, title, priority, tags, message, icon, attach, attachFilename, image, click, actions) {
+            let config = `service: notify.ntfy\n`;
+            config += `data:\n`;
+            config += `  url: "${server}${topic}"\n`;
+            config += `  method: ${method}\n`;
+            
+            if (title) config += `  title: ${title}\n`;
+            if (priority) config += `  priority: ${priority}\n`;
+            if (tags) config += `  tags: ${tags}\n`;
+            if (message) config += `  message: "${message.replace(/\n/g, '\\n')}"\n`;
+            if (icon) config += `  icon: "${icon}"\n`;
+            if (attach) config += `  attach: "${attach}"\n`;
+            if (attachFilename) config += `  filename: "${attachFilename}"\n`;
+            if (image) config += `  image: "${image}"\n`;
+            if (click) config += `  click: "${click}"\n`;
+            
+            // Actions
+            if (actions.length > 0) {
+                config += `  actions:\n`;
+                actions.forEach(action => {
+                    config += `    - action: ${action.action}\n`;
+                    config += `      label: "${action.label}"\n`;
+                    if (action.clear) {
+                        config += `      clear: true\n`;
+                    }
+                    if (action.action === 'view') {
+                        config += `      url: "${action.url}"\n`;
+                    } else if (action.action === 'http') {
+                        config += `      url: "${action.url}"\n`;
+                        if (action.method) {
+                            config += `      method: ${action.method}\n`;
+                        }
+                        if (action.headers) {
+                            config += `      headers: ${JSON.stringify(action.headers)}\n`;
+                        }
+                        if (action.body) {
+                            config += `      body: ${typeof action.body === 'string' ? `'${action.body}'` : JSON.stringify(action.body)}\n`;
+                        }
+                    }
+                });
+            }
+            
+            displayConfiguration(config);
+        }
+
+        // 5.05.000: Display configuration
+        function displayConfiguration(config) {
+            const previewElement = document.getElementById('preview');
+            previewElement.textContent = config;
+        }
+
+        // 6.00.000: Additional functions
+        // 6.01.000: Clear form
+        function resetForm() {
+            if (confirm('Are you sure you want to clear the form?')) {
+                document.querySelectorAll('input, select, textarea').forEach(element => {
+                    if (element.type !== 'button' && element.name !== 'output-format') {
+                        if (element.type === 'checkbox' || element.type === 'radio') {
+                            element.checked = false;
+                        } else if (element.tagName === 'SELECT') {
+                            element.selectedIndex = 0;
+                        } else {
+                            element.value = '';
+                        }
+                    }
+                });
+                
+                // Restore default format
+                document.getElementById('format-rest').checked = true;
+                
+                // Hide all custom fields
+                document.querySelectorAll('.hidden').forEach(element => {
+                    if (element.id.includes('custom-') || element.id.includes('_value')) {
+                        element.classList.add('hidden');
+                    }
+                });
+                
+                // Hide all optional fields
+                document.querySelectorAll('[id$="-group"]').forEach(element => {
+                    element.classList.add('hidden');
+                });
+                
+                // Hide image preview
+                document.getElementById('image-preview').classList.remove('visible');
+                
+                // Clear actions
+                document.getElementById('actions-container').innerHTML = '';
+                actionCounter = 0;
+                
+                // Disable download button
+                document.getElementById('download').disabled = true;
+                document.getElementById('download').classList.add('download-disabled');
+                
+                // Clear preview
+                document.getElementById('preview').textContent = 'Configuration will appear here after clicking "Generate Configuration"';
+            }
+        }
+
+        // 6.02.000: Copy to clipboard
+        function copyToClipboard() {
+            const previewText = document.getElementById('preview').textContent;
+            
+            navigator.clipboard.writeText(previewText).then(function() {
+                alert('Configuration copied to clipboard!');
+            }, function(err) {
+                console.error('Error copying: ', err);
+                alert('Error copying to clipboard!');
+            });
+        }
+
+        // 6.03.000: Download file
+        function downloadFile() {
+            const previewText = document.getElementById('preview').textContent;
+            const filename = document.getElementById('filename').value.trim();
+            const outputFormat = document.querySelector('input[name="output-format"]:checked').value;
+            
+            if (!filename) {
+                alert('Please enter a filename!');
+                return;
+            }
+            
+            // Only REST Command format can be downloaded
+            if (outputFormat !== 'rest') {
+                alert('Only REST Command format can be downloaded as a file!');
+                return;
+            }
+            
+            const blob = new Blob([previewText], { type: 'text/yaml' });
+            const url = URL.createObjectURL(blob);
+            
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `${filename}.yaml`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
+        // 7.00.000: Examples
+        // 7.01.000: Load example
+        function loadExample(exampleId) {
+            // First clear the form
+            resetForm();
+            
+            // Make sure we're in REST Command format for examples
+            document.getElementById('format-rest').checked = true;
+            
+            // Then fill with example values
+            switch(exampleId) {
+                case '1':
+                    // Example 1: Standard notification
+                    document.getElementById('server').value = 'https://ntfy.sh/';
+                    document.getElementById('topic').value = 'your_topic';
+                    document.getElementById('title').value = 'Home Assistant';
+                    document.getElementById('message').value = 'This is an example notification from Home Assistant';
+                    
+                    // Activate additional options
+                    document.getElementById('enable-priority').checked = true;
+                    document.getElementById('priority-group').classList.remove('hidden');
+                    document.getElementById('priority').value = 'default';
+                    
+                    document.getElementById('enable-tags').checked = true;
+                    document.getElementById('tags-group').classList.remove('hidden');
+                    document.getElementById('tags').value = 'house';
+                    
+                    document.getElementById('enable-click').checked = true;
+                    document.getElementById('click-group').classList.remove('hidden');
+                    document.getElementById('click').value = 'https://homeassistant.local';
+                    break;
+                    
+                case '2':
+                    // Example 2: File attachment
+                    document.getElementById('server').value = 'https://ntfy.sh/';
+                    document.getElementById('topic').value = 'your_topic';
+                    document.getElementById('title').value = 'Home Assistant File Manager';
+                    document.getElementById('message').value = 'Touch on "F-droid.apk" to start download';
+                    
+                    // Activate additional options
+                    document.getElementById('enable-priority').checked = true;
+                    document.getElementById('priority-group').classList.remove('hidden');
+                    document.getElementById('priority').value = 'urgent';
+                    
+                    document.getElementById('enable-tags').checked = true;
+                    document.getElementById('tags-group').classList.remove('hidden');
+                    document.getElementById('tags').value = 'receipt';
+                    
+                    document.getElementById('enable-icon').checked = true;
+                    document.getElementById('icon-group').classList.remove('hidden');
+                    document.getElementById('icon-url').value = 'https://e7.pngegg.com/pngimages/923/707/png-clipart-f-droid-android-free-and-open-source-software-bright-automotive-rectangle-logo.png';
+                    
+                    document.getElementById('enable-attach').checked = true;
+                    document.getElementById('attach-group').classList.remove('hidden');
+                    document.getElementById('attach-url').value = 'https://f-droid.org/F-Droid.apk';
+                    document.getElementById('attach-filename').value = 'F-droid.apk';
+                    break;
+                    
+                case '3':
+                    // Example 3: "View" Action
+                    document.getElementById('server').value = 'https://ntfy.sh/';
+                    document.getElementById('topic').value = 'your_topic';
+                    document.getElementById('title').value = 'Network';
+                    document.getElementById('message').value = 'Check your network status';
+                    
+                    // Activate additional options
+                    document.getElementById('enable-priority').checked = true;
+                    document.getElementById('priority-group').classList.remove('hidden');
+                    document.getElementById('priority').value = 'low';
+                    
+                    document.getElementById('enable-tags').checked = true;
+                    document.getElementById('tags-group').classList.remove('hidden');
+                    document.getElementById('tags').value = 'globe_with_meridians';
+                    
+                    // Add action
+                    addAction();
+                    const action1 = document.querySelector('.action-item');
+                    document.getElementById(`${action1.id}-action`).value = 'view';
+                    document.getElementById(`${action1.id}-label`).value = 'Open network panel';
+                    document.getElementById(`${action1.id}-url`).value = 'https://router.local';
+                    break;
+                    
+                case '4':
+                    // Example 4: HTTP Action
+                    document.getElementById('server').value = 'https://ntfy.sh/';
+                    document.getElementById('topic').value = 'your_topic';
+                    document.getElementById('title').value = 'Devices';
+                    document.getElementById('message').value = 'Device is turned on';
+                    
+                    // Activate additional options
+                    document.getElementById('enable-priority').checked = true;
+                    document.getElementById('priority-group').classList.remove('hidden');
+                    document.getElementById('priority').value = 'default';
+                    
+                    document.getElementById('enable-tags').checked = true;
+                    document.getElementById('tags-group').classList.remove('hidden');
+                    document.getElementById('tags').value = 'white_check_mark';
+                    
+                    // Add action
+                    addAction();
+                    const action2 = document.querySelector('.action-item');
+                    document.getElementById(`${action2.id}-action`).value = 'http';
+                    document.getElementById(`${action2.id}-label`).value = 'Turn off device';
+                    document.getElementById(`${action2.id}-url`).value = 'https://homeassistant.local/api/services/switch/turn_off';
+                    document.getElementById(`${action2.id}-method`).value = 'POST';
+                    document.getElementById(`${action2.id}-headers`).value = '{"Authorization": "Bearer your_long_lived_token", "Content-Type": "application/json"}';
+                    document.getElementById(`${action2.id}-body`).value = '{"entity_id": "switch.living_room_light"}';
+                    document.getElementById(`${action2.id}-clear`).checked = true;
+                    break;
+
+                case '5':
+                    // Example 5: Notification with image
+                    document.getElementById('server').value = 'https://ntfy.sh/';
+                    document.getElementById('topic').value = 'your_topic';
+                    document.getElementById('title').value = 'Security';
+                    document.getElementById('message').value = 'Suspicious activity detected on camera';
+                    
+                    // Activate additional options
+                    document.getElementById('enable-priority').checked = true;
+                    document.getElementById('priority-group').classList.remove('hidden');
+                    document.getElementById('priority').value = 'high';
+                    
+                    document.getElementById('enable-tags').checked = true;
+                    document.getElementById('tags-group').classList.remove('hidden');
+                    document.getElementById('tags').value = 'warning';
+                    
+                    document.getElementById('enable-image').checked = true;
+                    document.getElementById('image-group').classList.remove('hidden');
+                    document.getElementById('image-url').value = 'https://raw.githubusercontent.com/Bacard1/icon-set-project/refs/heads/main/IT/wlan.png';
+                    updateImagePreview(document.getElementById('image-url').value, document.getElementById('image-preview'));
+                    break;
+            }
+            
+            // Generate configuration
+            generateConfiguration();
+        }
+    </script>
+</body>
+</html>

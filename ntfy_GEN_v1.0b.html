@@ -1,0 +1,2048 @@
+<!DOCTYPE html>
+<html lang="bg">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Генератор за ntfy известия</title>
+    <style>
+        :root {
+            --primary-color: #4a6fa5;
+            --secondary-color: #166088;
+            --background-color: #f5f7fa;
+            --card-color: #ffffff;
+            --text-color: #333333;
+            --border-color: #dddddd;
+            --error-color: #e74c3c;
+            --success-color: #2ecc71;
+        }
+        
+        /* Dark mode styles */
+        .dark-mode {
+            --primary-color: #5a8fd8;
+            --secondary-color: #2a7bbf;
+            --background-color: #1a1a1a;
+            --card-color: #2d2d2d;
+            --text-color: #e0e0e0;
+            --border-color: #444444;
+            --error-color: #e74c3c;
+            --success-color: #2ecc71;
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: var(--text-color);
+            background-color: var(--background-color);
+            padding: 20px;
+            transition: background-color 0.3s, color 0.3s;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid var(--border-color);
+            position: relative;
+        }
+        
+        .header-buttons {
+            position: absolute;
+            top: 0;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+        
+        .theme-toggle, .version-switch {
+            background: var(--card-color);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            padding: 8px 15px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            color: var(--text-color);
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+        
+        .theme-toggle {
+            left: 0;
+        }
+        
+        .version-switch {
+            right: 0;
+        }
+        
+        .theme-toggle:hover, .version-switch:hover {
+            background: var(--primary-color);
+            color: white;
+        }
+        
+        h1 {
+            color: var(--primary-color);
+            margin-bottom: 10px;
+        }
+        
+        .description {
+            color: #666;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .description a {
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: bold;
+        }
+        
+        .description a:hover {
+            text-decoration: underline;
+        }
+        
+        .dark-mode .description {
+            color: #aaa;
+        }
+
+        /* Info Banner Styles */
+        .info-banner {
+            background-color: var(--card-color);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 30px;
+            grid-column: 1 / -1;
+        }
+        
+        .info-banner h3 {
+            margin-top: 0;
+            color: var(--primary-color);
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 10px;
+        }
+        
+        .info-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        
+        .info-section {
+            margin-bottom: 15px;
+        }
+        
+        .info-section h4 {
+            margin: 0 0 10px 0;
+            color: var(--secondary-color);
+        }
+        
+        .info-section ul {
+            padding-left: 20px;
+            margin: 0;
+        }
+        
+        .info-section li {
+            margin-bottom: 5px;
+            font-size: 0.9rem;
+        }
+        
+        .config-example {
+            background-color: var(--background-color);
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            padding: 10px;
+            font-family: monospace;
+            font-size: 0.85rem;
+            margin-top: 5px;
+        }
+        
+        .external-link {
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: bold;
+        }
+        
+        .external-link:hover {
+            text-decoration: underline;
+        }
+        
+        .generator-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+        }
+        
+        @media (max-width: 768px) {
+            .generator-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .info-content {
+                grid-template-columns: 1fr;
+            }
+            
+            .header-buttons {
+                position: static;
+                justify-content: space-between;
+                margin-top: 15px;
+            }
+        }
+        
+        .form-section, .preview-section {
+            background-color: var(--card-color);
+            border-radius: 8px;
+            padding: 25px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            transition: background-color 0.3s;
+        }
+        
+        .section-title {
+            font-size: 1.3rem;
+            margin-bottom: 20px;
+            color: var(--secondary-color);
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+        
+        input, select, textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            font-size: 1rem;
+            background-color: var(--card-color);
+            color: var(--text-color);
+            transition: border-color 0.3s, background-color 0.3s, color 0.3s;
+        }
+        
+        textarea {
+            min-height: 100px;
+            resize: vertical;
+            font-family: monospace;
+        }
+        
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        
+        .checkbox-group input {
+            width: auto;
+            margin-right: 10px;
+        }
+        
+        .actions-container {
+            margin-top: 20px;
+        }
+        
+        .action-item {
+            background-color: #f9f9f9;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            padding: 15px;
+            margin-bottom: 15px;
+        }
+        
+        .dark-mode .action-item {
+            background-color: #3a3a3a;
+        }
+        
+        .action-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        
+        .action-title {
+            font-weight: bold;
+        }
+        
+        .remove-action {
+            background-color: var(--error-color);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 5px 10px;
+            cursor: pointer;
+        }
+        
+        .btn {
+            display: inline-block;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 10px 20px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        
+        .btn:hover {
+            background-color: var(--secondary-color);
+        }
+        
+        .btn-secondary {
+            background-color: #6c757d;
+        }
+        
+        .btn-secondary:hover {
+            background-color: #5a6268;
+        }
+        
+        .btn-success {
+            background-color: var(--success-color);
+        }
+        
+        .btn-success:hover {
+            background-color: #27ae60;
+        }
+        
+        .btn-danger {
+            background-color: var(--error-color);
+        }
+        
+        .btn-danger:hover {
+            background-color: #c0392b;
+        }
+        
+        .btn-small {
+            padding: 5px 10px;
+            font-size: 0.8rem;
+        }
+        
+        .buttons-container {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .preview-code {
+            background-color: #2d2d2d;
+            color: #f8f8f2;
+            padding: 15px;
+            border-radius: 4px;
+            overflow-x: auto;
+            font-family: monospace;
+            white-space: pre-wrap;
+            margin-top: 15px;
+            max-height: 500px;
+            overflow-y: auto;
+        }
+        
+        .examples-container {
+            margin-top: 30px;
+        }
+        
+        .example-item {
+            background-color: #f0f8ff;
+            border-left: 4px solid var(--primary-color);
+            padding: 15px;
+            margin-bottom: 15px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        
+        .dark-mode .example-item {
+            background-color: #2a3a4a;
+        }
+        
+        .example-item:hover {
+            background-color: #e1f0ff;
+        }
+        
+        .dark-mode .example-item:hover {
+            background-color: #3a4a5a;
+        }
+        
+        .example-title {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        .example-description {
+            color: #666;
+            font-size: 0.9rem;
+        }
+        
+        .dark-mode .example-description {
+            color: #aaa;
+        }
+        
+        .hidden {
+            display: none;
+        }
+        
+        .tabs {
+            display: flex;
+            margin-bottom: 20px;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .tab {
+            padding: 10px 20px;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+        }
+        
+        .tab.active {
+            border-bottom-color: var(--primary-color);
+            font-weight: bold;
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        .loading {
+            color: #666;
+            font-style: italic;
+        }
+        
+        .optional-section {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px dashed var(--border-color);
+        }
+        
+        .optional-toggle {
+            margin-bottom: 15px;
+        }
+        
+        .filename-input {
+            margin-bottom: 15px;
+        }
+        
+        .download-disabled {
+            background-color: #6c757d;
+            cursor: not-allowed;
+        }
+        
+        .download-disabled:hover {
+            background-color: #6c757d;
+        }
+        
+        .output-format {
+            margin-bottom: 15px;
+        }
+        
+        .format-option {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        
+        .format-option input {
+            width: auto;
+            margin-right: 10px;
+        }
+        
+        .format-description {
+            color: #666;
+            font-size: 0.9rem;
+            margin-left: 24px;
+        }
+
+        .dark-mode .format-description {
+            color: #aaa;
+        }
+
+        .image-preview {
+            max-width: 100%;
+            max-height: 200px;
+            margin-top: 10px;
+            border-radius: 4px;
+            display: none;
+        }
+
+        .image-preview.visible {
+            display: block;
+        }
+
+        .url-input-group {
+            display: flex;
+            gap: 10px;
+        }
+
+        .url-input-group input {
+            flex: 1;
+        }
+
+        .test-image-btn {
+            white-space: nowrap;
+        }
+        
+        /* Placeholder text styling */
+        select option[disabled] {
+            color: #999;
+            font-style: italic;
+        }
+        
+        .dark-mode select option[disabled] {
+            color: #777;
+        }
+
+        .required-field::after {
+            content: " *";
+            color: var(--error-color);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="header-buttons">
+                <button class="theme-toggle" id="theme-toggle">🌙 Тъмен режим</button>
+                <a href="ntfy_GEN_v1.0e.html" class="version-switch">en English</a>
+            </div>
+            <h1>Генератор за ntfy известия от Home Assistant</h1>
+            <p class="description">
+                Този инструмент ви помага да генерирате конфигурации за известия, изпращани от Home Assistant през интеграцията на ntfy.sh. 
+                Посетете <a href="https://pasevsu.github.io/" target="_blank">pasevsu.github.io</a> за още генератори и проекти.
+            </p>
+        </header>
+
+        <!-- Добавена информационна секция -->
+        <div class="info-banner">
+            <h3>Важна информация за използване</h3>
+            <div class="info-content">
+                <div class="info-section">
+                    <h4>Основни настройки</h4>
+                    <ul>
+                        <li><strong>Сървър:</strong> Използвайте публичния ntfy.sh или ваши собствен сървър</li>
+                        <li><strong>Топик:</strong> Уникално име, което ще идентифицира вашите известия</li>
+                        <li><strong>Заглавие & Съобщение:</strong> Задължителни полета за всяко известие</li>
+                        <li><strong>Метод:</strong> POST за повечето случаи, PUT за специфични сценарии</li>
+                    </ul>
+                </div>
+                
+                <div class="info-section">
+                    <h4>Допълнителни опции</h4>
+                    <ul>
+                        <li><strong>Приоритет:</strong> Определя важността на известието (min, low, default, high, urgent, max)</li>
+                        <li><strong>Тагове:</strong> Добавете емоджита за визуално разпознаване</li>
+                        <li><strong>Икона & Картинка:</strong> URL към изображения за визуално обогатяване</li>
+                        <li><strong>Прикачен файл:</strong> Линк към файлове за изтегляне</li>
+                        <li><strong>URL за кликване:</strong> Отваря се при кликване на известието</li>
+                    </ul>
+                </div>
+
+                <div class="info-section">
+                    <h4>Действия (Action Buttons)</h4>
+                    <ul>
+                        <li><strong>Преглед:</strong> Бутон, който отваря URL в браузър</li>
+                        <li><strong>HTTP:</strong> Изпраща HTTP заявка към определен endpoint</li>
+                        <li><strong>Изчистване:</strong> Автоматично изтрива известието след кликване</li>
+                    </ul>
+                </div>
+
+                <div class="info-section">
+                    <h4>Формати на конфигурацията</h4>
+                    <ul>
+                        <li><strong>REST Command:</strong> За използване в <code>rest_command</code> в configuration.yaml</li>
+                        <li><strong>Service формат:</strong> За директно използване в автоматизации и скриптове</li>
+                    </ul>
+                    <div class="config-example">
+                        # Пример за REST Command използване:<br>
+                        rest_command:<br>
+                        &nbsp;&nbsp;ntfy_notification:<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;url: !include yaml/ntfy/notification.yaml
+                    </div>
+                </div>
+
+                <div class="info-section">
+                    <h4>Съвети за употреба</h4>
+                    <ul>
+                        <li>Подробна информация за "ntfy", начини на употреба и конфигурация и документация може да намерите на официалния сайт <a href="https://docs.ntfy.sh/" target="_blank" class="external-link">https://docs.ntfy.sh/</a></li>
+                        <li>Тествайте известията си преди да ги вкарате в автоматизации</li>
+                        <li>Използвайте уникални топици за различни типове известия</li>
+                        <li>При сложни сценарии комбинирайте действия и допълнителни опции</li>
+                        <li>Не сме добавили поле в което да въведете свой таг, но след генерирането на кода видаги можете да го замените с желания от вас от големият списък: <a href="https://docs.ntfy.sh/emojis/" target="_blank" class="external-link">списък със тагове</a></li>
+                    </ul>
+                </div>
+
+                <div class="info-section">
+                    <h4>Често срещани употреби</h4>
+                    <ul>
+                        <li>🔔 Уведомления за Home Assistant автоматизации</li>
+                        <li>🚨 Аларми и предупреждения за системата</li>
+                        <li>📊 Статус отчети на устройства и сензори</li>
+                        <li>🔗 Връзки за бърз достъп до панели и инструменти</li>
+                        <li>📎 Споделяне на файлове и снимки</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        
+        <div class="tabs">
+            <div class="tab active" data-tab="basic">Основни настройки</div>
+            <div class="tab" data-tab="actions">Действия</div>
+        </div>
+        
+        <div class="generator-container">
+            <div class="form-section">
+                <div class="tab-content active" id="basic-tab">
+                    <h2 class="section-title">Основни настройки</h2>
+                    
+                    <!-- 1.01.000: Задължителни полета -->
+                    <div class="form-group">
+                        <label for="server" class="required-field">Сървър:</label>
+                        <select id="server">
+                            <option value="" disabled selected>Пример: https://ntfy.sh</option>
+                            <option value="https://ntfy.sh/">https://ntfy.sh/</option>
+                            <option value="custom">Друг сървър</option>
+                        </select>
+                        <input type="text" id="custom-server" class="hidden" placeholder="Въведете персонализиран сървър (напр. https://ntfy.example.com/)">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="topic" class="required-field">Топик:</label>
+                        <input type="text" id="topic" placeholder="Въведи уникално име (Топик) Пример: tova_e_unikaino_ime" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="method">Метод:</label>
+                        <select id="method">
+                            <option value="POST" selected>POST</option>
+                            <option value="PUT">PUT</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="title" class="required-field">Заглавие:</label>
+                        <input type="text" id="title" placeholder="Въведи заглавие Пример: HASS Service, HASS Kalendar, System" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="message" class="required-field">Съобщение:</label>
+                        <textarea id="message" placeholder="Въведете съобщението на известието" required></textarea>
+                    </div>
+                    
+                    <!-- 1.02.000: Преместени опционални полета с чекбоксове -->
+                    <div class="optional-section">
+                        <h3 class="section-title">Допълнителни опции</h3>
+                        
+                        <!-- 1.02.001: Икона с чекбокс -->
+                        <div class="optional-toggle">
+                            <div class="checkbox-group">
+                                <input type="checkbox" id="enable-icon">
+                                <label for="enable-icon">Икона</label>
+                            </div>
+                        </div>
+                        <div class="form-group hidden" id="icon-group">
+                            <label for="icon-url">URL на икона:</label>
+                            <input type="text" id="icon-url" placeholder="https://example.com/icon.png">
+                            <small>Въведете пълен URL към изображението за икона</small>
+                        </div>
+                        
+                        <!-- 1.02.002: Прикачен файл с чекбокс -->
+                        <div class="optional-toggle">
+                            <div class="checkbox-group">
+                                <input type="checkbox" id="enable-attach">
+                                <label for="enable-attach">Прикачен файл</label>
+                            </div>
+                        </div>
+                        <div class="form-group hidden" id="attach-group">
+                            <label for="attach-url">URL на файла:</label>
+                            <input type="text" id="attach-url" placeholder="https://example.com/file.pdf">
+                            <small>Въведете пълен URL към файла за прикачване</small>
+                            <div class="form-group">
+                                <label for="attach-filename">Име на файла (по избор):</label>
+                                <input type="text" id="attach-filename" placeholder="Въведете име на файла (напр. F-droid.apk)">
+                                <small>Ако не се посочи, ще се използва оригиналното име на файла от URL-то</small>
+                            </div>
+                        </div>
+
+                        <!-- 1.02.009: Картинка с чекбокс -->
+                        <div class="optional-toggle">
+                            <div class="checkbox-group">
+                                <input type="checkbox" id="enable-image">
+                                <label for="enable-image">Картинка</label>
+                            </div>
+                        </div>
+                        <div class="form-group hidden" id="image-group">
+                            <label for="image-url">URL на картинката:</label>
+                            <div class="url-input-group">
+                                <input type="text" id="image-url" placeholder="https://example.com/image.jpg">
+                                <button type="button" class="btn btn-secondary test-image-btn" id="test-image">Тест</button>
+                            </div>
+                            <small>Въведете пълен URL към изображението</small>
+                            <img id="image-preview" class="image-preview" alt="Преглед на картинката">
+                        </div>
+                        
+                        <!-- 1.02.003: URL за кликване с чекбокс -->
+                        <div class="optional-toggle">
+                            <div class="checkbox-group">
+                                <input type="checkbox" id="enable-click">
+                                <label for="enable-click">URL за кликване</label>
+                            </div>
+                        </div>
+                        <div class="form-group hidden" id="click-group">
+                            <input type="text" id="click" placeholder="URL, който да се отвори при кликване">
+                        </div>
+                        
+                        <!-- 1.02.004: Приоритет с чекбокс -->
+                        <div class="optional-toggle">
+                            <div class="checkbox-group">
+                                <input type="checkbox" id="enable-priority">
+                                <label for="enable-priority">Приоритет</label>
+                            </div>
+                        </div>
+                        <div class="form-group hidden" id="priority-group">
+                            <select id="priority">
+                                <option value="" disabled selected>Изберете приоритет на известието</option>
+                                <option value="min">min - Минимален</option>
+                                <option value="low">low - Нисък</option>
+                                <option value="default">default - Стандартен</option>
+                                <option value="high">high - Висок</option>
+                                <option value="urgent">urgent - Спешен</option>
+                                <option value="max">max - Максимален</option>
+                            </select>
+                        </div>
+                        
+                        <!-- 1.02.005: Тагове с чекбокс -->
+                        <div class="optional-toggle">
+                            <div class="checkbox-group">
+                                <input type="checkbox" id="enable-tags">
+                                <label for="enable-tags">Тагове</label>
+                            </div>
+                        </div>
+                        <div class="form-group hidden" id="tags-group">
+                            <select id="tags">
+                                <option value="" disabled selected>Изберете таг за известието</option>
+                                <option value="warning">⚠️ warning</option>
+                                <option value="rotating_light">🚨 rotating_light</option>
+                                <option value="construction">🚧 construction</option>
+                                <option value="closed_lock_with_key">🔐 closed_lock_with_key</option>
+                                <option value="key">🔑 key</option>
+                                <option value="fire">🔥 fire</option>
+                                <option value="ambulance">🚑 ambulance</option>
+                                <option value="police_car">🚓 police_car</option>
+                                <option value="house">🏠 house</option>
+                                <option value="office">🏢 office</option>
+                                <option value="globe_with_meridians">🌐 globe_with_meridians</option>
+                                <option value="desktop_computer">🖥️ desktop_computer</option>
+                                <option value="computer">💻 computer</option>
+                                <option value="iphone">📱 iphone</option>
+                                <option value="telephone">☎️ telephone</option>
+                                <option value="bell">🔔 bell</option>
+                                <option value="alarm_clock">⏰ alarm_clock</option>
+                                <option value="stopwatch">⏱️ stopwatch</option>
+                                <option value="timer_clock">⏲️ timer_clock</option>
+                                <option value="moneybag">💰 moneybag</option>
+                                <option value="credit_card">💳 credit_card</option>
+                                <option value="chart_with_upwards_trend">📈 chart_with_upwards_trend</option>
+                                <option value="chart_with_downwards_trend">📉 chart_with_downwards_trend</option>
+                                <option value="battery">🔋 battery</option>
+                                <option value="electric_plug">🔌 electric_plug</option>
+                                <option value="mag">🔍 mag</option>
+                                <option value="wrench">🔧 wrench</option>
+                                <option value="hammer">🔨 hammer</option>
+                                <option value="nut_and_bolt">🔩 nut_and_bolt</option>
+                                <option value="gear">⚙️ gear</option>
+                                <option value="link">🔗 link</option>
+                                <option value="cloud">☁️ cloud</option>
+                                <option value="sunny">☀️ sunny</option>
+                                <option value="umbrella_with_rain_drops">☔ umbrella_with_rain_drops</option>
+                                <option value="snowflake">❄️ snowflake</option>
+                                <option value="partly_sunny">⛅ partly_sunny</option>
+                                <option value="thunder_cloud_and_rain">⛈️ thunder_cloud_and_rain</option>
+                                <option value="fog">🌫️ fog</option>
+                                <option value="wind_blowing_face">🌬️ wind_blowing_face</option>
+                                <option value="cyclone">🌀 cyclone</option>
+                                <option value="rainbow">🌈 rainbow</option>
+                                <option value="water_wave">🌊 water_wave</option>
+                                <option value="car">🚗 car</option>
+                                <option value="truck">🚚 truck</option>
+                                <option value="airplane">✈️ airplane</option>
+                                <option value="rocket">🚀 rocket</option>
+                                <option value="satellite">🛰️ satellite</option>
+                                <option value="bulb">💡 bulb</option>
+                                <option value="flashlight">🔦 flashlight</option>
+                                <option value="camera">📷 camera</option>
+                                <option value="video_camera">📹 video_camera</option>
+                                <option value="movie_camera">🎥 movie_camera</option>
+                                <option value="clapper">🎬 clapper</option>
+                                <option value="tv">📺 tv</option>
+                                <option value="radio">📻 radio</option>
+                                <option value="videocassette">📼 videocassette</option>
+                                <option value="prayer_beads">📿 prayer_beads</option>
+                                <option value="shopping_cart">🛒 shopping_cart</option>
+                                <option value="package">📦 package</option>
+                                <option value="envelope">✉️ envelope</option>
+                                <option value="email">📧 email</option>
+                                <option value="incoming_envelope">📨 incoming_envelope</option>
+                                <option value="e-mail">📩 e-mail</option>
+                                <option value="love_letter">💌 love_letter</option>
+                                <option value="inbox_tray">📥 inbox_tray</option>
+                                <option value="outbox_tray">📤 outbox_tray</option>
+                                <option value="scroll">📜 scroll</option>
+                                <option value="page_with_curl">📃 page_with_curl</option>
+                                <option value="bookmark_tabs">📑 bookmark_tabs</option>
+                                <option value="bar_chart">📊 bar_chart</option>
+                                <option value="date">📅 date</option>
+                                <option value="calendar">📆 calendar</option>
+                                <option value="spiral_calendar">🗓️ spiral_calendar</option>
+                                <option value="card_index">📇 card_index</option>
+                                <option value="file_folder">📁 file_folder</option>
+                                <option value="open_file_folder">📂 open_file_folder</option>
+                                <option value="scissors">✂️ scissors</option>
+                                <option value="paperclip">📎 paperclip</option>
+                                <option value="black_nib">✒️ black_nib</option>
+                                <option value="pencil2">✏️ pencil2</option>
+                                <option value="paintbrush">🖌️ paintbrush</option>
+                                <option value="crayon">🖍️ crayon</option>
+                                <option value="memo">📝 memo</option>
+                                <option value="briefcase">💼 briefcase</option>
+                                <option value="minidisc">💽 minidisc</option>
+                                <option value="floppy_disk">💾 floppy_disk</option>
+                                <option value="cd">💿 cd</option>
+                                <option value="dvd">📀 dvd</option>
+                                <option value="computer_mouse">🖱️ computer_mouse</option>
+                                <option value="trackball">🖲️ trackball</option>
+                                <option value="joystick">🕹️ joystick</option>
+                                <option value="chess_pawn">♟️ chess_pawn</option>
+                                <option value="jigsaw">🧩 jigsaw</option>
+                                <option value="teddy_bear">🧸 teddy_bear</option>
+                                <option value="spades">♠️ spades</option>
+                                <option value="hearts">♥️ hearts</option>
+                                <option value="diamonds">♦️ diamonds</option>
+                                <option value="clubs">♣️ clubs</option>
+                                <option value="black_joker">🃏 black_joker</option>
+                                <option value="mahjong">🀄 mahjong</option>
+                                <option value="flower_playing_cards">🎴 flower_playing_cards</option>
+                                <option value="mute">🔇 mute</option>
+                                <option value="speaker">🔈 speaker</option>
+                                <option value="sound">🔉 sound</option>
+                                <option value="loud_sound">🔊 loud_sound</option>
+                                <option value="mega">📣 mega</option>
+                                <option value="loudspeaker">📢 loudspeaker</option>
+                                <option value="bell">🔔 bell</option>
+                                <option value="no_bell">🔕 no_bell</option>
+                                <option value="musical_score">🎼 musical_score</option>
+                                <option value="musical_note">🎵 musical_note</option>
+                                <option value="notes">🎶 notes</option>
+                                <option value="studio_microphone">🎙️ studio_microphone</option>
+                                <option value="level_slider">🎚️ level_slider</option>
+                                <option value="control_knobs">🎛️ control_knobs</option>
+                                <option value="microphone">🎤 microphone</option>
+                                <option value="headphone">🎧 headphone</option>
+                                <option value="radio">📻 radio</option>
+                                <option value="saxophone">🎷 saxophone</option>
+                                <option value="guitar">🎸 guitar</option>
+                                <option value="musical_keyboard">🎹 musical_keyboard</option>
+                                <option value="trumpet">🎺 trumpet</option>
+                                <option value="violin">🎻 violin</option>
+                                <option value="drum">🥁 drum</option>
+                                <option value="mobile_phone">📱 mobile_phone</option>
+                                <option value="calling">📲 calling</option>
+                                <option value="phone">☎️ phone</option>
+                                <option value="telephone_receiver">📞 telephone_receiver</option>
+                                <option value="pager">📟 pager</option>
+                                <option value="fax">📠 fax</option>
+                                <option value="battery">🔋 battery</option>
+                                <option value="electric_plug">🔌 electric_plug</option>
+                                <option value="computer">💻 computer</option>
+                                <option value="desktop_computer">🖥️ desktop_computer</option>
+                                <option value="printer">🖨️ printer</option>
+                                <option value="keyboard">⌨️ keyboard</option>
+                                <option value="computer_mouse">🖱️ computer_mouse</option>
+                                <option value="trackball">🖲️ trackball</option>
+                                <option value="minidisc">💽 minidisc</option>
+                                <option value="floppy_disk">💾 floppy_disk</option>
+                                <option value="cd">💿 cd</option>
+                                <option value="dvd">📀 dvd</option>
+                                <option value="abacus">🧮 abacus</option>
+                                <option value="movie_camera">🎥 movie_camera</option>
+                                <option value="film_strip">🎞️ film_strip</option>
+                                <option value="film_projector">📽️ film_projector</option>
+                                <option value="clapper">🎬 clapper</option>
+                                <option value="tv">📺 tv</option>
+                                <option value="camera">📷 camera</option>
+                                <option value="camera_with_flash">📸 camera_with_flash</option>
+                                <option value="video_camera">📹 video_camera</option>
+                                <option value="vhs">📼 vhs</option>
+                                <option value="mag">🔍 mag</option>
+                                <option value="mag_right">🔎 mag_right</option>
+                                <option value="candle">🕯️ candle</option>
+                                <option value="bulb">💡 bulb</option>
+                                <option value="flashlight">🔦 flashlight</option>
+                                <option value="red_paper_lantern">🏮 red_paper_lantern</option>
+                                <option value="notebook_with_decorative_cover">📔 notebook_with_decorative_cover</option>
+                                <option value="closed_book">📕 closed_book</option>
+                                <option value="book">📖 book</option>
+                                <option value="green_book">📗 green_book</option>
+                                <option value="blue_book">📘 blue_book</option>
+                                <option value="orange_book">📙 orange_book</option>
+                                <option value="books">📚 books</option>
+                                <option value="notebook">📓 notebook</option>
+                                <option value="ledger">📒 ledger</option>
+                                <option value="page_with_curl">📃 page_with_curl</option>
+                                <option value="scroll">📜 scroll</option>
+                                <option value="page_facing_up">📄 page_facing_up</option>
+                                <option value="newspaper">📰 newspaper</option>
+                                <option value="newspaper_roll">🗞️ newspaper_roll</option>
+                                <option value="bookmark_tabs">📑 bookmark_tabs</option>
+                                <option value="bookmark">🔖 bookmark</option>
+                                <option value="label">🏷️ label</option>
+                                <option value="moneybag">💰 moneybag</option>
+                                <option value="yen">💴 yen</option>
+                                <option value="dollar">💵 dollar</option>
+                                <option value="euro">💶 euro</option>
+                                <option value="pound">💷 pound</option>
+                                <option value="money_with_wings">💸 money_with_wings</option>
+                                <option value="credit_card">💳 credit_card</option>
+                                <option value="receipt">🧾 receipt</option>
+                                <option value="chart">💹 chart</option>
+                                <option value="currency_exchange">💱 currency_exchange</option>
+                                <option value="heavy_dollar_sign">💲 heavy_dollar_sign</option>
+                                <option value="envelope">✉️ envelope</option>
+                                <option value="e-mail">📧 e-mail</option>
+                                <option value="incoming_envelope">📨 incoming_envelope</option>
+                                <option value="envelope_with_arrow">📩 envelope_with_arrow</option>
+                                <option value="outbox_tray">📤 outbox_tray</option>
+                                <option value="inbox_tray">📥 inbox_tray</option>
+                                <option value="package">📦 package</option>
+                                <option value="mailbox">📫 mailbox</option>
+                                <option value="mailbox_closed">📪 mailbox_closed</option>
+                                <option value="mailbox_with_mail">📬 mailbox_with_mail</option>
+                                <option value="mailbox_with_no_mail">📭 mailbox_with_no_mail</option>
+                                <option value="postbox">📮 postbox</option>
+                                <option value="ballot_box">🗳️ ballot_box</option>
+                                <option value="pencil">✏️ pencil</option>
+                                <option value="black_nib">✒️ black_nib</option>
+                                <option value="fountain_pen">🖋️ fountain_pen</option>
+                                <option value="pen">🖊️ pen</option>
+                                <option value="paintbrush">🖌️ paintbrush</option>
+                                <option value="crayon">🖍️ crayon</option>
+                                <option value="memo">📝 memo</option>
+                                <option value="briefcase">💼 briefcase</option>
+                                <option value="file_folder">📁 file_folder</option>
+                                <option value="open_file_folder">📂 open_file_folder</option>
+                                <option value="card_index_dividers">🗂️ card_index_dividers</option>
+                                <option value="date">📅 date</option>
+                                <option value="calendar">📆 calendar</option>
+                                <option value="spiral_notepad">🗒️ spiral_notepad</option>
+                                <option value="spiral_calendar">🗓️ spiral_calendar</option>
+                                <option value="card_index">📇 card_index</option>
+                                <option value="chart_with_upwards_trend">📈 chart_with_upwards_trend</option>
+                                <option value="chart_with_downwards_trend">📉 chart_with_downwards_trend</option>
+                                <option value="bar_chart">📊 bar_chart</option>
+                                <option value="clipboard">📋 clipboard</option>
+                                <option value="pushpin">📌 pushpin</option>
+                                <option value="round_pushpin">📍 round_pushpin</option>
+                                <option value="paperclip">📎 paperclip</option>
+                                <option value="linked_paperclips">🖇️ linked_paperclips</option>
+                                <option value="straight_ruler">📏 straight_ruler</option>
+                                <option value="triangular_ruler">📐 triangular_ruler</option>
+                                <option value="scissors">✂️ scissors</option>
+                                <option value="card_file_box">🗃️ card_file_box</option>
+                                <option value="file_cabinet">🗄️ file_cabinet</option>
+                                <option value="wastebasket">🗑️ wastebasket</option>
+                                <option value="lock">🔒 lock</option>
+                                <option value="unlock">🔓 unlock</option>
+                                <option value="lock_with_ink_pen">🔏 lock_with_ink_pen</option>
+                                <option value="closed_lock_with_key">🔐 closed_lock_with_key</option>
+                                <option value="key">🔑 key</option>
+                                <option value="old_key">🗝️ old_key</option>
+                                <option value="hammer">🔨 hammer</option>
+                                <option value="pick">⛏️ pick</option>
+                                <option value="hammer_and_pick">⚒️ hammer_and_pick</option>
+                                <option value="hammer_and_wrench">🛠️ hammer_and_wrench</option>
+                                <option value="dagger">🗡️ dagger</option>
+                                <option value="crossed_swords">⚔️ crossed_swords</option>
+                                <option value="gun">🔫 gun</option>
+                                <option value="bow_and_arrow">🏹 bow_and_arrow</option>
+                                <option value="shield">🛡️ shield</option>
+                                <option value="wrench">🔧 wrench</option>
+                                <option value="nut_and_bolt">🔩 nut_and_bolt</option>
+                                <option value="gear">⚙️ gear</option>
+                                <option value="clamp">🗜️ clamp</option>
+                                <option value="balance_scale">⚖️ balance_scale</option>
+                                <option value="probing_cane">🦯 probing_cane</option>
+                                <option value="link">🔗 link</option>
+                                <option value="chains">⛓️ chains</option>
+                                <option value="hook">🪝 hook</option>
+                                <option value="toolbox">🧰 toolbox</option>
+                                <option value="magnet">🧲 magnet</option>
+                                <option value="ladder">🪜 ladder</option>
+                                <option value="alembic">⚗️ alembic</option>
+                                <option value="test_tube">🧪 test_tube</option>
+                                <option value="petri_dish">🧫 petri_dish</option>
+                                <option value="dna">🧬 dna</option>
+                                <option value="microscope">🔬 microscope</option>
+                                <option value="telescope">🔭 telescope</option>
+                                <option value="satellite_antenna">📡 satellite_antenna</option>
+                                <option value="syringe">💉 syringe</option>
+                                <option value="drop_of_blood">🩸 drop_of_blood</option>
+                                <option value="pill">💊 pill</option>
+                                <option value="adhesive_bandage">🩹 adhesive_bandage</option>
+                                <option value="stethoscope">🩺 stethoscope</option>
+                                <option value="door">🚪 door</option>
+                                <option value="elevator">🛗 elevator</option>
+                                <option value="mirror">🪞 mirror</option>
+                                <option value="window">🪟 window</option>
+                                <option value="bed">🛏️ bed</option>
+                                <option value="couch_and_lamp">🛋️ couch_and_lamp</option>
+                                <option value="chair">🪑 chair</option>
+                                <option value="toilet">🚽 toilet</option>
+                                <option value="plunger">🪠 plunger</option>
+                                <option value="shower">🚿 shower</option>
+                                <option value="bathtub">🛁 bathtub</option>
+                                <option value="mouse_trap">🪤 mouse_trap</option>
+                                <option value="razor">🪒 razor</option>
+                                <option value="lotion_bottle">🧴 lotion_bottle</option>
+                                <option value="safety_pin">🧷 safety_pin</option>
+                                <option value="broom">🧹 broom</option>
+                                <option value="basket">🧺 basket</option>
+                                <option value="roll_of_paper">🧻 roll_of_paper</option>
+                                <option value="bucket">🪣 bucket</option>
+                                <option value="soap">🧼 soap</option>
+                                <option value="toothbrush">🪥 toothbrush</option>
+                                <option value="sponge">🧽 sponge</option>
+                                <option value="fire_extinguisher">🧯 fire_extinguisher</option>
+                                <option value="shopping_cart">🛒 shopping_cart</option>
+                                <option value="smoking">🚬 smoking</option>
+                                <option value="coffin">⚰️ coffin</option>
+                                <option value="headstone">🪦 headstone</option>
+                                <option value="funeral_urn">⚱️ funeral_urn</option>
+                                <option value="moyai">🗿 moyai</option>
+                                <option value="placard">🪧 placard</option>
+                                <option value="identification_card">🪪 identification_card</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="tab-content" id="actions-tab">
+                    <h2 class="section-title">Действия</h2>
+                    <p>Добавете бутони за действие към вашето известие</p>
+                    
+                    <div class="actions-container" id="actions-container">
+                        <!-- Actions will be added here dynamically -->
+                    </div>
+                    
+                    <button type="button" class="btn" id="add-action">Добави действие</button>
+                </div>
+                
+                <div class="buttons-container">
+                    <button type="button" class="btn btn-success" id="generate">Генерирай конфигурация</button>
+                    <button type="button" class="btn btn-secondary" id="reset">Изчисти формата</button>
+                </div>
+            </div>
+            
+            <div class="preview-section">
+                <h2 class="section-title">Преглед на конфигурацията</h2>
+                
+                <!-- 1.03.000: Формат на изхода -->
+                <div class="form-group output-format">
+                    <label>Формат на конфигурацията:</label>
+                    <div class="format-option">
+                        <input type="radio" id="format-rest" name="output-format" value="rest" checked>
+                        <label for="format-rest">REST Command (за изтегляне)</label>
+                    </div>
+                    <div class="format-option">
+                        <input type="radio" id="format-service" name="output-format" value="service">
+                        <label for="format-service">Service формат</label>
+                    </div>
+                    <div class="format-description">
+                        <strong>REST Command:</strong> За използване с rest_command в configuration.yaml<br>
+                        <strong>Service формат:</strong> За директно използване в автоматизации
+                    </div>
+                </div>
+                
+                <!-- 1.03.001: Поле за име на файла -->
+                <div class="form-group filename-input">
+                    <label for="filename">Име на файла (задължително за изтегляне):</label>
+                    <input type="text" id="filename" placeholder="Въведете име на файла (без разширение)">
+                    <small>Файлът ще бъде изтеглен с разширение .yaml</small>
+                </div>
+                
+                <div class="preview-code" id="preview">
+                    Конфигурацията ще се появи тук след като кликнете на "Генерирай конфигурация"
+                </div>
+                
+                <div class="buttons-container">
+                    <button type="button" class="btn download-disabled" id="download" disabled>Изтегли файл</button>
+                    <button type="button" class="btn btn-secondary" id="copy">Копирай в клипборда</button>
+                </div>
+                
+                <div class="examples-container">
+                    <h2 class="section-title">Готови примери</h2>
+                    
+                    <div class="example-item" data-example="1">
+                        <div class="example-title">Пример 1: Стандартно известие</div>
+                        <div class="example-description">Заглавие, тагове, приоритет и URL за кликване</div>
+                    </div>
+                    
+                    <div class="example-item" data-example="2">
+                        <div class="example-title">Пример 2: Прикачен файл</div>
+                        <div class="example-description">Прикачване на файл с персонализирано име</div>
+                    </div>
+                    
+                    <div class="example-item" data-example="3">
+                        <div class="example-title">Пример 3: Действие "Преглед"</div>
+                        <div class="example-description">Бутон за отваряне на URL</div>
+                    </div>
+                    
+                    <div class="example-item" data-example="4">
+                        <div class="example-title">Пример 4: HTTP действие</div>
+                        <div class="example-description">Взаимодействие с Home Assistant чрез HTTP заявка</div>
+                    </div>
+
+                    <div class="example-item" data-example="5">
+                        <div class="example-title">Пример 5: Известие с картинка</div>
+                        <div class="example-description">Известие с външна картинка и преглед</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 1.00.000: Основни данни за опциите
+        let optionsData = {
+            server: [
+                {value: "https://ntfy.sh/", label: "https://ntfy.sh/", system: true},
+                {value: "custom", label: "Друг сървър", system: true}
+            ],
+            priority: [
+                {value: "min", label: "min - Минимален", system: true},
+                {value: "low", label: "low - Нисък", system: true},
+                {value: "default", label: "default - Стандартен", system: true},
+                {value: "high", label: "high - Висок", system: true},
+                {value: "urgent", label: "urgent - Спешен", system: true},
+                {value: "max", label: "max - Максимален", system: true}
+            ],
+            tags: [
+                {value: "", label: "-- Без таг --", system: true},
+                {value: "warning", label: "⚠️ warning", system: true},
+                {value: "rotating_light", label: "🚨 rotating_light", system: true},
+                {value: "construction", label: "🚧 construction", system: true},
+                {value: "closed_lock_with_key", label: "🔐 closed_lock_with_key", system: true},
+                {value: "key", label: "🔑 key", system: true},
+                {value: "fire", label: "🔥 fire", system: true},
+                {value: "ambulance", label: "🚑 ambulance", system: true},
+                {value: "police_car", label: "🚓 police_car", system: true},
+                {value: "house", label: "🏠 house", system: true},
+                {value: "office", label: "🏢 office", system: true},
+                {value: "globe_with_meridians", label: "🌐 globe_with_meridians", system: true},
+                {value: "desktop_computer", label: "🖥️ desktop_computer", system: true},
+                {value: "computer", label: "💻 computer", system: true},
+                {value: "iphone", label: "📱 iphone", system: true},
+                {value: "telephone", label: "☎️ telephone", system: true},
+                {value: "bell", label: "🔔 bell", system: true},
+                {value: "alarm_clock", label: "⏰ alarm_clock", system: true},
+                {value: "stopwatch", label: "⏱️ stopwatch", system: true},
+                {value: "timer_clock", label: "⏲️ timer_clock", system: true},
+                {value: "moneybag", label: "💰 moneybag", system: true},
+                {value: "credit_card", label: "💳 credit_card", system: true},
+                {value: "chart_with_upwards_trend", label: "📈 chart_with_upwards_trend", system: true},
+                {value: "chart_with_downwards_trend", label: "📉 chart_with_downwards_trend", system: true},
+                {value: "battery", label: "🔋 battery", system: true},
+                {value: "electric_plug", label: "🔌 electric_plug", system: true},
+                {value: "mag", label: "🔍 mag", system: true},
+                {value: "wrench", label: "🔧 wrench", system: true},
+                {value: "hammer", label: "🔨 hammer", system: true},
+                {value: "nut_and_bolt", label: "🔩 nut_and_bolt", system: true},
+                {value: "gear", label: "⚙️ gear", system: true},
+                {value: "link", label: "🔗 link", system: true},
+                {value: "cloud", label: "☁️ cloud", system: true},
+                {value: "sunny", label: "☀️ sunny", system: true},
+                {value: "umbrella_with_rain_drops", label: "☔ umbrella_with_rain_drops", system: true},
+                {value: "snowflake", label: "❄️ snowflake", system: true},
+                {value: "partly_sunny", label: "⛅ partly_sunny", system: true},
+                {value: "thunder_cloud_and_rain", label: "⛈️ thunder_cloud_and_rain", system: true},
+                {value: "fog", label: "🌫️ fog", system: true},
+                {value: "wind_blowing_face", label: "🌬️ wind_blowing_face", system: true},
+                {value: "cyclone", label: "🌀 cyclone", system: true},
+                {value: "rainbow", label: "🌈 rainbow", system: true},
+                {value: "water_wave", label: "🌊 water_wave", system: true}
+            ]
+        };
+
+        // 0.00.000: Зареждане на данни от външни източници
+        async function loadExternalData() {
+            try {
+                const response = await fetch('/local/ntfy/tags.json');
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                const externalData = await response.json();
+                
+                if (Array.isArray(externalData)) {
+                    optionsData.tags = [
+                        ...optionsData.tags,
+                        ...externalData.map(tag => ({
+                            value: tag.value,
+                            label: tag.label,
+                            system: false
+                        }))
+                    ];
+                }
+                
+                console.log('Данните от tags.json са заредени успешно');
+            } catch (error) {
+                console.error('Грешка при зареждане на tags.json:', error);
+                // Вече имаме достатъчно тагове по подразбиране
+            }
+        }
+        
+        // 1.00.001: Заредени опции от localStorage
+        let userOptions = {};
+
+        // 4.00.000: Функционалност за действия
+        let actionCounter = 0;
+
+        // 1.00.002: Събитие при зареждане на DOM
+        document.addEventListener('DOMContentLoaded', async function() {
+            // 0.01.000: Заредете външни данни първо
+            await loadExternalData();
+            
+            // 1.01.001: Заредете потребителските опции от localStorage
+            loadUserOptions();
+            
+            // 1.01.002: Заредете всички опции
+            loadAllOptions();
+            
+            // 1.01.003: Tab functionality
+            const tabs = document.querySelectorAll('.tab');
+            tabs.forEach(tab => {
+                tab.addEventListener('click', function() {
+                    const tabId = this.getAttribute('data-tab');
+                    
+                    // Remove active class from all tabs and contents
+                    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+                    
+                    // Add active class to current tab and content
+                    this.classList.add('active');
+                    document.getElementById(`${tabId}-tab`).classList.add('active');
+                });
+            });
+                        
+            // 1.02.009: Custom input toggles
+            setupCustomInputToggle('server', 'custom-server');
+            
+            // 1.02.010: Optional field toggles
+            setupOptionalFieldToggle('enable-icon', 'icon-group');
+            setupOptionalFieldToggle('enable-attach', 'attach-group');
+            setupOptionalFieldToggle('enable-image', 'image-group');
+            setupOptionalFieldToggle('enable-click', 'click-group');
+            setupOptionalFieldToggle('enable-priority', 'priority-group');
+            setupOptionalFieldToggle('enable-tags', 'tags-group');
+            
+            // 1.02.011: Image preview functionality
+            const imageUrlInput = document.getElementById('image-url');
+            const testImageBtn = document.getElementById('test-image');
+            const imagePreview = document.getElementById('image-preview');
+            
+            imageUrlInput.addEventListener('input', function() {
+                updateImagePreview(this.value, imagePreview);
+            });
+            
+            testImageBtn.addEventListener('click', function() {
+                updateImagePreview(imageUrlInput.value, imagePreview);
+            });
+            
+            // 1.03.002: Output format toggle
+            const formatRadios = document.querySelectorAll('input[name="output-format"]');
+            formatRadios.forEach(radio => {
+                radio.addEventListener('change', function() {
+                    // Регенерираме конфигурацията при промяна на формата
+                    if (document.getElementById('preview').textContent !== 'Конфигурацията ще се появи тук след като кликнете на "Генерирай конфигурация"') {
+                        generateConfiguration();
+                    }
+                });
+            });
+            
+            // 1.03.003: Filename input validation for download button
+            const filenameInput = document.getElementById('filename');
+            const downloadButton = document.getElementById('download');
+            
+            filenameInput.addEventListener('input', function() {
+                if (this.value.trim() !== '') {
+                    downloadButton.disabled = false;
+                    downloadButton.classList.remove('download-disabled');
+                } else {
+                    downloadButton.disabled = true;
+                    downloadButton.classList.add('download-disabled');
+                }
+            });
+            
+            // 1.04.000: Actions functionality
+            document.getElementById('add-action').addEventListener('click', addAction);
+            
+            // 1.05.000: Generate configuration
+            const generateButton = document.getElementById('generate');
+            const previewElement = document.getElementById('preview');
+            
+            generateButton.addEventListener('click', generateConfiguration);
+            
+            // 1.06.000: Reset form
+            const resetButton = document.getElementById('reset');
+            resetButton.addEventListener('click', resetForm);
+            
+            // 1.07.000: Copy to clipboard
+            const copyButton = document.getElementById('copy');
+            copyButton.addEventListener('click', copyToClipboard);
+            
+            // 1.08.000: Download file
+            downloadButton.addEventListener('click', downloadFile);
+            
+            // 1.09.000: Examples
+            const exampleItems = document.querySelectorAll('.example-item');
+            exampleItems.forEach(item => {
+                item.addEventListener('click', function() {
+                    const exampleId = this.getAttribute('data-example');
+                    loadExample(exampleId);
+                });
+            });
+            
+            // 1.10.000: Dark mode toggle
+            const themeToggle = document.getElementById('theme-toggle');
+            themeToggle.addEventListener('click', toggleDarkMode);
+            
+            // Check for saved theme preference
+            if (localStorage.getItem('darkMode') === 'enabled') {
+                document.body.classList.add('dark-mode');
+                themeToggle.textContent = '☀️ Светъл режим';
+            }
+        });
+
+        // 2.00.000: Функции за управление на опциите
+        // 2.01.000: Зареждане на потребителски опции от localStorage
+        function loadUserOptions() {
+            const saved = localStorage.getItem('ntfyUserOptions');
+            if (saved) {
+                userOptions = JSON.parse(saved);
+            }
+        }
+
+        // 2.04.000: Зареждане на всички опции в селект полетата
+        function loadAllOptions() {
+            Object.entries(optionsData).forEach(([field, defaultOptions]) => {
+                const userFieldOptions = userOptions[field] || [];
+                const allOptions = [...defaultOptions, ...userFieldOptions];
+                populateSelect(field, allOptions);
+            });
+        }
+
+        // 2.05.000: Попълване на селект поле с опции
+        function populateSelect(field, options) {
+            const select = document.getElementById(field);
+            if (!select) {
+                console.error(`Select element with id '${field}' not found`);
+                return;
+            }
+            
+            select.innerHTML = '';
+            
+            options.forEach(option => {
+                const optionElement = document.createElement('option');
+                optionElement.value = option.value;
+                optionElement.textContent = option.label;
+                select.appendChild(optionElement);
+            });
+        }
+
+        // 3.00.000: Helper функции
+        // 3.01.000: Настройка на превключване между селект и персонализирано поле
+        function setupCustomInputToggle(selectId, inputId) {
+            const select = document.getElementById(selectId);
+            const input = document.getElementById(inputId);
+            
+            select.addEventListener('change', function() {
+                if (this.value === 'custom') {
+                    input.classList.remove('hidden');
+                } else {
+                    input.classList.add('hidden');
+                }
+            });
+        }
+
+        // 3.02.000: Настройка на превключване за опционални полета
+        function setupOptionalFieldToggle(checkboxId, fieldGroupId) {
+            const checkbox = document.getElementById(checkboxId);
+            const fieldGroup = document.getElementById(fieldGroupId);
+            
+            checkbox.addEventListener('change', function() {
+                if (this.checked) {
+                    fieldGroup.classList.remove('hidden');
+                } else {
+                    fieldGroup.classList.add('hidden');
+                }
+            });
+        }
+
+        // 3.03.000: Вземане на стойност от селект или персонализирано поле
+        function getCustomValue(selectId, inputId) {
+            const select = document.getElementById(selectId);
+            const input = document.getElementById(inputId);
+            
+            if (select.value === 'custom') {
+                return input.value;
+            }
+            return select.value;
+        }
+
+        // 3.04.000: Функция за преглед на картинка
+        function updateImagePreview(url, previewElement) {
+            if (url && isValidUrl(url)) {
+                previewElement.src = url;
+                previewElement.classList.add('visible');
+                previewElement.alt = 'Преглед на картинката: ' + url;
+            } else {
+                previewElement.classList.remove('visible');
+                previewElement.src = '';
+                previewElement.alt = '';
+            }
+        }
+
+        // 3.05.000: Проверка за валиден URL
+        function isValidUrl(string) {
+            try {
+                new URL(string);
+                return true;
+            } catch (_) {
+                return false;
+            }
+        }
+        
+        // 3.06.000: Превключване на тъмен режим
+        function toggleDarkMode() {
+            const body = document.body;
+            const themeToggle = document.getElementById('theme-toggle');
+            
+            body.classList.toggle('dark-mode');
+            
+            if (body.classList.contains('dark-mode')) {
+                localStorage.setItem('darkMode', 'enabled');
+                themeToggle.textContent = '☀️ Светъл режим';
+            } else {
+                localStorage.setItem('darkMode', 'disabled');
+                themeToggle.textContent = '🌙 Тъмен режим';
+            }
+        }
+
+        // 4.01.000: Добавяне на ново действие
+        function addAction() {
+            actionCounter++;
+            const actionId = `action-${actionCounter}`;
+            
+            const actionItem = document.createElement('div');
+            actionItem.className = 'action-item';
+            actionItem.id = actionId;
+            
+            actionItem.innerHTML = `
+                <div class="action-header">
+                    <div class="action-title">Действие ${actionCounter}</div>
+                    <button type="button" class="remove-action btn btn-danger btn-small" data-action="${actionId}">Премахни</button>
+                </div>
+                <div class="form-group">
+                    <label for="${actionId}-action">Тип на действието:</label>
+                    <select id="${actionId}-action" class="action-type-select">
+                        <option value="view">Преглед</option>
+                        <option value="http">HTTP</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="${actionId}-label">Етикет:</label>
+                    <input type="text" id="${actionId}-label" placeholder="Текст на бутона">
+                </div>
+                <div class="form-group">
+                    <label for="${actionId}-url">URL:</label>
+                    <input type="text" id="${actionId}-url" placeholder="URL за преглед или HTTP заявка">
+                </div>
+                <div class="form-group http-only">
+                    <label for="${actionId}-method">Метод (само за HTTP):</label>
+                    <select id="${actionId}-method">
+                        <option value="POST">POST</option>
+                        <option value="GET">GET</option>
+                        <option value="PUT">PUT</option>
+                        <option value="DELETE">DELETE</option>
+                    </select>
+                </div>
+                <div class="form-group http-only">
+                    <label for="${actionId}-headers">Заглавки (само за HTTP):</label>
+                    <textarea id="${actionId}-headers" placeholder='Заглавки във формат JSON, напр. {"Authorization": "Bearer token"}'></textarea>
+                </div>
+                <div class="form-group http-only">
+                    <label for="${actionId}-body">Тяло (само за HTTP):</label>
+                    <textarea id="${actionId}-body" placeholder="Тяло на заявката (JSON или текст)"></textarea>
+                </div>
+                <div class="form-group">
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="${actionId}-clear">
+                        <label for="${actionId}-clear">Изчистване на известието след кликване</label>
+                    </div>
+                </div>
+            `;
+            
+            document.getElementById('actions-container').appendChild(actionItem);
+            
+            // Добавяне на събитие за премахване
+            const removeButton = actionItem.querySelector('.remove-action');
+            removeButton.addEventListener('click', function() {
+                const actionToRemove = document.getElementById(this.getAttribute('data-action'));
+                if (actionToRemove) {
+                    actionToRemove.remove();
+                    updateActionTitles();
+                }
+            });
+            
+            // Добавяне на събитие за промяна на типа действие
+            const actionTypeSelect = actionItem.querySelector('.action-type-select');
+            actionTypeSelect.addEventListener('change', function() {
+                toggleHttpFields(actionItem, this.value);
+            });
+            
+            // Инициализиране на състоянието на HTTP полетата
+            toggleHttpFields(actionItem, 'view');
+        }
+
+        // 4.02.000: Превключване на HTTP полетата
+        function toggleHttpFields(actionItem, actionType) {
+            const httpFields = actionItem.querySelectorAll('.http-only');
+            httpFields.forEach(field => {
+                if (actionType === 'http') {
+                    field.style.display = 'block';
+                } else {
+                    field.style.display = 'none';
+                }
+            });
+        }
+
+        // 4.03.000: Актуализиране на заглавията на действията
+        function updateActionTitles() {
+            const actionItems = document.querySelectorAll('.action-item');
+            actionCounter = 0;
+            
+            actionItems.forEach((item, index) => {
+                actionCounter++;
+                const titleElement = item.querySelector('.action-title');
+                if (titleElement) {
+                    titleElement.textContent = `Действие ${actionCounter}`;
+                }
+                // Актуализиране на ID-тата, ако е необходимо
+                const newId = `action-${actionCounter}`;
+                item.id = newId;
+                
+                // Актуализиране на бутона за премахване
+                const removeButton = item.querySelector('.remove-action');
+                if (removeButton) {
+                    removeButton.setAttribute('data-action', newId);
+                }
+            });
+        }
+
+        // 4.04.000: Вземане на действия от формата
+        function getActions() {
+            const actions = [];
+            const actionItems = document.querySelectorAll('.action-item');
+            
+            actionItems.forEach(item => {
+                const actionId = item.id;
+                const actionType = document.getElementById(`${actionId}-action`).value;
+                const label = document.getElementById(`${actionId}-label`).value;
+                const url = document.getElementById(`${actionId}-url`).value;
+                const clear = document.getElementById(`${actionId}-clear`).checked;
+                
+                if (label && url) {
+                    const action = {
+                        action: actionType,
+                        label: label,
+                        url: url,
+                        clear: clear
+                    };
+                    
+                    if (actionType === 'http') {
+                        const method = document.getElementById(`${actionId}-method`).value;
+                        const headersText = document.getElementById(`${actionId}-headers`).value;
+                        const body = document.getElementById(`${actionId}-body`).value;
+                        
+                        action.method = method;
+                        
+                        if (headersText) {
+                            try {
+                                action.headers = JSON.parse(headersText);
+                            } catch (e) {
+                                console.error('Грешка при парсване на заглавките:', e);
+                            }
+                        }
+                        
+                        if (body) {
+                            try {
+                                action.body = JSON.parse(body);
+                            } catch (e) {
+                                // Ако не е валиден JSON, запазваме като текст
+                                action.body = body;
+                            }
+                        }
+                    }
+                    
+                    actions.push(action);
+                }
+            });
+            
+            return actions;
+        }
+
+        // 5.00.000: Генериране на конфигурация
+        // 5.01.000: Основна функция за генериране на конфигурация
+        function generateConfiguration() {
+            // 5.01.001: Вземане на стойности от формата
+            const server = getCustomValue('server', 'custom-server');
+            const topic = document.getElementById('topic').value;
+            const method = document.getElementById('method').value;
+            const title = document.getElementById('title').value;
+            const message = document.getElementById('message').value;
+            
+            // 5.01.002: Вземане на опционални стойности
+            let priority = '';
+            let tags = '';
+            let icon = '';
+            let attach = '';
+            let attachFilename = '';
+            let click = '';
+            let image = '';
+            
+            if (document.getElementById('enable-priority').checked) {
+                priority = document.getElementById('priority').value;
+            }
+            
+            if (document.getElementById('enable-tags').checked) {
+                tags = document.getElementById('tags').value;
+            }
+            
+            if (document.getElementById('enable-icon').checked) {
+                icon = document.getElementById('icon-url').value;
+            }
+            
+            if (document.getElementById('enable-attach').checked) {
+                attach = document.getElementById('attach-url').value;
+                attachFilename = document.getElementById('attach-filename').value;
+            }
+
+            if (document.getElementById('enable-image').checked) {
+                image = document.getElementById('image-url').value;
+            }
+            
+            if (document.getElementById('enable-click').checked) {
+                click = document.getElementById('click').value;
+            }
+            
+            // 5.01.004: Вземане на действия
+            const actions = getActions();
+            
+            // 5.01.005: Проверка на изходния формат
+            const outputFormat = document.querySelector('input[name="output-format"]:checked').value;
+            
+            // 5.01.006: Генериране на конфигурация според избрания формат
+            if (outputFormat === 'rest') {
+                generateRestCommandConfig(server, topic, method, title, priority, tags, message, icon, attach, attachFilename, image, click, actions);
+            } else {
+                generateServiceConfig(server, topic, method, title, priority, tags, message, icon, attach, attachFilename, image, click, actions);
+            }
+        }
+
+        // 5.02.000: Генериране на REST Command конфигурация
+        function generateRestCommandConfig(server, topic, method, title, priority, tags, message, icon, attach, attachFilename, image, click, actions) {
+            let config = `url: "${server}${topic}"\n`;
+            config += `method: "${method}"\n`;
+            
+            // Headers секция
+            let hasHeaders = false;
+            let headersConfig = '';
+            
+            if (title) {
+                headersConfig += `  Title: "${title}"\n`;
+                hasHeaders = true;
+            }
+            if (priority) {
+                headersConfig += `  Priority: "${priority}"\n`;
+                hasHeaders = true;
+            }
+            if (tags) {
+                headersConfig += `  Tags: "${tags}"\n`;
+                hasHeaders = true;
+            }
+            if (icon) {
+                headersConfig += `  Icon: "${icon}"\n`;
+                hasHeaders = true;
+            }
+            if (attach) {
+                headersConfig += `  Attach: "${attach}"\n`;
+                hasHeaders = true;
+            }
+            if (attachFilename) {
+                headersConfig += `  Filename: "${attachFilename}"\n`;
+                hasHeaders = true;
+            }
+            if (image) {
+                headersConfig += `  Image: "${image}"\n`;
+                hasHeaders = true;
+            }
+            
+            if (hasHeaders) {
+                config += `headers:\n${headersConfig}`;
+            }
+            
+            // Payload
+            if (message) {
+                config += `payload: "${message.replace(/\n/g, '\\n')}"\n`;
+            }
+            
+            // Data секция за разширени опции
+            let hasData = false;
+            let dataConfig = '';
+            
+            if (click) {
+                dataConfig += `  click: "${click}"\n`;
+                hasData = true;
+            }
+            
+            if (actions.length > 0) {
+                dataConfig += `  actions:\n`;
+                actions.forEach(action => {
+                    dataConfig += `    - action: ${action.action}\n`;
+                    dataConfig += `      label: "${action.label}"\n`;
+                    if (action.clear) {
+                        dataConfig += `      clear: true\n`;
+                    }
+                    if (action.action === 'view') {
+                        dataConfig += `      url: "${action.url}"\n`;
+                    } else if (action.action === 'http') {
+                        dataConfig += `      url: "${action.url}"\n`;
+                        if (action.method) {
+                            dataConfig += `      method: ${action.method}\n`;
+                        }
+                        if (action.headers) {
+                            dataConfig += `      headers:\n`;
+                            Object.entries(action.headers).forEach(([key, value]) => {
+                                dataConfig += `        ${key}: "${value}"\n`;
+                            });
+                        }
+                        if (action.body) {
+                            dataConfig += `      body: '${typeof action.body === 'string' ? action.body : JSON.stringify(action.body)}'\n`;
+                        }
+                    }
+                });
+                hasData = true;
+            }
+            
+            if (hasData) {
+                config += `data:\n${dataConfig}`;
+            }
+            
+            displayConfiguration(config);
+        }
+
+        // 5.03.000: Генериране на Service конфигурация
+        function generateServiceConfig(server, topic, method, title, priority, tags, message, icon, attach, attachFilename, image, click, actions) {
+            let config = `service: notify.ntfy\n`;
+            config += `data:\n`;
+            config += `  url: "${server}${topic}"\n`;
+            config += `  method: ${method}\n`;
+            
+            if (title) config += `  title: ${title}\n`;
+            if (priority) config += `  priority: ${priority}\n`;
+            if (tags) config += `  tags: ${tags}\n`;
+            if (message) config += `  message: "${message.replace(/\n/g, '\\n')}"\n`;
+            if (icon) config += `  icon: "${icon}"\n`;
+            if (attach) config += `  attach: "${attach}"\n`;
+            if (attachFilename) config += `  filename: "${attachFilename}"\n`;
+            if (image) config += `  image: "${image}"\n`;
+            if (click) config += `  click: "${click}"\n`;
+            
+            // Actions
+            if (actions.length > 0) {
+                config += `  actions:\n`;
+                actions.forEach(action => {
+                    config += `    - action: ${action.action}\n`;
+                    config += `      label: "${action.label}"\n`;
+                    if (action.clear) {
+                        config += `      clear: true\n`;
+                    }
+                    if (action.action === 'view') {
+                        config += `      url: "${action.url}"\n`;
+                    } else if (action.action === 'http') {
+                        config += `      url: "${action.url}"\n`;
+                        if (action.method) {
+                            config += `      method: ${action.method}\n`;
+                        }
+                        if (action.headers) {
+                            config += `      headers: ${JSON.stringify(action.headers)}\n`;
+                        }
+                        if (action.body) {
+                            config += `      body: ${typeof action.body === 'string' ? `'${action.body}'` : JSON.stringify(action.body)}\n`;
+                        }
+                    }
+                });
+            }
+            
+            displayConfiguration(config);
+        }
+
+        // 5.05.000: Показване на конфигурацията
+        function displayConfiguration(config) {
+            const previewElement = document.getElementById('preview');
+            previewElement.textContent = config;
+        }
+
+        // 6.00.000: Допълнителни функции
+        // 6.01.000: Изчистване на формата
+        function resetForm() {
+            if (confirm('Сигурни ли сте, че искате да изчистите формата?')) {
+                document.querySelectorAll('input, select, textarea').forEach(element => {
+                    if (element.type !== 'button' && element.name !== 'output-format') {
+                        if (element.type === 'checkbox' || element.type === 'radio') {
+                            element.checked = false;
+                        } else if (element.tagName === 'SELECT') {
+                            element.selectedIndex = 0;
+                        } else {
+                            element.value = '';
+                        }
+                    }
+                });
+                
+                // Възстановяване на стандартния формат
+                document.getElementById('format-rest').checked = true;
+                
+                // Скриване на всички персонализирани полета
+                document.querySelectorAll('.hidden').forEach(element => {
+                    if (element.id.includes('custom-') || element.id.includes('_value')) {
+                        element.classList.add('hidden');
+                    }
+                });
+                
+                // Скриване на всички опционални полета
+                document.querySelectorAll('[id$="-group"]').forEach(element => {
+                    element.classList.add('hidden');
+                });
+                
+                // Скриване на прегледа на картинката
+                document.getElementById('image-preview').classList.remove('visible');
+                
+                // Изчистване на действията
+                document.getElementById('actions-container').innerHTML = '';
+                actionCounter = 0;
+                
+                // Деактивиране на бутона за изтегляне
+                document.getElementById('download').disabled = true;
+                document.getElementById('download').classList.add('download-disabled');
+                
+                // Изчистване на прегледа
+                document.getElementById('preview').textContent = 'Конфигурацията ще се появи тук след като кликнете на "Генерирай конфигурация"';
+            }
+        }
+
+        // 6.02.000: Копиране в клипборда
+        function copyToClipboard() {
+            const previewText = document.getElementById('preview').textContent;
+            
+            navigator.clipboard.writeText(previewText).then(function() {
+                alert('Конфигурацията е копирана в клипборда!');
+            }, function(err) {
+                console.error('Грешка при копиране: ', err);
+                alert('Грешка при копиране в клипборда!');
+            });
+        }
+
+        // 6.03.000: Изтегляне на файл
+        function downloadFile() {
+            const previewText = document.getElementById('preview').textContent;
+            const filename = document.getElementById('filename').value.trim();
+            const outputFormat = document.querySelector('input[name="output-format"]:checked').value;
+            
+            if (!filename) {
+                alert('Моля, въведете име на файла!');
+                return;
+            }
+            
+            // Само REST Command формат може да се изтегля
+            if (outputFormat !== 'rest') {
+                alert('Само REST Command форматът може да бъде изтеглен като файл!');
+                return;
+            }
+            
+            const blob = new Blob([previewText], { type: 'text/yaml' });
+            const url = URL.createObjectURL(blob);
+            
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `${filename}.yaml`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
+        // 7.00.000: Примери
+        // 7.01.000: Зареждане на пример
+        function loadExample(exampleId) {
+            // Първо изчистваме формата
+            resetForm();
+            
+            // Увери се, че сме в REST Command формат за примерите
+            document.getElementById('format-rest').checked = true;
+            
+            // След това попълваме със стойности от примера
+            switch(exampleId) {
+                case '1':
+                    // Пример 1: Стандартно известие
+                    document.getElementById('server').value = 'https://ntfy.sh/';
+                    document.getElementById('topic').value = 'your_topic';
+                    document.getElementById('title').value = 'Home Assistant';
+                    document.getElementById('message').value = 'Това е пример за известие от Home Assistant';
+                    
+                    // Активиране на допълнителни опции
+                    document.getElementById('enable-priority').checked = true;
+                    document.getElementById('priority-group').classList.remove('hidden');
+                    document.getElementById('priority').value = 'default';
+                    
+                    document.getElementById('enable-tags').checked = true;
+                    document.getElementById('tags-group').classList.remove('hidden');
+                    document.getElementById('tags').value = 'house';
+                    
+                    document.getElementById('enable-click').checked = true;
+                    document.getElementById('click-group').classList.remove('hidden');
+                    document.getElementById('click').value = 'https://homeassistant.local';
+                    break;
+                    
+                case '2':
+                    // Пример 2: Прикачен файл
+                    document.getElementById('server').value = 'https://ntfy.sh/';
+                    document.getElementById('topic').value = 'your_topic';
+                    document.getElementById('title').value = 'Home Assistant File Manager';
+                    document.getElementById('message').value = 'Докосни върху "F-droid.apk" за да предприемеш изтегляне';
+                    
+                    // Активиране на допълнителни опции
+                    document.getElementById('enable-priority').checked = true;
+                    document.getElementById('priority-group').classList.remove('hidden');
+                    document.getElementById('priority').value = 'urgent';
+                    
+                    document.getElementById('enable-tags').checked = true;
+                    document.getElementById('tags-group').classList.remove('hidden');
+                    document.getElementById('tags').value = 'receipt';
+                    
+                    document.getElementById('enable-icon').checked = true;
+                    document.getElementById('icon-group').classList.remove('hidden');
+                    document.getElementById('icon-url').value = 'https://e7.pngegg.com/pngimages/923/707/png-clipart-f-droid-android-free-and-open-source-software-bright-automotive-rectangle-logo.png';
+                    
+                    document.getElementById('enable-attach').checked = true;
+                    document.getElementById('attach-group').classList.remove('hidden');
+                    document.getElementById('attach-url').value = 'https://f-droid.org/F-Droid.apk';
+                    document.getElementById('attach-filename').value = 'F-droid.apk';
+                    break;
+                    
+                case '3':
+                    // Пример 3: Действие "Преглед"
+                    document.getElementById('server').value = 'https://ntfy.sh/';
+                    document.getElementById('topic').value = 'your_topic';
+                    document.getElementById('title').value = 'Мрежа';
+                    document.getElementById('message').value = 'Проверете състоянието на вашата мрежа';
+                    
+                    // Активиране на допълнителни опции
+                    document.getElementById('enable-priority').checked = true;
+                    document.getElementById('priority-group').classList.remove('hidden');
+                    document.getElementById('priority').value = 'low';
+                    
+                    document.getElementById('enable-tags').checked = true;
+                    document.getElementById('tags-group').classList.remove('hidden');
+                    document.getElementById('tags').value = 'globe_with_meridians';
+                    
+                    // Добавяне на действие
+                    addAction();
+                    const action1 = document.querySelector('.action-item');
+                    document.getElementById(`${action1.id}-action`).value = 'view';
+                    document.getElementById(`${action1.id}-label`).value = 'Отвори мрежов панел';
+                    document.getElementById(`${action1.id}-url`).value = 'https://router.local';
+                    break;
+                    
+                case '4':
+                    // Пример 4: HTTP действие
+                    document.getElementById('server').value = 'https://ntfy.sh/';
+                    document.getElementById('topic').value = 'your_topic';
+                    document.getElementById('title').value = 'Устройства';
+                    document.getElementById('message').value = 'Устройството е включено';
+                    
+                    // Активиране на допълнителни опции
+                    document.getElementById('enable-priority').checked = true;
+                    document.getElementById('priority-group').classList.remove('hidden');
+                    document.getElementById('priority').value = 'default';
+                    
+                    document.getElementById('enable-tags').checked = true;
+                    document.getElementById('tags-group').classList.remove('hidden');
+                    document.getElementById('tags').value = 'white_check_mark';
+                    
+                    // Добавяне на действие
+                    addAction();
+                    const action2 = document.querySelector('.action-item');
+                    document.getElementById(`${action2.id}-action`).value = 'http';
+                    document.getElementById(`${action2.id}-label`).value = 'Изключи устройството';
+                    document.getElementById(`${action2.id}-url`).value = 'https://homeassistant.local/api/services/switch/turn_off';
+                    document.getElementById(`${action2.id}-method`).value = 'POST';
+                    document.getElementById(`${action2.id}-headers`).value = '{"Authorization": "Bearer your_long_lived_token", "Content-Type": "application/json"}';
+                    document.getElementById(`${action2.id}-body`).value = '{"entity_id": "switch.living_room_light"}';
+                    document.getElementById(`${action2.id}-clear`).checked = true;
+                    break;
+
+                case '5':
+                    // Пример 5: Известие с картинка
+                    document.getElementById('server').value = 'https://ntfy.sh/';
+                    document.getElementById('topic').value = 'your_topic';
+                    document.getElementById('title').value = 'Сигурност';
+                    document.getElementById('message').value = 'Открита е подозрителна дейност на камерата';
+                    
+                    // Активиране на допълнителни опции
+                    document.getElementById('enable-priority').checked = true;
+                    document.getElementById('priority-group').classList.remove('hidden');
+                    document.getElementById('priority').value = 'high';
+                    
+                    document.getElementById('enable-tags').checked = true;
+                    document.getElementById('tags-group').classList.remove('hidden');
+                    document.getElementById('tags').value = 'warning';
+                    
+                    document.getElementById('enable-image').checked = true;
+                    document.getElementById('image-group').classList.remove('hidden');
+                    document.getElementById('image-url').value = 'https://raw.githubusercontent.com/Bacard1/icon-set-project/refs/heads/main/IT/wlan.png';
+                    updateImagePreview(document.getElementById('image-url').value, document.getElementById('image-preview'));
+                    break;
+            }
+            
+            // Генерираме конфигурацията
+            generateConfiguration();
+        }
+    </script>
+</body>
+</html>

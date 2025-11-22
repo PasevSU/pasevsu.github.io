@@ -1,0 +1,1380 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home Assistant Mobile Notifications Generator</title>
+    <style>
+        :root {
+            --primary-color: #4a6fa5;
+            --secondary-color: #166088;
+            --background-color: #f5f7fa;
+            --card-color: #ffffff;
+            --text-color: #333333;
+            --border-color: #dddddd;
+            --error-color: #e74c3c;
+            --success-color: #2ecc71;
+            --android-color: #3ddc84;
+            --ios-color: #007aff;
+        }
+        
+        .dark-mode {
+            --primary-color: #5a8fd8;
+            --secondary-color: #2a7bbf;
+            --background-color: #1a1a1a;
+            --card-color: #2d2d2d;
+            --text-color: #e0e0e0;
+            --border-color: #444444;
+            --error-color: #e74c3c;
+            --success-color: #2ecc71;
+            --android-color: #3ddc84;
+            --ios-color: #007aff;
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: var(--text-color);
+            background-color: var(--background-color);
+            padding: 20px;
+            transition: background-color 0.3s, color 0.3s;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid var(--border-color);
+            position: relative;
+        }
+        
+        .header-buttons {
+            position: absolute;
+            top: 0;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+        
+        .theme-toggle, .version-switch {
+            background: var(--card-color);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            padding: 8px 15px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            color: var(--text-color);
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+        
+        .theme-toggle {
+            left: 0;
+        }
+        
+        .version-switch {
+            right: 0;
+        }
+        
+        .theme-toggle:hover, .version-switch:hover {
+            background: var(--primary-color);
+            color: white;
+        }
+        
+        h1 {
+            color: var(--primary-color);
+            margin-bottom: 10px;
+        }
+        
+        .description {
+            color: #666;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .description a {
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: bold;
+        }
+        
+        .description a:hover {
+            text-decoration: underline;
+        }
+        
+        .dark-mode .description {
+            color: #aaa;
+        }
+
+        /* Info Banner Styles */
+        .info-banner {
+            background-color: var(--card-color);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .info-banner h3 {
+            margin-top: 0;
+            color: var(--primary-color);
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 10px;
+        }
+        
+        .info-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        
+        @media (max-width: 768px) {
+            .info-content {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .info-section {
+            margin-bottom: 15px;
+        }
+        
+        .info-section h4 {
+            margin: 0 0 10px 0;
+            color: var(--secondary-color);
+        }
+        
+        .info-section ul {
+            padding-left: 20px;
+            margin: 0;
+        }
+        
+        .info-section li {
+            margin-bottom: 5px;
+            font-size: 0.9rem;
+        }
+        
+        .config-example {
+            background-color: var(--background-color);
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            padding: 10px;
+            font-family: monospace;
+            font-size: 0.85rem;
+            margin-top: 5px;
+        }
+
+        .external-link {
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: bold;
+        }
+        
+        .external-link:hover {
+            text-decoration: underline;
+        }
+
+        .device-selector {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 30px;
+            justify-content: center;
+        }
+        
+        .device-option {
+            flex: 1;
+            max-width: 200px;
+        }
+        
+        .device-radio {
+            display: none;
+        }
+        
+        .device-label {
+            display: block;
+            padding: 20px;
+            text-align: center;
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: var(--card-color);
+        }
+        
+        .device-radio:checked + .device-label {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 10px rgba(74, 111, 165, 0.3);
+        }
+        
+        .android-label {
+            border-left: 4px solid var(--android-color);
+        }
+        
+        .ios-label {
+            border-left: 4px solid var(--ios-color);
+        }
+        
+        .device-icon {
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+        
+        .notification-type-selector {
+            margin-bottom: 30px;
+        }
+        
+        .type-buttons {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        
+        .type-btn {
+            padding: 10px 20px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            background: var(--card-color);
+            color: var(--text-color);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .type-btn.active {
+            background: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+        
+        .generator-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+        }
+        
+        @media (max-width: 768px) {
+            .generator-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .device-selector {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .device-option {
+                max-width: 100%;
+            }
+            
+            .header-buttons {
+                position: static;
+                justify-content: space-between;
+                margin-top: 15px;
+            }
+        }
+        
+        .form-section, .preview-section {
+            background-color: var(--card-color);
+            border-radius: 8px;
+            padding: 25px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .section-title {
+            font-size: 1.3rem;
+            margin-bottom: 20px;
+            color: var(--secondary-color);
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+        
+        input, select, textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            font-size: 1rem;
+            background-color: var(--card-color);
+            color: var(--text-color);
+        }
+        
+        textarea {
+            min-height: 100px;
+            resize: vertical;
+            font-family: monospace;
+        }
+        
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        
+        .checkbox-group input {
+            width: auto;
+            margin-right: 10px;
+        }
+        
+        .actions-container {
+            margin-top: 20px;
+        }
+        
+        .action-item {
+            background-color: #f9f9f9;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            padding: 15px;
+            margin-bottom: 15px;
+        }
+        
+        .dark-mode .action-item {
+            background-color: #3a3a3a;
+        }
+        
+        .action-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        
+        .action-title {
+            font-weight: bold;
+        }
+        
+        .remove-action {
+            background-color: var(--error-color);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 5px 10px;
+            cursor: pointer;
+        }
+        
+        .btn {
+            display: inline-block;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 10px 20px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            margin-right: 10px;
+            margin-bottom: 10px;
+        }
+        
+        .btn:hover {
+            background-color: var(--secondary-color);
+        }
+        
+        .btn-success {
+            background-color: var(--success-color);
+        }
+        
+        .btn-success:hover {
+            background-color: #27ae60;
+        }
+        
+        .btn-secondary {
+            background-color: #6c757d;
+        }
+        
+        .btn-secondary:hover {
+            background-color: #5a6268;
+        }
+        
+        .btn-android {
+            background-color: var(--android-color);
+            color: #000;
+        }
+        
+        .btn-ios {
+            background-color: var(--ios-color);
+        }
+        
+        .preview-code {
+            background-color: #2d2d2d;
+            color: #f8f8f2;
+            padding: 15px;
+            border-radius: 4px;
+            overflow-x: auto;
+            font-family: monospace;
+            white-space: pre-wrap;
+            margin-top: 15px;
+            max-height: 500px;
+            overflow-y: auto;
+        }
+        
+        .hidden {
+            display: none;
+        }
+        
+        .optional-section {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px dashed var(--border-color);
+        }
+        
+        .required-field::after {
+            content: " *";
+            color: var(--error-color);
+        }
+        
+        .tabs {
+            display: flex;
+            margin-bottom: 20px;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .tab {
+            padding: 10px 20px;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+        }
+        
+        .tab.active {
+            border-bottom-color: var(--primary-color);
+            font-weight: bold;
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        .notification-options {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+        
+        @media (max-width: 1024px) {
+            .notification-options {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .example-item {
+            background-color: #f0f8ff;
+            border-left: 4px solid var(--primary-color);
+            padding: 15px;
+            margin-bottom: 15px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        
+        .dark-mode .example-item {
+            background-color: #2a3a4a;
+        }
+        
+        .example-item:hover {
+            background-color: #e1f0ff;
+        }
+        
+        .dark-mode .example-item:hover {
+            background-color: #3a4a5a;
+        }
+        
+        .example-title {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        .example-description {
+            color: #666;
+            font-size: 0.9rem;
+        }
+        
+        .dark-mode .example-description {
+            color: #aaa;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="header-buttons">
+                <button class="theme-toggle" id="theme-toggle">🌙 Dark Mode</button>
+                <a href="mobile_app_ntfy_GEN_v1.0b.html" class="version-switch">бг Български</a>
+            </div>
+            <h1>Home Assistant Mobile Notifications Generator</h1>
+            <p class="description">
+                Generate configurations for Home Assistant mobile notifications for Android and iOS devices.
+                Create automations and scripts with all available notification options.
+                For more generators and projects visit <a href="https://pasevsu.github.io/" target="_blank">https://pasevsu.github.io/</a> (Reference)
+            </p>
+        </header>
+
+        <!-- Added information section -->
+        <div class="info-banner">
+            <h3>Important Information for Mobile Notifications</h3>
+            <div class="info-content">
+                <div class="info-section">
+                    <h4>Basic Settings</h4>
+                    <ul>
+                        <li><strong>Title & Message:</strong> Required fields for every notification</li>
+                        <li><strong>Target Devices:</strong> List of device IDs (leave empty for all devices)</li>
+                        <li><strong>Android Channel:</strong> Android specific - defines notification type</li>
+                        <li><strong>Tag:</strong> Groups notifications with the same tag</li>
+                    </ul>
+                </div>
+                
+                <div class="info-section">
+                    <h4>Additional Options</h4>
+                    <ul>
+                        <li><strong>Color:</strong> Accent color for the notification</li>
+                        <li><strong>Priority:</strong> Determines the importance of the notification</li>
+                        <li><strong>Sticky Notifications:</strong> Cannot be dismissed</li>
+                        <li><strong>Vibration:</strong> Custom vibration pattern</li>
+                        <li><strong>Image & Icon:</strong> URL to images</li>
+                        <li><strong>Sound:</strong> Custom sound for the notification</li>
+                    </ul>
+                </div>
+
+                <div class="info-section">
+                    <h4>Action Buttons</h4>
+                    <ul>
+                        <li><strong>Open URI:</strong> Opens URL in browser</li>
+                        <li><strong>Call Service:</strong> Executes Home Assistant service</li>
+                        <li><strong>Remove Notification:</strong> Closes the notification</li>
+                    </ul>
+                </div>
+
+                <div class="info-section">
+                    <h4>Platform Specific</h4>
+                    <ul>
+                        <li><strong>Android:</strong> Channels, importance, visibility</li>
+                        <li><strong>iOS:</strong> Badge counter, critical notifications</li>
+                        <li><strong>Critical Notifications:</strong> For iOS - bypass "Do Not Disturb" mode</li>
+                    </ul>
+                </div>
+
+                <div class="info-section">
+                    <h4>Usage Tips</h4>
+                    <ul>
+                        <li>Make sure the Home Assistant mobile app is installed and configured</li>
+                        <li>Test your notifications before implementing them in automations</li>
+                        <li>Use different channels for different types of notifications (Android)</li>
+                        <li>Critical notifications should be used only for important events</li>
+                        <li>Detailed information about mobile notifications can be found in the official documentation: <a href="https://www.home-assistant.io/integrations/mobile_app/" target="_blank" class="external-link">https://www.home-assistant.io/integrations/mobile_app/</a></li>
+                    </ul>
+                </div>
+
+                <div class="info-section">
+                    <h4>Common Use Cases</h4>
+                    <ul>
+                        <li>🔔 Home Assistant automation notifications</li>
+                        <li>🚨 System alarms and warnings</li>
+                        <li>🏠 Smart home control through actions</li>
+                        <li>📊 Device and sensor status reports</li>
+                        <li>🔐 Security and access</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="device-selector">
+            <div class="device-option">
+                <input type="radio" id="android" name="device" value="android" class="device-radio" checked>
+                <label for="android" class="device-label android-label">
+                    <div class="device-icon">🤖</div>
+                    <div class="device-name">Android</div>
+                </label>
+            </div>
+            <div class="device-option">
+                <input type="radio" id="ios" name="device" value="ios" class="device-radio">
+                <label for="ios" class="device-label ios-label">
+                    <div class="device-icon">🍎</div>
+                    <div class="device-name">iOS</div>
+                </label>
+            </div>
+        </div>
+
+        <div class="notification-type-selector">
+            <h2 class="section-title">Notification Type</h2>
+            <div class="type-buttons">
+                <button class="type-btn active" data-type="automation">Automation</button>
+                <button class="type-btn" data-type="script">Script</button>
+            </div>
+        </div>
+
+        <div class="generator-container">
+            <div class="form-section">
+                <div class="tabs">
+                    <div class="tab active" data-tab="basic">Basic Settings</div>
+                    <div class="tab" data-tab="advanced">Advanced Options</div>
+                    <div class="tab" data-tab="actions">Actions</div>
+                </div>
+                
+                <div class="tab-content active" id="basic-tab">
+                    <h2 class="section-title">Basic Notification Settings</h2>
+                    
+                    <div class="form-group">
+                        <label for="title" class="required-field">Title:</label>
+                        <input type="text" id="title" placeholder="Notification title" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="message" class="required-field">Message:</label>
+                        <textarea id="message" placeholder="Notification message" required></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="target">Target Devices:</label>
+                        <input type="text" id="target" placeholder="device1, device2 (leave empty for all devices)">
+                        <small>Comma-separated list of device IDs</small>
+                    </div>
+                    
+                    <div class="optional-section">
+                        <h3 class="section-title">Additional Basic Options</h3>
+                        
+                        <div class="notification-options">
+                            <div class="form-group">
+                                <label for="channel">Android Channel:</label>
+                                <input type="text" id="channel" placeholder="Channel ID">
+                                <small>Android only - notification channel</small>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="tag">Tag:</label>
+                                <input type="text" id="tag" placeholder="Notification tag">
+                                <small>Group notifications with the same tag</small>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="color">Color:</label>
+                                <input type="color" id="color" value="#4a6fa5">
+                                <small>Notification accent color</small>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="priority">Priority:</label>
+                                <select id="priority">
+                                    <option value="default">Default</option>
+                                    <option value="min">Min</option>
+                                    <option value="low">Low</option>
+                                    <option value="high">High</option>
+                                    <option value="max">Max</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="sticky">Sticky Notification:</label>
+                                <select id="sticky">
+                                    <option value="false">No</option>
+                                    <option value="true">Yes</option>
+                                </select>
+                                <small>Notification cannot be dismissed</small>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="vibration">Vibration Pattern:</label>
+                                <input type="text" id="vibration" placeholder="100, 200, 100, 200">
+                                <small>Comma-separated milliseconds</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="tab-content" id="advanced-tab">
+                    <h2 class="section-title">Advanced Notification Options</h2>
+                    
+                    <div class="notification-options">
+                        <div class="form-group">
+                            <label for="image">Image URL:</label>
+                            <input type="text" id="image" placeholder="https://example.com/image.jpg">
+                            <small>URL to image attachment</small>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="icon">Icon URL:</label>
+                            <input type="text" id="icon" placeholder="https://example.com/icon.png">
+                            <small>Custom notification icon</small>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="sound">Sound:</label>
+                            <select id="sound">
+                                <option value="">Default</option>
+                                <option value="alarm">Alarm</option>
+                                <option value="alert">Alert</option>
+                                <option value="beep">Beep</option>
+                                <option value="bell">Bell</option>
+                                <option value="chime">Chime</option>
+                                <option value="ding">Ding</option>
+                                <option value="notification">Notification</option>
+                                <option value="ringtone">Ringtone</option>
+                                <option value="custom">Custom</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group" id="custom-sound-group" style="display: none;">
+                            <label for="custom-sound">Custom Sound URL:</label>
+                            <input type="text" id="custom-sound" placeholder="https://example.com/sound.mp3">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="click-action">Click Action URL:</label>
+                            <input type="text" id="click-action" placeholder="https://homeassistant.local">
+                            <small>URL to open when notification is clicked</small>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="group">Group:</label>
+                            <input type="text" id="group" placeholder="Group name">
+                            <small>Group multiple notifications together</small>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="ttl">Time to Live (seconds):</label>
+                            <input type="number" id="ttl" placeholder="3600">
+                            <small>How long the notification should live</small>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="importance">Importance (Android):</label>
+                            <select id="importance">
+                                <option value="default">Default</option>
+                                <option value="min">Min</option>
+                                <option value="low">Low</option>
+                                <option value="high">High</option>
+                                <option value="max">Max</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="visibility">Visibility (Android):</label>
+                            <select id="visibility">
+                                <option value="public">Public</option>
+                                <option value="private">Private</option>
+                                <option value="secret">Secret</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="badge">Badge Number (iOS):</label>
+                            <input type="number" id="badge" placeholder="1">
+                            <small>App icon badge number</small>
+                        </div>
+                    </div>
+                    
+                    <div class="optional-section">
+                        <h3 class="section-title">Critical Notifications (iOS)</h3>
+                        
+                        <div class="checkbox-group">
+                            <input type="checkbox" id="critical">
+                            <label for="critical">Enable Critical Notification</label>
+                        </div>
+                        
+                        <div id="critical-options" style="display: none; margin-top: 15px;">
+                            <div class="form-group">
+                                <label for="critical-sound">Critical Sound:</label>
+                                <input type="text" id="critical-sound" placeholder="default" value="default">
+                                <small>Sound name for critical alert</small>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="critical-volume">Critical Volume:</label>
+                                <input type="range" id="critical-volume" min="0" max="1" step="0.1" value="1">
+                                <small>Volume level (0.0 to 1.0)</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="tab-content" id="actions-tab">
+                    <h2 class="section-title">Action Buttons</h2>
+                    <p>Add action buttons to your notification</p>
+                    
+                    <div class="actions-container" id="actions-container">
+                        <!-- Actions will be added here dynamically -->
+                    </div>
+                    
+                    <button type="button" class="btn" id="add-action">Add Action</button>
+                    
+                    <div class="optional-section">
+                        <h3 class="section-title">Action Options</h3>
+                        
+                        <div class="checkbox-group">
+                            <input type="checkbox" id="action-uri">
+                            <label for="action-uri">Open URI Action</label>
+                        </div>
+                        
+                        <div class="checkbox-group">
+                            <input type="checkbox" id="action-service">
+                            <label for="action-service">Call Service Action</label>
+                        </div>
+                        
+                        <div class="checkbox-group">
+                            <input type="checkbox" id="action-remove">
+                            <label for="action-remove">Remove Notification Action</label>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="buttons-container" style="margin-top: 30px;">
+                    <button type="button" class="btn btn-success" id="generate">Generate Configuration</button>
+                    <button type="button" class="btn btn-secondary" id="reset">Clear Form</button>
+                </div>
+            </div>
+            
+            <div class="preview-section">
+                <h2 class="section-title">Configuration Preview</h2>
+                
+                <div class="form-group">
+                    <label>Output Type:</label>
+                    <div style="display: flex; gap: 10px; margin-bottom: 15px;">
+                        <button class="btn btn-android" id="show-automation">Show Automation</button>
+                        <button class="btn btn-ios" id="show-script">Show Script</button>
+                    </div>
+                </div>
+                
+                <div class="preview-code" id="preview">
+                    Configuration will appear here after clicking "Generate Configuration"
+                </div>
+                
+                <div class="buttons-container" style="margin-top: 20px;">
+                    <button type="button" class="btn" id="copy">Copy to Clipboard</button>
+                </div>
+                
+                <div class="examples-container" style="margin-top: 30px;">
+                    <h2 class="section-title">Quick Examples</h2>
+                    
+                    <div class="example-item" data-example="basic">
+                        <div class="example-title">Basic Notification</div>
+                        <div class="example-description">Simple notification with title and message</div>
+                    </div>
+                    
+                    <div class="example-item" data-example="action">
+                        <div class="example-title">Notification with Actions</div>
+                        <div class="example-description">Notification with action buttons</div>
+                    </div>
+                    
+                    <div class="example-item" data-example="critical">
+                        <div class="example-title">Critical Notification</div>
+                        <div class="example-description">Critical alert with sound and badge</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Configuration data
+        const notificationOptions = {
+            android: {
+                channels: ["default", "alarm", "media", "calls", "system"],
+                sounds: ["default", "alarm", "alert", "beep", "bell", "chime", "ding", "notification", "ringtone"],
+                priorities: ["min", "low", "default", "high", "max"],
+                visibilities: ["public", "private", "secret"]
+            },
+            ios: {
+                sounds: ["default", "alarm", "alert", "beep", "bell", "chime", "ding", "notification", "ringtone"],
+                criticalSounds: ["default", "alarm", "siren"]
+            }
+        };
+
+        let actionCounter = 0;
+        let currentDevice = 'android';
+        let currentType = 'automation';
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // Device selection
+            const deviceRadios = document.querySelectorAll('input[name="device"]');
+            deviceRadios.forEach(radio => {
+                radio.addEventListener('change', function() {
+                    currentDevice = this.value;
+                    updateDeviceSpecificOptions();
+                });
+            });
+
+            // Notification type selection
+            const typeButtons = document.querySelectorAll('.type-btn');
+            typeButtons.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    typeButtons.forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    currentType = this.getAttribute('data-type');
+                });
+            });
+
+            // Tab functionality
+            const tabs = document.querySelectorAll('.tab');
+            tabs.forEach(tab => {
+                tab.addEventListener('click', function() {
+                    const tabId = this.getAttribute('data-tab');
+                    
+                    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+                    
+                    this.classList.add('active');
+                    document.getElementById(`${tabId}-tab`).classList.add('active');
+                });
+            });
+
+            // Sound selection
+            const soundSelect = document.getElementById('sound');
+            const customSoundGroup = document.getElementById('custom-sound-group');
+            
+            soundSelect.addEventListener('change', function() {
+                if (this.value === 'custom') {
+                    customSoundGroup.style.display = 'block';
+                } else {
+                    customSoundGroup.style.display = 'none';
+                }
+            });
+
+            // Critical notification toggle
+            const criticalCheckbox = document.getElementById('critical');
+            const criticalOptions = document.getElementById('critical-options');
+            
+            criticalCheckbox.addEventListener('change', function() {
+                criticalOptions.style.display = this.checked ? 'block' : 'none';
+            });
+
+            // Actions
+            document.getElementById('add-action').addEventListener('click', addAction);
+
+            // Generate configuration
+            document.getElementById('generate').addEventListener('click', generateConfiguration);
+
+            // Reset form
+            document.getElementById('reset').addEventListener('click', resetForm);
+
+            // Copy to clipboard
+            document.getElementById('copy').addEventListener('click', copyToClipboard);
+
+            // Output type buttons
+            document.getElementById('show-automation').addEventListener('click', function() {
+                generateConfiguration('automation');
+            });
+            
+            document.getElementById('show-script').addEventListener('click', function() {
+                generateConfiguration('script');
+            });
+
+            // Examples
+            const exampleItems = document.querySelectorAll('.example-item');
+            exampleItems.forEach(item => {
+                item.addEventListener('click', function() {
+                    const exampleId = this.getAttribute('data-example');
+                    loadExample(exampleId);
+                });
+            });
+
+            // Dark mode toggle
+            document.getElementById('theme-toggle').addEventListener('click', toggleDarkMode);
+
+            // Initialize
+            updateDeviceSpecificOptions();
+        });
+
+        function updateDeviceSpecificOptions() {
+            // Update options based on selected device
+            const importanceSelect = document.getElementById('importance');
+            const visibilitySelect = document.getElementById('visibility');
+            
+            if (currentDevice === 'android') {
+                importanceSelect.disabled = false;
+                visibilitySelect.disabled = false;
+            } else {
+                importanceSelect.disabled = true;
+                visibilitySelect.disabled = true;
+            }
+        }
+
+        function addAction() {
+            actionCounter++;
+            const actionId = `action-${actionCounter}`;
+            
+            const actionItem = document.createElement('div');
+            actionItem.className = 'action-item';
+            actionItem.id = actionId;
+            
+            actionItem.innerHTML = `
+                <div class="action-header">
+                    <div class="action-title">Action ${actionCounter}</div>
+                    <button type="button" class="remove-action" data-action="${actionId}">Remove</button>
+                </div>
+                <div class="form-group">
+                    <label for="${actionId}-title">Action Title:</label>
+                    <input type="text" id="${actionId}-title" placeholder="Action button text">
+                </div>
+                <div class="form-group">
+                    <label for="${actionId}-action">Action Type:</label>
+                    <select id="${actionId}-action" class="action-type-select">
+                        <option value="URI">Open URI</option>
+                        <option value="SERVICE">Call Service</option>
+                        <option value="REMOVE">Remove Notification</option>
+                    </select>
+                </div>
+                <div class="form-group uri-option">
+                    <label for="${actionId}-uri">URI:</label>
+                    <input type="text" id="${actionId}-uri" placeholder="https://example.com">
+                </div>
+                <div class="form-group service-option" style="display: none;">
+                    <label for="${actionId}-service">Service:</label>
+                    <input type="text" id="${actionId}-service" placeholder="light.turn_on">
+                </div>
+                <div class="form-group service-option" style="display: none;">
+                    <label for="${actionId}-service-data">Service Data:</label>
+                    <textarea id="${actionId}-service-data" placeholder='{"entity_id": "light.living_room"}'></textarea>
+                </div>
+            `;
+            
+            document.getElementById('actions-container').appendChild(actionItem);
+            
+            // Remove action event
+            const removeButton = actionItem.querySelector('.remove-action');
+            removeButton.addEventListener('click', function() {
+                document.getElementById(this.getAttribute('data-action')).remove();
+                updateActionTitles();
+            });
+            
+            // Action type change event
+            const actionTypeSelect = actionItem.querySelector('.action-type-select');
+            actionTypeSelect.addEventListener('change', function() {
+                toggleActionFields(actionItem, this.value);
+            });
+            
+            // Initialize action fields
+            toggleActionFields(actionItem, 'URI');
+        }
+
+        function toggleActionFields(actionItem, actionType) {
+            const uriFields = actionItem.querySelectorAll('.uri-option');
+            const serviceFields = actionItem.querySelectorAll('.service-option');
+            
+            if (actionType === 'URI') {
+                uriFields.forEach(field => field.style.display = 'block');
+                serviceFields.forEach(field => field.style.display = 'none');
+            } else if (actionType === 'SERVICE') {
+                uriFields.forEach(field => field.style.display = 'none');
+                serviceFields.forEach(field => field.style.display = 'block');
+            } else if (actionType === 'REMOVE') {
+                uriFields.forEach(field => field.style.display = 'none');
+                serviceFields.forEach(field => field.style.display = 'none');
+            }
+        }
+
+        function updateActionTitles() {
+            const actionItems = document.querySelectorAll('.action-item');
+            actionCounter = 0;
+            
+            actionItems.forEach((item, index) => {
+                actionCounter++;
+                const titleElement = item.querySelector('.action-title');
+                if (titleElement) {
+                    titleElement.textContent = `Action ${actionCounter}`;
+                }
+            });
+        }
+
+        function getActions() {
+            const actions = [];
+            const actionItems = document.querySelectorAll('.action-item');
+            
+            actionItems.forEach(item => {
+                const actionId = item.id;
+                const title = document.getElementById(`${actionId}-title`).value;
+                const actionType = document.getElementById(`${actionId}-action`).value;
+                
+                if (title) {
+                    const action = {
+                        action: title,
+                        title: title
+                    };
+                    
+                    if (actionType === 'URI') {
+                        const uri = document.getElementById(`${actionId}-uri`).value;
+                        if (uri) {
+                            action.uri = uri;
+                        }
+                    } else if (actionType === 'SERVICE') {
+                        const service = document.getElementById(`${actionId}-service`).value;
+                        const serviceData = document.getElementById(`${actionId}-service-data`).value;
+                        
+                        if (service) {
+                            action.service = service;
+                            if (serviceData) {
+                                try {
+                                    action.data = JSON.parse(serviceData);
+                                } catch (e) {
+                                    console.error('Error parsing service data:', e);
+                                }
+                            }
+                        }
+                    } else if (actionType === 'REMOVE') {
+                        action.remove = true;
+                    }
+                    
+                    actions.push(action);
+                }
+            });
+            
+            return actions;
+        }
+
+        function generateConfiguration(outputType = null) {
+            const finalOutputType = outputType || currentType;
+            const title = document.getElementById('title').value;
+            const message = document.getElementById('message').value;
+            const target = document.getElementById('target').value;
+            
+            if (!title || !message) {
+                alert('Please fill in required fields: Title and Message');
+                return;
+            }
+            
+            // Get all form values
+            const data = {
+                title: title,
+                message: message,
+                target: target ? target.split(',').map(t => t.trim()) : undefined,
+                data: {}
+            };
+            
+            // Basic options
+            const channel = document.getElementById('channel').value;
+            const tag = document.getElementById('tag').value;
+            const color = document.getElementById('color').value;
+            const priority = document.getElementById('priority').value;
+            const sticky = document.getElementById('sticky').value;
+            const vibration = document.getElementById('vibration').value;
+            
+            if (channel) data.data.channel = channel;
+            if (tag) data.data.tag = tag;
+            if (color !== '#4a6fa5') data.data.color = color;
+            if (priority !== 'default') data.data.priority = priority;
+            if (sticky === 'true') data.data.sticky = true;
+            if (vibration) data.data.vibration = vibration.split(',').map(v => parseInt(v.trim()));
+            
+            // Advanced options
+            const image = document.getElementById('image').value;
+            const icon = document.getElementById('icon').value;
+            const sound = document.getElementById('sound').value;
+            const customSound = document.getElementById('custom-sound').value;
+            const clickAction = document.getElementById('click-action').value;
+            const group = document.getElementById('group').value;
+            const ttl = document.getElementById('ttl').value;
+            const importance = document.getElementById('importance').value;
+            const visibility = document.getElementById('visibility').value;
+            const badge = document.getElementById('badge').value;
+            
+            if (image) data.data.image = image;
+            if (icon) data.data.icon = icon;
+            if (sound === 'custom' && customSound) {
+                data.data.sound = customSound;
+            } else if (sound && sound !== 'default') {
+                data.data.sound = sound;
+            }
+            if (clickAction) data.data.clickAction = clickAction;
+            if (group) data.data.group = group;
+            if (ttl) data.data.ttl = parseInt(ttl);
+            if (importance !== 'default') data.data.importance = importance;
+            if (visibility !== 'public') data.data.visibility = visibility;
+            if (badge) data.data.badge = parseInt(badge);
+            
+            // Critical notifications (iOS)
+            const critical = document.getElementById('critical').checked;
+            if (critical) {
+                data.data.critical = 1;
+                const criticalSound = document.getElementById('critical-sound').value;
+                const criticalVolume = document.getElementById('critical-volume').value;
+                
+                if (criticalSound) data.data.criticalSound = criticalSound;
+                if (criticalVolume !== '1') data.data.criticalVolume = parseFloat(criticalVolume);
+            }
+            
+            // Actions
+            const actions = getActions();
+            if (actions.length > 0) {
+                data.data.actions = actions;
+            }
+            
+            // Generate configuration based on output type
+            let config = '';
+            
+            if (finalOutputType === 'automation') {
+                config = generateAutomationConfig(data);
+            } else {
+                config = generateScriptConfig(data);
+            }
+            
+            document.getElementById('preview').textContent = config;
+        }
+
+        function generateAutomationConfig(data) {
+            let config = `alias: "Send Mobile Notification"\n`;
+            config += `description: "Send notification to mobile devices"\n`;
+            config += `trigger:\n`;
+            config += `  - platform: state\n`;
+            config += `    entity_id: sensor.some_sensor\n`;
+            config += `action:\n`;
+            config += `  - service: notify.mobile_app_${currentDevice === 'android' ? 'android' : 'iphone'}\n`;
+            config += `    data:\n`;
+            config += `      title: "${data.title}"\n`;
+            config += `      message: "${data.message}"\n`;
+            
+            if (data.target && data.target.length > 0) {
+                config += `      target: ${JSON.stringify(data.target)}\n`;
+            }
+            
+            if (Object.keys(data.data).length > 0) {
+                config += `      data: ${JSON.stringify(data.data, null, 2).replace(/\n/g, '\n        ')}\n`;
+            }
+            
+            return config;
+        }
+
+        function generateScriptConfig(data) {
+            let config = `# Script to send mobile notification\n`;
+            config += `send_notification:\n`;
+            config += `  alias: "Send Mobile Notification"\n`;
+            config += `  sequence:\n`;
+            config += `    - service: notify.mobile_app_${currentDevice === 'android' ? 'android' : 'iphone'}\n`;
+            config += `      data:\n`;
+            config += `        title: "${data.title}"\n`;
+            config += `        message: "${data.message}"\n`;
+            
+            if (data.target && data.target.length > 0) {
+                config += `        target: ${JSON.stringify(data.target)}\n`;
+            }
+            
+            if (Object.keys(data.data).length > 0) {
+                config += `        data: ${JSON.stringify(data.data, null, 2).replace(/\n/g, '\n          ')}\n`;
+            }
+            
+            return config;
+        }
+
+        function resetForm() {
+            if (confirm('Are you sure you want to clear the form?')) {
+                document.querySelectorAll('input, select, textarea').forEach(element => {
+                    if (element.type !== 'radio' && element.type !== 'button' && element.id !== 'color') {
+                        if (element.type === 'checkbox') {
+                            element.checked = false;
+                        } else if (element.tagName === 'SELECT') {
+                            element.selectedIndex = 0;
+                        } else {
+                            element.value = '';
+                        }
+                    }
+                });
+                
+                // Reset color to default
+                document.getElementById('color').value = '#4a6fa5';
+                
+                // Clear actions
+                document.getElementById('actions-container').innerHTML = '';
+                actionCounter = 0;
+                
+                // Hide optional sections
+                document.getElementById('critical-options').style.display = 'none';
+                document.getElementById('custom-sound-group').style.display = 'none';
+                
+                // Reset preview
+                document.getElementById('preview').textContent = 'Configuration will appear here after clicking "Generate Configuration"';
+            }
+        }
+
+        function copyToClipboard() {
+            const previewText = document.getElementById('preview').textContent;
+            
+            navigator.clipboard.writeText(previewText).then(function() {
+                alert('Configuration copied to clipboard!');
+            }, function(err) {
+                console.error('Error copying: ', err);
+                alert('Error copying to clipboard!');
+            });
+        }
+
+        function loadExample(exampleId) {
+            resetForm();
+            
+            switch(exampleId) {
+                case 'basic':
+                    document.getElementById('title').value = 'Home Assistant';
+                    document.getElementById('message').value = 'This is a basic notification from Home Assistant';
+                    break;
+                    
+                case 'action':
+                    document.getElementById('title').value = 'Smart Home Control';
+                    document.getElementById('message').value = 'What would you like to do?';
+                    
+                    addAction();
+                    const action1 = document.querySelector('.action-item');
+                    document.getElementById(`${action1.id}-title`).value = 'Turn On Lights';
+                    document.getElementById(`${action1.id}-action`).value = 'SERVICE';
+                    document.getElementById(`${action1.id}-service`).value = 'light.turn_on';
+                    document.getElementById(`${action1.id}-service-data`).value = '{"entity_id": "light.living_room"}';
+                    
+                    addAction();
+                    const action2 = document.querySelectorAll('.action-item')[1];
+                    document.getElementById(`${action2.id}-title`).value = 'Open Dashboard';
+                    document.getElementById(`${action2.id}-action`).value = 'URI';
+                    document.getElementById(`${action2.id}-uri`).value = 'https://homeassistant.local';
+                    break;
+                    
+                case 'critical':
+                    document.getElementById('title').value = 'SECURITY ALERT';
+                    document.getElementById('message').value = 'Motion detected at front door!';
+                    document.getElementById('priority').value = 'high';
+                    document.getElementById('critical').checked = true;
+                    document.getElementById('critical-options').style.display = 'block';
+                    document.getElementById('badge').value = '1';
+                    break;
+            }
+            
+            generateConfiguration();
+        }
+
+        function toggleDarkMode() {
+            const body = document.body;
+            const themeToggle = document.getElementById('theme-toggle');
+            
+            body.classList.toggle('dark-mode');
+            
+            if (body.classList.contains('dark-mode')) {
+                localStorage.setItem('darkMode', 'enabled');
+                themeToggle.textContent = '☀️ Light Mode';
+            } else {
+                localStorage.setItem('darkMode', 'disabled');
+                themeToggle.textContent = '🌙 Dark Mode';
+            }
+        }
+
+        // Check for saved theme preference
+        if (localStorage.getItem('darkMode') === 'enabled') {
+            document.body.classList.add('dark-mode');
+            document.getElementById('theme-toggle').textContent = '☀️ Light Mode';
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,744 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shell Command Generator for Home Assistant</title>
+    <style>
+        :root {
+            --primary-color: #4a6fa5;
+            --secondary-color: #166088;
+            --background-color: #f5f7fa;
+            --card-color: #ffffff;
+            --text-color: #333333;
+            --border-color: #dddddd;
+            --error-color: #e74c3c;
+            --success-color: #2ecc71;
+        }
+        
+        .dark-mode {
+            --primary-color: #5d8cc9;
+            --secondary-color: #2a7bb8;
+            --background-color: #1a1a1a;
+            --card-color: #2d2d2d;
+            --text-color: #e0e0e0;
+            --border-color: #444444;
+            --error-color: #ff6b6b;
+            --success-color: #51cf66;
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: var(--text-color);
+            background-color: var(--background-color);
+            padding: 20px;
+            transition: all 0.3s ease;
+        }
+        
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid var(--border-color);
+            position: relative;
+        }
+        
+        h1 {
+            color: var(--primary-color);
+            margin-bottom: 10px;
+        }
+        
+        .description {
+            color: var(--text-color);
+            opacity: 0.8;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .header-buttons {
+            position: absolute;
+            top: 0;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+        
+        .theme-toggle, .language-toggle {
+            background: var(--card-color);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            padding: 8px 15px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            color: var(--text-color);
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+        
+        .theme-toggle {
+            left: 0;
+        }
+        
+        .language-toggle {
+            right: 0;
+        }
+        
+        .theme-toggle:hover, .language-toggle:hover {
+            background: var(--primary-color);
+            color: white;
+        }
+        
+        .info-banner {
+            background-color: var(--card-color);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 30px;
+            grid-column: 1 / -1;
+        }
+        
+        .info-banner h3 {
+            margin-top: 0;
+            color: var(--primary-color);
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 10px;
+        }
+        
+        .info-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        
+        .info-section {
+            margin-bottom: 15px;
+        }
+        
+        .info-section h4 {
+            margin: 0 0 10px 0;
+            color: var(--secondary-color);
+        }
+        
+        .info-section ul {
+            padding-left: 20px;
+            margin: 0;
+        }
+        
+        .info-section li {
+            margin-bottom: 5px;
+            font-size: 0.9rem;
+        }
+        
+        .config-example {
+            background-color: var(--background-color);
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            padding: 10px;
+            font-family: monospace;
+            font-size: 0.85rem;
+            margin-top: 5px;
+        }
+        
+        .generator-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+        
+        @media (max-width: 768px) {
+            .generator-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .info-content {
+                grid-template-columns: 1fr;
+            }
+            
+            .examples-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .header-buttons {
+                position: static;
+                justify-content: space-between;
+                margin-top: 15px;
+            }
+        }
+        
+        .form-section, .preview-section {
+            background-color: var(--card-color);
+            border-radius: 8px;
+            padding: 25px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .section-title {
+            font-size: 1.3rem;
+            margin-bottom: 20px;
+            color: var(--secondary-color);
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+        
+        input, textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            font-size: 1rem;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            transition: border-color 0.3s ease;
+        }
+        
+        input:focus, textarea:focus {
+            outline: none;
+            border-color: var(--primary-color);
+        }
+        
+        textarea {
+            min-height: 120px;
+            resize: vertical;
+            font-family: monospace;
+        }
+        
+        .btn {
+            display: inline-block;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 10px 20px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        
+        .btn:hover {
+            background-color: var(--secondary-color);
+        }
+        
+        .btn:disabled {
+            background-color: #6c757d;
+            cursor: not-allowed;
+        }
+        
+        .btn:disabled:hover {
+            background-color: #6c757d;
+        }
+        
+        .btn-success {
+            background-color: var(--success-color);
+        }
+        
+        .btn-success:hover {
+            background-color: #27ae60;
+        }
+        
+        .btn-secondary {
+            background-color: #6c757d;
+        }
+        
+        .btn-secondary:hover {
+            background-color: #5a6268;
+        }
+        
+        .buttons-container {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .preview-code {
+            background-color: var(--background-color);
+            color: var(--text-color);
+            padding: 15px;
+            border-radius: 4px;
+            overflow-x: auto;
+            font-family: monospace;
+            white-space: pre-wrap;
+            margin-top: 15px;
+            max-height: 400px;
+            overflow-y: auto;
+            border: 1px solid var(--border-color);
+        }
+        
+        .error-message {
+            color: var(--error-color);
+            font-size: 0.9rem;
+            margin-top: 5px;
+            display: none;
+        }
+        
+        .filename-input {
+            margin-bottom: 15px;
+        }
+        
+        .download-disabled {
+            background-color: #6c757d;
+            cursor: not-allowed;
+        }
+        
+        .download-disabled:hover {
+            background-color: #6c757d;
+        }
+        
+        .examples-banner {
+            background-color: var(--card-color);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 20px;
+            grid-column: 1 / -1;
+        }
+        
+        .examples-banner h3 {
+            margin-top: 0;
+            color: var(--primary-color);
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 10px;
+        }
+        
+        .examples-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+        
+        .example-item {
+            background-color: var(--card-color);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            padding: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .example-item:hover {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        
+        .example-item:hover .example-title,
+        .example-item:hover .example-description,
+        .example-item:hover .example-command {
+            color: white;
+        }
+        
+        .example-title {
+            font-weight: bold;
+            margin-bottom: 5px;
+            color: var(--secondary-color);
+        }
+        
+        .example-description {
+            color: var(--text-color);
+            opacity: 0.8;
+            font-size: 0.9rem;
+            margin-bottom: 10px;
+        }
+        
+        .example-command {
+            background-color: var(--background-color);
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            padding: 8px;
+            font-family: monospace;
+            font-size: 0.8rem;
+            color: var(--text-color);
+            word-break: break-all;
+            overflow-wrap: break-word;
+        }
+        
+        small {
+            color: var(--text-color);
+            opacity: 0.7;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="header-buttons">
+                <button class="theme-toggle" id="themeToggle">🌙 Dark Mode</button>
+                <a href="command_shell_GEN_v1.0b.html" class="language-toggle">🇧🇬 Bulgarian</a>
+            </div>
+            <h1>Shell Command Generator for Home Assistant</h1>
+            <p class="description">This tool helps you generate YAML files for the shell_command integration in Home Assistant</p>
+        </header>
+        
+        <div class="info-banner">
+            <h3>Important Usage Information</h3>
+            <div class="info-content">
+                <div class="info-section">
+                    <h4>Configuration Format</h4>
+                    <p>This generator creates files for use with <code>!include_dir_named</code>:</p>
+                    <div class="config-example">
+                        # configuration.yaml<br>
+                        shell_command: !include_dir_named yaml/shell_command
+                    </div>
+                    <p><strong>Each file must contain only the command, without the <code>shell_command:</code> prefix!</strong></p>
+                </div>
+                
+                <div class="info-section">
+                    <h4>Shell Command Instructions</h4>
+                    <ul>
+                        <li>Shell commands run in the Home Assistant environment</li>
+                        <li>Use full paths to executable files</li>
+                        <li>For complex commands, create a script and call it</li>
+                        <li>Command name must not contain spaces</li>
+                        <li>Files are saved in the <code>yaml/shell_command/</code> directory</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        
+        <div class="generator-container">
+            <div class="form-section">
+                <h2 class="section-title">Command Settings</h2>
+                
+                <div class="form-group">
+                    <label for="command-name">Command Name:</label>
+                    <input type="text" id="command-name" placeholder="Enter command name (no spaces)" pattern="[^\s]+" title="Name must not contain spaces" required>
+                    <div class="error-message" id="name-error">Name must not contain spaces!</div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="command">Command to Execute:</label>
+                    <textarea id="command" placeholder="Enter the command to execute (without quotes)" required></textarea>
+                    <div class="error-message" id="command-error">Command is required!</div>
+                </div>
+                
+                <div class="buttons-container">
+                    <button type="button" class="btn btn-success" id="generate" disabled>Generate Configuration</button>
+                    <button type="button" class="btn btn-secondary" id="reset">Clear Form</button>
+                </div>
+            </div>
+            
+            <div class="preview-section">
+                <h2 class="section-title">Configuration Preview</h2>
+                
+                <div class="form-group filename-input">
+                    <label for="filename">File Name:</label>
+                    <input type="text" id="filename" placeholder="Enter file name (without extension)" required>
+                    <small>File will be downloaded with .yaml extension</small>
+                </div>
+                
+                <div class="preview-code" id="preview">
+                    Configuration will appear here after clicking "Generate Configuration"
+                </div>
+                
+                <div class="buttons-container">
+                    <button type="button" class="btn download-disabled" id="download" disabled>Download File</button>
+                    <button type="button" class="btn btn-secondary" id="copy">Copy to Clipboard</button>
+                </div>
+            </div>
+        </div>
+        
+        <div class="examples-banner">
+            <h3>Ready Examples</h3>
+            <p>Click on any example to load it into the generator:</p>
+            
+            <div class="examples-grid">
+                <div class="example-item" data-example="1">
+                    <div class="example-title">Example 1: Service Restart</div>
+                    <div class="example-description">Restart Docker container</div>
+                    <div class="example-command">docker restart addon_db21ed7f_qbittorrent</div>
+                </div>
+                
+                <div class="example-item" data-example="2">
+                    <div class="example-title">Example 2: File Copy</div>
+                    <div class="example-description">Copy configuration file between containers</div>
+                    <div class="example-command">docker cp /config/openvpn/config.ovpn addon_db21ed7f_qbittorrent:/config/openvpn/config.ovpn</div>
+                </div>
+                
+                <div class="example-item" data-example="3">
+                    <div class="example-title">Example 3: Script Execution</div>
+                    <div class="example-description">Execute Python script</div>
+                    <div class="example-command">python3 /config/scripts/backup.py</div>
+                </div>
+                
+                <div class="example-item" data-example="4">
+                    <div class="example-title">Example 4: Network Check</div>
+                    <div class="example-description">Ping test to device</div>
+                    <div class="example-command">ping -c 3 192.168.1.1</div>
+                </div>
+                
+                <div class="example-item" data-example="5">
+                    <div class="example-title">Example 5: Database Backup</div>
+                    <div class="example-description">Create database backup</div>
+                    <div class="example-command">pg_dump -U homeassistant -h localhost homeassistant > /backup/ha_backup_$(date +%Y%m%d_%H%M%S).sql</div>
+                </div>
+                
+                <div class="example-item" data-example="6">
+                    <div class="example-title">Example 6: Disk Space Check</div>
+                    <div class="example-description">Show used disk space</div>
+                    <div class="example-command">df -h /config</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Form elements
+            const commandNameInput = document.getElementById('command-name');
+            const commandInput = document.getElementById('command');
+            const filenameInput = document.getElementById('filename');
+            const generateButton = document.getElementById('generate');
+            const resetButton = document.getElementById('reset');
+            const copyButton = document.getElementById('copy');
+            const downloadButton = document.getElementById('download');
+            const previewElement = document.getElementById('preview');
+            const nameError = document.getElementById('name-error');
+            const commandError = document.getElementById('command-error');
+            const themeToggle = document.getElementById('themeToggle');
+            
+            // Dark Mode functionality
+            themeToggle.addEventListener('click', function() {
+                document.body.classList.toggle('dark-mode');
+                if (document.body.classList.contains('dark-mode')) {
+                    themeToggle.textContent = '☀️ Light Mode';
+                } else {
+                    themeToggle.textContent = '🌙 Dark Mode';
+                }
+            });
+            
+            // Form validation
+            function validateForm() {
+                const commandName = commandNameInput.value.trim();
+                const command = commandInput.value.trim();
+                const hasSpaces = /\s/.test(commandName);
+                const isValid = commandName !== '' && !hasSpaces && command !== '';
+                
+                generateButton.disabled = !isValid;
+                
+                // Show/hide errors
+                if (commandName === '' || hasSpaces) {
+                    nameError.style.display = 'block';
+                } else {
+                    nameError.style.display = 'none';
+                }
+                
+                if (command === '') {
+                    commandError.style.display = 'block';
+                } else {
+                    commandError.style.display = 'none';
+                }
+                
+                return isValid;
+            }
+            
+            // Name validation (no spaces)
+            commandNameInput.addEventListener('input', function() {
+                validateForm();
+                
+                // Auto-fill filename
+                if (filenameInput.value.trim() === '' && this.value.trim() !== '') {
+                    filenameInput.value = this.value.trim();
+                    updateDownloadButton();
+                }
+            });
+            
+            // Command validation
+            commandInput.addEventListener('input', function() {
+                validateForm();
+            });
+            
+            // Filename validation for download button
+            filenameInput.addEventListener('input', updateDownloadButton);
+            
+            function updateDownloadButton() {
+                if (filenameInput.value.trim() !== '') {
+                    downloadButton.disabled = false;
+                    downloadButton.classList.remove('download-disabled');
+                } else {
+                    downloadButton.disabled = true;
+                    downloadButton.classList.add('download-disabled');
+                }
+            }
+            
+            // Generate configuration
+            generateButton.addEventListener('click', function() {
+                if (!validateForm()) {
+                    alert('Please fill all fields correctly!');
+                    return;
+                }
+                
+                const commandName = commandNameInput.value.trim();
+                const command = commandInput.value.trim();
+                
+                // Generate YAML - ONLY THE COMMAND, without shell_command:
+                // Escape single quotes in command
+                const escapedCommand = command.replace(/'/g, "''");
+                const yamlConfig = `${commandName}: '${escapedCommand}'`;
+                
+                // Show preview
+                previewElement.textContent = yamlConfig;
+                
+                // Auto-fill filename if empty
+                if (filenameInput.value.trim() === '') {
+                    filenameInput.value = commandName;
+                    updateDownloadButton();
+                }
+            });
+            
+            // Clear form
+            resetButton.addEventListener('click', function() {
+                if (confirm('Are you sure you want to clear the form?')) {
+                    resetForm();
+                }
+            });
+            
+            // Copy to clipboard
+            copyButton.addEventListener('click', function() {
+                const previewText = previewElement.textContent;
+                
+                if (previewText === 'Configuration will appear here after clicking "Generate Configuration"') {
+                    alert('Please generate configuration first!');
+                    return;
+                }
+                
+                navigator.clipboard.writeText(previewText).then(function() {
+                    alert('Configuration copied to clipboard!');
+                }, function(err) {
+                    console.error('Copy error: ', err);
+                    alert('Error copying to clipboard!');
+                });
+            });
+            
+            // Download file
+            downloadButton.addEventListener('click', function() {
+                const previewText = previewElement.textContent;
+                const filename = filenameInput.value.trim();
+                
+                if (previewText === 'Configuration will appear here after clicking "Generate Configuration"') {
+                    alert('Please generate configuration first!');
+                    return;
+                }
+                
+                if (!filename) {
+                    alert('Please enter file name!');
+                    return;
+                }
+                
+                const blob = new Blob([previewText], { type: 'text/yaml' });
+                const url = URL.createObjectURL(blob);
+                
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `${filename}.yaml`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+            });
+            
+            // Load examples
+            const exampleItems = document.querySelectorAll('.example-item');
+            exampleItems.forEach(item => {
+                item.addEventListener('click', function() {
+                    const exampleId = this.getAttribute('data-example');
+                    loadExample(exampleId);
+                });
+            });
+            
+            // Function to load example
+            function loadExample(exampleId) {
+                // First clear the form
+                resetForm();
+                
+                // Then fill with example values
+                switch(exampleId) {
+                    case '1':
+                        // Example 1: Service restart
+                        commandNameInput.value = 'restart_qbittorrent';
+                        commandInput.value = 'docker restart addon_db21ed7f_qbittorrent';
+                        break;
+                        
+                    case '2':
+                        // Example 2: File copy
+                        commandNameInput.value = 'copy_openvpn_config';
+                        commandInput.value = 'docker cp /config/openvpn/config.ovpn addon_db21ed7f_qbittorrent:/config/openvpn/config.ovpn';
+                        break;
+                        
+                    case '3':
+                        // Example 3: Script execution
+                        commandNameInput.value = 'run_backup_script';
+                        commandInput.value = 'python3 /config/scripts/backup.py';
+                        break;
+                        
+                    case '4':
+                        // Example 4: Network check
+                        commandNameInput.value = 'ping_router';
+                        commandInput.value = 'ping -c 3 192.168.1.1';
+                        break;
+                        
+                    case '5':
+                        // Example 5: Database backup
+                        commandNameInput.value = 'backup_database';
+                        commandInput.value = 'pg_dump -U homeassistant -h localhost homeassistant > /backup/ha_backup_$(date +%Y%m%d_%H%M%S).sql';
+                        break;
+                        
+                    case '6':
+                        // Example 6: Disk space check
+                        commandNameInput.value = 'check_disk_space';
+                        commandInput.value = 'df -h /config';
+                        break;
+                }
+                
+                // Validate and activate button
+                validateForm();
+                
+                // Generate configuration
+                generateButton.click();
+            }
+            
+            // Helper function to clear form
+            function resetForm() {
+                commandNameInput.value = '';
+                commandInput.value = '';
+                filenameInput.value = '';
+                previewElement.textContent = 'Configuration will appear here after clicking "Generate Configuration"';
+                nameError.style.display = 'none';
+                commandError.style.display = 'none';
+                generateButton.disabled = true;
+                downloadButton.disabled = true;
+                downloadButton.classList.add('download-disabled');
+            }
+            
+            // Initialize form
+            validateForm();
+        });
+    </script>
+</body>
+</html>
