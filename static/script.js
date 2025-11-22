@@ -1,6 +1,25 @@
 // Simple language translations
 const translations = {
+    // ----------------------------------------------------------------------------------------
+    // ----------------------------------------------------------------------------------------
+    // English translations
+    // ----------------------------------------------------------------------------------------
+    // ----------------------------------------------------------------------------------------
     en: {
+        
+        // Contact Form (ADD THESE)
+        "contact.title": "Contact",
+        "contact.description": "Send us a message and we'll respond as soon as possible.",
+        "contact.form.name": "Name",
+        "contact.form.email": "Email", 
+        "contact.form.subject": "Subject",
+        "contact.form.message": "Message",
+        "contact.form.submit": "Send Message",
+        "contact.form.loading": "Sending...",
+        "contact.form.success": "Message sent successfully! We'll contact you soon.",
+        "contact.form.error": "Error sending message. Please try again.",
+        "contact.form.validation": "Please fill in all fields.",
+
         // Navigation
         "nav.home": "Home",
         "nav.projects": "Projects", 
@@ -129,7 +148,26 @@ const translations = {
         "footer.copyright": "© 2023 Home Assistant Projects. All rights reserved."
     },
     
+    // ----------------------------------------------------------------------------------------
+    // ----------------------------------------------------------------------------------------
+    // Bulgarian translations
+    // ----------------------------------------------------------------------------------------
+    // ----------------------------------------------------------------------------------------
     bg: {
+        
+        // Contact Form (ADD THESE)
+        "contact.title": "Контакт",
+        "contact.description": "Изпратете ни съобщение и ще ви отговорим възможно най-бързо.",
+        "contact.form.name": "Име",
+        "contact.form.email": "Имейл", 
+        "contact.form.subject": "Тема",
+        "contact.form.message": "Съобщение",
+        "contact.form.submit": "Изпрати съобщение",
+        "contact.form.loading": "Изпращане...",
+        "contact.form.success": "Съобщението е изпратено успешно! Ще се свържем с вас скоро.",
+        "contact.form.error": "Грешка при изпращане. Моля, опитайте отново.",
+        "contact.form.validation": "Моля, попълнете всички полета.",
+        // Navigation
         "nav.home": "Начало",
         "nav.projects": "Проекти",
         "nav.about": "За нас", 
@@ -254,7 +292,26 @@ const translations = {
         "footer.copyright": "© 2023 Home Assistant Projects. Всички права запазени."
     },
     
+    // ----------------------------------------------------------------------------------------
+    // ----------------------------------------------------------------------------------------
+    // German translations
+    // ----------------------------------------------------------------------------------------
+    // ----------------------------------------------------------------------------------------
     de: {
+        
+        // Contact Form (ADD THESE)
+        "contact.title": "Kontakt",
+        "contact.description": "Senden Sie uns eine Nachricht und wir antworten so schnell wie möglich.",
+        "contact.form.name": "Name",
+        "contact.form.email": "E-Mail", 
+        "contact.form.subject": "Betreff",
+        "contact.form.message": "Nachricht",
+        "contact.form.submit": "Nachricht Senden",
+        "contact.form.loading": "Wird gesendet...",
+        "contact.form.success": "Nachricht erfolgreich gesendet! Wir werden uns bald bei Ihnen melden.",
+        "contact.form.error": "Fehler beim Senden. Bitte versuchen Sie es erneut.",
+        "contact.form.validation": "Bitte füllen Sie alle Felder aus.",
+
         // Navigation
         "nav.home": "Startseite",
         "nav.projects": "Projekte",
@@ -487,6 +544,48 @@ class LanguageManager {
 document.addEventListener('DOMContentLoaded', () => {
     const languageManager = new LanguageManager();
     
+    // Contact modal functionality
+    const contactModal = document.getElementById('contact-modal');
+    const contactLinks = document.querySelectorAll('a[href="#contact"]');
+    const closeBtn = document.querySelector('.close');
+
+    // Open modal when clicking contact links in navigation
+    contactLinks.forEach(link => {
+        link.addEventListener('click', function(e) {
+            e.preventDefault();
+            if (contactModal) {
+                contactModal.style.display = 'block';
+                document.body.style.overflow = 'hidden';
+            }
+        });
+    });
+
+    // Close modal when clicking X
+    if (closeBtn && contactModal) {
+        closeBtn.addEventListener('click', function() {
+            contactModal.style.display = 'none';
+            document.body.style.overflow = 'auto';
+        });
+    }
+
+    // Close modal when clicking outside
+    if (contactModal) {
+        contactModal.addEventListener('click', function(e) {
+            if (e.target === contactModal) {
+                contactModal.style.display = 'none';
+                document.body.style.overflow = 'auto';
+            }
+        });
+    }
+
+    // Close modal with Escape key
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && contactModal && contactModal.style.display === 'block') {
+            contactModal.style.display = 'none';
+            document.body.style.overflow = 'auto';
+        }
+    });
+    
     // Mobile Navigation
     const hamburger = document.querySelector('.hamburger');
     const navMenu = document.querySelector('.nav-menu');
@@ -518,4 +617,121 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     });
+
+    // Contact Form functionality
+    const contactForm = document.getElementById('contact-form');
+    const formMessage = document.getElementById('form-message');
+    
+    if (contactForm) {
+        contactForm.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            // Get form data
+            const formData = new FormData(contactForm);
+            const data = {
+                name: formData.get('name'),
+                email: formData.get('email'),
+                subject: formData.get('subject'),
+                message: formData.get('message')
+            };
+            
+            // Get current language for validation messages
+            const currentLang = localStorage.getItem('preferred-language') || 'en';
+            
+            // Validate form
+            if (!data.name || !data.email || !data.subject || !data.message) {
+                const validationMsg = translations[currentLang]?.["contact.form.validation"] || "Please fill in all fields.";
+                showMessage(validationMsg, 'error');
+                return;
+            }
+            
+            // Show loading state
+            const submitBtn = contactForm.querySelector('button[type="submit"]');
+            const originalText = submitBtn.textContent;
+            const loadingText = translations[currentLang]?.["contact.form.loading"] || "Sending...";
+            submitBtn.textContent = loadingText;
+            submitBtn.disabled = true;
+            
+            try {
+                // Send to ntfy.sh
+                await sendToNtfy(data);
+                
+                // Show success message
+                const successMsg = translations[currentLang]?.["contact.form.success"] || "Message sent successfully!";
+                showMessage(successMsg, 'success');
+                contactForm.reset();
+                
+                // Close modal after success
+                setTimeout(() => {
+                    if (contactModal) {
+                        contactModal.style.display = 'none';
+                    }
+                }, 2000);
+                
+            } catch (error) {
+                console.error('Error sending message:', error);
+                const errorMsg = translations[currentLang]?.["contact.form.error"] || "Error sending message.";
+                showMessage(errorMsg, 'error');
+            } finally {
+                // Reset button state
+                submitBtn.textContent = originalText;
+                submitBtn.disabled = false;
+            }
+        });
+    }
+    
+    function showMessage(text, type) {
+        if (formMessage) {
+            formMessage.textContent = text;
+            formMessage.className = 'form-message ' + type;
+            formMessage.style.display = 'block';
+            
+            // Auto hide after 5 seconds
+            setTimeout(() => {
+                formMessage.style.display = 'none';
+            }, 5000);
+        }
+    }
+    
+    async function sendToNtfy(data) {
+        const topic = 'pasevsu_messages';
+        const ntfyUrl = `https://ntfy.sh/${topic}`;
+        
+        // Create the message content
+        const messageContent = `
+    Name: ${data.name}
+    Email: ${data.email}
+    Subject: ${data.subject}
+
+    Message:
+    ${data.message}
+
+    Sent from: ${window.location.hostname}
+        `.trim();
+        
+        try {
+            // Send to ntfy.sh
+            const response = await fetch(ntfyUrl, {
+                method: 'POST',
+                body: messageContent,
+                headers: {
+                    'Title': `New message from: ${data.name}`,
+                    'Priority': 'default',
+                    'Tags': 'email,envelope',
+                    'Click': `mailto:${data.email}`
+                }
+            });
+            
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            
+            console.log('Message sent successfully to ntfy');
+            return response;
+            
+        } catch (error) {
+            console.error('Error sending to ntfy:', error);
+            throw error;
+        }
+    }
 });
