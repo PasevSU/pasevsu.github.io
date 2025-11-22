@@ -66,3 +66,47 @@
         min-width: auto;
     }
 }
+
+/* Генератори - 3 колони и бутони */
+.generators-list .gen-grid{
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+    align-items: start;
+}
+.gen-column{
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+.gen-button{
+    display: inline-block;
+    width: 100%; /* за да изглеждат като пълноширинни бутони в колоните */
+    background: #2bb0ea;
+    color: #ffffff;
+    text-decoration: none;
+    text-align: center;
+    padding: 12px 18px;
+    border-radius: 8px;
+    font-weight: 600;
+    box-shadow: 0 4px 0 rgba(0,0,0,0.08);
+    transition: transform .08s ease, box-shadow .08s ease, background .12s;
+}
+.gen-button:hover{
+    background: #24a6d6;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 0 rgba(0,0,0,0.10);
+}
+.gen-button:active{
+    transform: translateY(0);
+    box-shadow: 0 3px 0 rgba(0,0,0,0.06);
+}
+
+/* Отзивчивост: една колона на малки екрани */
+@media (max-width: 800px){
+    .generators-list .gen-grid{
+        grid-template-columns: 1fr;
+    }
+}
+/* Малеки стилизации за визуална идентичност с останалата тема */
+.generators-list { margin-top: 0.5rem; margin-bottom: 1.5rem; }

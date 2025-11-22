@@ -7,7 +7,7 @@ const translations = {
         "nav.about": "About",
         "nav.documentation": "Documentation",
         "nav.contact": "Contact",
-        "nav.support": "Support",
+        "nav.support": "Generators",
         
         // Hero
         "hero.title": "🏠 HOME ASSISTANT PROJECTS AND DEVELOPMENTS",
@@ -114,8 +114,8 @@ const translations = {
         "contact.title": "Contact",
         "contact.description": "If you need help or have questions, feel free to contact me.",
         // Support
-        "support.title": "Support",
-        "support.description": "If you like this project, check out more of my repositories here.",
+        "support.title": "Generators",
+        "support.description": "In case of problems with the generators, write to me at pasevdenislav@gmail.com with the subject 'HASS Generators' or via the contact form on the site.",
         "support.generators.title": "Generators",
         "support.generators.item1": "ntfy notifications generator",
         "support.generators.item2": "Mobile app notification generator",
@@ -130,15 +130,12 @@ const translations = {
     },
     
     bg: {
-        // Navigation
         "nav.home": "Начало",
         "nav.projects": "Проекти",
         "nav.about": "За нас", 
         "nav.documentation": "Документация",
         "nav.contact": "Контакт",
-        "nav.support": "Поддръжка",
-        
-        // Hero
+        "nav.support": "Генератори",
         "hero.title": "🏠 HOME ASSISTANT ПРОЕКТИ И РАЗРАБОТКИ",
         "hero.badge1": "🔧 Умен дом",
         "hero.badge2": "🧠 Автоматизации",
@@ -242,8 +239,8 @@ const translations = {
         "contact.title": "Контакт",
         "contact.description": "Ако имате нужда от помощ или въпроси, свържете се с мен.",
         // Support
-        "support.title": "Поддръжка",
-        "support.description": "Ако харесвате проекта, разгледайте още мои хранилища тук.",
+        "support.title": "Генератори",
+        "support.description": "При нередности с генераторите ми пишете на имейл pasevdenislav@gmail.com с тема 'HASS Генератори' или чрез контактната форма в сайта.",
         "support.generators.title": "Генератори",
         "support.generators.item1": "Генератор за ntfy известия",
         "support.generators.item2": "Генератор на известия до mobile app",
@@ -264,7 +261,7 @@ const translations = {
         "nav.about": "Über uns", 
         "nav.documentation": "Dokumentation",
         "nav.contact": "Kontakt",
-        "nav.support": "Unterstützung",
+        "nav.support": "Generatoren",
         
         // Hero
         "hero.title": "🏠 HOME ASSISTANT PROJEKTE UND ENTWICKLUNGEN",
@@ -370,8 +367,8 @@ const translations = {
         "contact.title": "Kontakt",
         "contact.description": "Wenn Sie Hilfe benötigen oder Fragen haben, kontaktieren Sie mich gerne.",
         // Support
-        "support.title": "Support",
-        "support.description": "Wenn Ihnen dieses Projekt gefällt, schauen Sie sich weitere meiner Repositories an.",
+        "support.title": "Generators",
+        "support.description": "Bei Unregelmäßigkeiten mit den Generatoren schreiben Sie mir bitte eine E-Mail an pasevdenislav@gmail.com mit dem Betreff 'HASS Generatoren' oder über das Kontaktformular auf der Website.",
         "support.generators.title": "Generatoren",
         "support.generators.item1": "Generator für ntfy-Benachrichtigungen",
         "support.generators.item2": "Generator für Mobile-App-Benachrichtigungen",
