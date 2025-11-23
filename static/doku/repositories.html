@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="bg">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add-on Repositories - Home Assistant</title>
+    <link rel="stylesheet" href="doku.css">
+</head>
+<body>
+    <div class="doku-container">
+        <header class="doku-header">
+            <div class="header-content">
+                <!-- Left: Back Button -->
+                <a href="../../index.html" class="back-button">
+                    <span class="back-icon">←</span>
+                    Начална страница
+                </a>
+                
+                <!-- Center: Title -->
+                <h1 class="header-title">📂 Моите Repository-та</h1>
+                
+                <!-- Right: Theme Toggle and Language Switch -->
+                <div class="header-controls">
+                    <button class="theme-toggle" onclick="toggleTheme()" title="Промяна на темата">
+                        <span class="theme-icon">🌙</span>
+                    </button>
+                    <div class="lang-switch">
+                        <button class="lang-btn active" data-lang="bg" onclick="changeLanguage('bg')">BG</button>
+                        <button class="lang-btn" data-lang="en" onclick="changeLanguage('en')">EN</button>
+                        <button class="lang-btn" data-lang="de" onclick="changeLanguage('de')">DE</button>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <main class="doku-main">
+            <div class="content-container">
+                <div class="description-bar">
+                    <p class="repo-description">Колекция от Repository-та, които използвам!</p>
+                </div>
+
+                <div class="markdown-content">
+                    <div class="repo-header">
+                        <div class="badges">
+                            <img src="https://img.shields.io/badge/License-MIT-yellow.svg?color=ff00d8" alt="License: MIT">
+                            <img src="https://img.shields.io/github/last-commit/Bacard1/homeassistant.svg?color=ff00d8" alt="GitHub last commit">
+                            <img src="https://img.shields.io/npm/dm/homeassistant.svg?color=ff00d8" alt="Downloads">
+                            <img src="https://img.shields.io/badge/HACS-2025.5.3-orange.svg?color=ff00d8" alt="hacs_badge">
+                        </div>
+                        <div class="repo-badges">
+                            <img src="https://img.shields.io/badge/.-HOME_ASSISTANT-blue?logo=homeassistant" alt="Home Assistant">
+                            <img src="https://img.shields.io/badge/PayPal-DONATE-blue?logo=paypal" alt="Donate via PayPal">
+                            <img src="https://img.shields.io/badge/Script-YAML-blue?logo=yaml" alt="Script">
+                        </div>
+                    </div>
+
+                    <div class="repositories-container">
+                        <!-- JavaScript will populate this -->
+                    </div>
+
+                    <div class="tip-box">
+                        <!-- JavaScript will populate this -->
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer class="doku-footer">
+            <p>© 2024 Home Assistant Projects. Всички права запазени.</p>
+        </footer>
+    </div>
+
+    <script src="doku.js"></script>
+</body>
+</html>
