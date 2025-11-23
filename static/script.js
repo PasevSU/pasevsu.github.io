@@ -6,6 +6,12 @@ const translations = {
     // ----------------------------------------------------------------------------------------
     // ----------------------------------------------------------------------------------------
     en: {
+        // Projects - Shopping
+        "projects.shopping.title": "🛒 Shopping List with Images",
+        "projects.shopping.li1": "Quickly find items by categories",
+        "projects.shopping.li2": "Visual identification through images", 
+        "projects.shopping.li3": "Household members receive notifications for new items",
+        "projects.shopping.li4": "Automatically removes checked items",
         
         // Contact Form (ADD THESE)
         "contact.title": "Contact",
@@ -154,7 +160,13 @@ const translations = {
     // ----------------------------------------------------------------------------------------
     // ----------------------------------------------------------------------------------------
     bg: {
-        
+        // Projects - Shopping  
+        "projects.shopping.title": "🛒 Списък за пазаруване с изображения",
+        "projects.shopping.li1": "Бързо намиране на артикули по категории",
+        "projects.shopping.li2": "Визуална идентификация чрез изображения",
+        "projects.shopping.li3": "Членовете на домакинството получават известия за нови артикули",
+        "projects.shopping.li4": "Автоматично премахва отметнати артикули",
+
         // Contact Form (ADD THESE)
         "contact.title": "Контакт",
         "contact.description": "Изпратете ни съобщение и ще ви отговорим възможно най-бързо.",
@@ -298,7 +310,13 @@ const translations = {
     // ----------------------------------------------------------------------------------------
     // ----------------------------------------------------------------------------------------
     de: {
-        
+        // Projects - Shopping
+        "projects.shopping.title": "🛒 Einkaufsliste mit Bildern", 
+        "projects.shopping.li1": "Schnelles Finden von Artikeln nach Kategorien",
+        "projects.shopping.li2": "Visuelle Identifikation durch Bilder",
+        "projects.shopping.li3": "Haushaltsmitglieder erhalten Benachrichtigungen für neue Artikel",
+        "projects.shopping.li4": "Entfernt automatisch abgehakte Artikel",
+
         // Contact Form (ADD THESE)
         "contact.title": "Kontakt",
         "contact.description": "Senden Sie uns eine Nachricht und wir antworten so schnell wie möglich.",
