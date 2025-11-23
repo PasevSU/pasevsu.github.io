@@ -5,10 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title data-translate="footer.title">Home Assistant Проекти</title>
     <link rel="stylesheet" href="static/styles.css">
-    <script src="static/sync-data.js"></script>
-    <!-- Първо translations, после language manager -->
-    <script src="static/translations.js"></script>
-    <script src="static/language-manager.js"></script>
+    <script src="static/admin.js"></script>
 </head>
 <body>
     <header>
@@ -376,7 +373,6 @@
 
         <section id="documentation" class="documentation">
             <h2 data-translate="documentation.title">Документация</h2>
-            <p data-translate="documentation.description">Документация за Home Assistant проекти</p>
             <div class="doc-links">
                 <a data-translate="documentation.link1" href="static/doku/repositories.html" class="doc-link">Списък с add-on хранилища</a>
                 <a data-translate="documentation.link2" href="static/doku/automations.html" class="doc-link">Видове автоматизации</a>
@@ -390,17 +386,18 @@
             <div class="generators-list">
                 <div class="gen-grid" role="group" aria-label="Генератори">
                     <div class="gen-column">
-                        <a class="gen-button" href="https://pasevsu.github.io/ntfy_GEN_v1.0e.html" data-translate="generator.ntfy" target="_blank" rel="noopener">Генератор за ntfy известия</a>
+                        <a class="gen-button" href="https://pasevsu.github.io/ntfy_GEN_v1.0e.html" data-translate="support.generators.item1" target="_blank" rel="noopener">Генератор за ntfy известия</a>
                     </div>
                     <div class="gen-column">
-                        <a class="gen-button" href="https://pasevsu.github.io/mobile_app_ntfy_GEN_v1.0e.html" data-translate="generator.mobile" target="_blank" rel="noopener">Генератор на известия до mobile app</a>
+                        <a class="gen-button" href="https://pasevsu.github.io/mobile_app_ntfy_GEN_v1.0e.html" data-translate="support.generators.item2" target="_blank" rel="noopener">Генератор на известия до mobile app</a>
                     </div>
                     <div class="gen-column">
-                        <a class="gen-button" href="https://pasevsu.github.io/command_shell_GEN_v1.0e.html" data-translate="generator.shell" target="_blank" rel="noopener">Генератор на command shell кодове</a>
+                        <a class="gen-button" href="https://pasevsu.github.io/command_shell_GEN_v1.0e.html" data-translate="support.generators.item3" target="_blank" rel="noopener">Генератор на command shell кодове</a>
                     </div>
                 </div>
-            </div>
-        </section>        
+             </div>
+         </section>
+
         <section id="about" class="about">
             <h2 data-translate="about.title">За нас</h2>
             <p data-translate="about.description">Това хранилище съдържа моите персонални проекти за Home Assistant, автоматизации, конфигурации и интеграции. Повечето проекти имат поддръжка на английски и български и редовно добавям нови функции и подобрения.</p>
@@ -475,5 +472,37 @@
     </div>
 
     <script src="static/script.js"></script>
+    <!-- Admin Panel Modal (hidden by default) -->
+    <div id="admin-modal" class="modal" style="display: none;">
+        <div class="modal-content" style="max-width: 800px;">
+            <span class="close">&times;</span>
+            <h3>Админ Панел</h3>
+            <div class="admin-actions">
+                <button class="admin-btn" onclick="openFullAdminPanel()">🛠️ Пълен Админ Панел</button>
+                <button class="admin-btn" onclick="quickEditProjects()">📝 Бързо Редактиране на Проекти</button>
+                <button class="admin-btn" onclick="quickEditContent()">📄 Бързо Редактиране на Съдържание</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+    // Функции за бързо редактиране
+    function openFullAdminPanel() {
+        window.open('index_admin.html', 'adminPanel', 'width=1200,height=800,scrollbars=yes');
+    }
+
+    function quickEditProjects() {
+        alert('Бързо редактиране на проекти - тази функционалност може да бъде добавена');
+    }
+
+    function quickEditContent() {
+        alert('Бързо редактиране на съдържание - тази функционалност може да бъде добавена');
+    }
+
+    // Затваряне на модалния прозорец
+    document.querySelector('#admin-modal .close').addEventListener('click', function() {
+        document.getElementById('admin-modal').style.display = 'none';
+    });
+    </script>
 </body>
 </html>

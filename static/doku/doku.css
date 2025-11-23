@@ -534,4 +534,116 @@ pre code {
         font-size: 0.8rem;
     }
 }
+/* Table of Contents styles */
+.toc-container {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin: 1rem 0;
+}
+
+.toc-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.toc-list li {
+    margin-bottom: 0.5rem;
+    padding-left: 1rem;
+    position: relative;
+}
+
+.toc-list li:before {
+    content: "•";
+    color: var(--accent-color);
+    position: absolute;
+    left: 0;
+}
+
+.toc-list a {
+    color: var(--text-primary);
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.toc-list a:hover {
+    color: var(--accent-color);
+}
+
+/* Method item styles */
+.method-item {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin: 1.5rem 0;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+.method-item h3 {
+    color: var(--accent-color);
+    margin-top: 0;
+    margin-bottom: 1rem;
+    border-bottom: 2px solid var(--accent-color);
+    padding-bottom: 0.5rem;
+}
+
+.method-item h4 {
+    color: var(--text-primary);
+    margin: 1.5rem 0 1rem 0;
+}
+
+/* Code block improvements */
+pre {
+    background: #2d3748;
+    color: #e2e8f0;
+    padding: 1.5rem;
+    border-radius: 8px;
+    overflow-x: auto;
+    margin: 1rem 0;
+    border-left: 4px solid var(--accent-color);
+    font-size: 0.9rem;
+    line-height: 1.4;
+}
+
+pre code {
+    background: none;
+    color: inherit;
+    padding: 0;
+    font-family: 'Courier New', monospace;
+}
+
+/* Responsive improvements */
+@media (max-width: 768px) {
+    .toc-container {
+        padding: 1rem;
+    }
+    
+    .method-item {
+        padding: 1rem;
+        margin: 1rem 0;
+    }
+    
+    pre {
+        padding: 1rem;
+        font-size: 0.8rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .toc-list li {
+        padding-left: 0.5rem;
+    }
+    
+    .method-item {
+        padding: 0.75rem;
+    }
+    
+    pre {
+        padding: 0.75rem;
+        font-size: 0.75rem;
+    }
+}
 }

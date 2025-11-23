@@ -341,3 +341,47 @@
         padding: 1.5rem;
     }
 }
+/* Admin Styles */
+.admin-login-btn {
+    background-color: #ff6b6b !important;
+    border-radius: 20px;
+    padding: 5px 15px !important;
+    margin-left: 10px;
+}
+
+.admin-actions {
+    display: grid;
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.admin-btn {
+    background-color: #3498db;
+    color: white;
+    border: none;
+    padding: 15px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s;
+    text-align: left;
+}
+
+.admin-btn:hover {
+    background-color: #2980b9;
+}
+
+.form-control {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 16px;
+    box-sizing: border-box;
+}
+
+.form-control:focus {
+    outline: none;
+    border-color: #3498db;
+    box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+}
