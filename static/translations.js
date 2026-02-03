@@ -9,44 +9,6 @@ const translations = {
     // ----------------------------------------------------------------------------------------
     // ----------------------------------------------------------------------------------------
     en: {
-        // Projects - Shopping
-        "projects.shopping.title": "🛒 Shopping List with Images",
-        "projects.shopping.li1": "Quickly find items by categories",
-        "projects.shopping.li2": "Visual identification through images", 
-        "projects.shopping.li3": "Household members receive notifications for new items",
-        "projects.shopping.li4": "Automatically removes checked items",
-        
-        // Documentation section
-        "documentation.description": "Documentation for Home Assistant projects",
-        "documentation.repositories": "List of add-on repositories",
-        "documentation.automations": "Types of automations", 
-        "documentation.configurations": "Configuration methods",
-
-    
-        // Support/Generators links
-        // "support.generators.item1": "ntfy notifications generator", 
-        // "support.generators.item2": "Mobile app notification generator",
-        // "support.generators.item3": "Command shell code generator",
-
-        // Support/Generators section  
-        "support.generators.description": "In case of problems with the generators, write to me at pasevdenislav@gmail.com with the subject 'HASS Generators' or via the contact form on the site.",
-        "support.generators.ntfy": "ntfy notifications generator",
-        "support.generators.mobile": "Mobile app notification generator",
-        "support.generators.shell": "Command shell code generator",
-
-        // Contact Form (ADD THESE)
-        "contact.title": "Contact",
-        "contact.description": "Send us a message and we'll respond as soon as possible.",
-        "contact.form.name": "Name",
-        "contact.form.email": "Email", 
-        "contact.form.subject": "Subject",
-        "contact.form.message": "Message",
-        "contact.form.submit": "Send Message",
-        "contact.form.loading": "Sending...",
-        "contact.form.success": "Message sent successfully! We'll contact you soon.",
-        "contact.form.error": "Error sending message. Please try again.",
-        "contact.form.validation": "Please fill in all fields.",
-
         // Navigation
         "nav.home": "Home",
         "nav.projects": "Projects", 
@@ -82,6 +44,7 @@ const translations = {
         "projects.title": "🛠️ PROJECTS",
         "projects.advantages": "Advantages:",
         "projects.goto": "↪️ GO TO PROJECT ▶️",
+        
         // Zigbee project (EN)
         "projects.zigbee.title": "🛜 Creating/Integrating a Zigbee Network",
         "projects.zigbee.imageAlt": "Zigbee Network",
@@ -91,10 +54,16 @@ const translations = {
         "projects.zigbee.li4": "Zigbee devices act as repeaters",
         "projects.zigbee.li5": "Affordable Zigbee hardware",
         "projects.zigbee.li6": "Upgradable when the network gets busy",
-        // Shopping project image alt
+        
+        // Shopping project
+        "projects.shopping.title": "🛒 Shopping List with Images",
         "projects.shopping.imageAlt": "Shopping List",
-
-        // Additional project translations
+        "projects.shopping.li1": "Quickly find items by categories",
+        "projects.shopping.li2": "Visual identification through images", 
+        "projects.shopping.li3": "Household members receive notifications for new items",
+        "projects.shopping.li4": "Automatically removes checked items",
+        
+        // WLED project
         "projects.wled.title": "🎤🔉 WLED SoundReactive Intelligent Light Show",
         "projects.wled.imageAlt": "WLED SoundReactive animation",
         "projects.wled.li1": "Real-time reaction beyond human perception",
@@ -103,6 +72,7 @@ const translations = {
         "projects.wled.li4": "Full WLED mod with official firmware features",
         "projects.wled.li5": "Web interface and mobile apps — Home Assistant compatible",
 
+        // Tasmota project
         "projects.tasmota.title": "🤖 TASMOTA – Integration and Devices",
         "projects.tasmota.imageAlt": "Tasmota devices",
         "projects.tasmota.li1": "Full device control",
@@ -110,6 +80,7 @@ const translations = {
         "projects.tasmota.li3": "Instant control via TASMOTA, Home Assistant and Alexa",
         "projects.tasmota.li4": "Does not burden your internet network",
 
+        // HASS 2 Zigbee project
         "projects.hass2zigbee.title": "🏠 HASS with Two Zigbee Networks",
         "projects.hass2zigbee.imageAlt": "Two Zigbee networks",
         "projects.hass2zigbee.li1": "Supports more devices",
@@ -117,12 +88,14 @@ const translations = {
         "projects.hass2zigbee.li3": "Enhanced compatibility testing",
         "projects.hass2zigbee.li4": "Flexible migration and experimentation",
 
+        // Voice control project
         "projects.voice.title": "🎙️ Voice Control of HASS Devices (Alexa / Google Home)",
         "projects.voice.imageAlt": "Voice control integration",
         "projects.voice.li1": "Control automations and scripts via voice",
         "projects.voice.li2": "Control devices and monitor sensors by voice",
         "projects.voice.li3": "Easily add and remove devices",
 
+        // Fingerbot project
         "projects.fingerbot.title": "🖲️ Zigbee Fingerbot Control via NFC & Home Assistant",
         "projects.fingerbot.imageAlt": "Fingerbot NFC door",
         "projects.fingerbot.li1": "Contactless access",
@@ -130,18 +103,31 @@ const translations = {
         "projects.fingerbot.li3": "Local and offline control",
         "projects.fingerbot.li4": "Compatible with any NFC-enabled device",
 
+        // Eco mode project
         "projects.eco.title": "🌿 Eco Mode for Thermostats in Home Assistant",
         "projects.eco.imageAlt": "Eco mode thermostat",
         "projects.eco.li1": "Energy savings",
         "projects.eco.li2": "Comfort without compromise",
         "projects.eco.li3": "Easy integration and customization",
 
+        // Dual Zigbee project (NEW)
+        "projects.dualzigbee.title": "🏠 HOME ASSISTANT with Dual Zigbee Networks via Zigbee2MQTT",
+        "projects.dualzigbee.imageAlt": "Two Zigbee networks",
+        "projects.dualzigbee.li1": "Two Independent Zigbee Networks",
+        "projects.dualzigbee.li2": "Zigbee2MQTT Integration", 
+        "projects.dualzigbee.li3": "Enhanced Performance",
+        "projects.dualzigbee.li4": "Flexibility and Scalability",
+        "projects.dualzigbee.li5": "Local Control",
+        "projects.dualzigbee.li6": "Comprehensive Documentation",
+
+        // Away mode project
         "projects.away.title": "🔋 HASS-AWAY-MODE / AWAY MODE",
         "projects.away.imageAlt": "Away mode banner",
         "projects.away.li1": "Automated away mode management",
         "projects.away.li2": "Home Assistant integration",
         "projects.away.li3": "Flexible scenarios with input booleans",
 
+        // Timer project
         "projects.timer.title": "⏱️ Home Assistant - Flexible Timer Automation",
         "projects.timer.imageAlt": "Flexible timer banner",
         "projects.timer.li1": "Set interval via UI (hours, minutes, seconds)",
@@ -151,22 +137,41 @@ const translations = {
         // About
         "about.title": "About",
         "about.description": "This repository contains my personal Home Assistant projects, automations, configurations, and integrations. Most projects include support in both English and Bulgarian, and I continuously update the repository with new features and improvements.",
+        
         // Documentation
         "documentation.title": "Documentation",
+        "documentation.description": "Documentation for Home Assistant projects",
         "documentation.link1": "List of add-on repositories",
         "documentation.link2": "Types of automations",
         "documentation.link3": "Configuration methods",
         
-        // Contact
-        "contact.title": "Contact",
-        "contact.description": "If you need help or have questions, feel free to contact me.",
         // Support
         "support.title": "Generators",
         "support.description": "If you encounter any problems with the generators, feel free to contact me using our contact form. In case of difficulties, we hope you will look for me, even for criticisms, they are important to me in order not to stop my aspiration to improve and learn every day.",
         "support.generators.title": "Generators",
-        // "support.generators.item1": "ntfy notifications generator",
-        // "support.generators.item2": "Mobile app notification generator",
-        // "support.generators.item3": "Command shell code generator",
+        "support.generators.description": "In case of problems with the generators, write to me at pasevdenislav@gmail.com with the subject 'HASS Generators' or via the contact form on the site.",
+        "support.generators.ntfy": "ntfy notifications generator",
+        "support.generators.mobile": "Mobile app notification generator",
+        "support.generators.shell": "Command shell code generator",
+        
+        // Generators buttons
+        "generator.ntfy": "ntfy notifications generator",
+        "generator.mobile": "Mobile app notification generator", 
+        "generator.shell": "Command shell code generator",
+        
+        // Contact
+        "contact.title": "Contact",
+        "contact.description": "If you need help or have questions, feel free to contact me.",
+        "contact.form.name": "Name",
+        "contact.form.email": "Email", 
+        "contact.form.subject": "Subject",
+        "contact.form.message": "Message",
+        "contact.form.submit": "Send Message",
+        "contact.form.loading": "Sending...",
+        "contact.form.success": "Message sent successfully! We'll contact you soon.",
+        "contact.form.error": "Error sending message. Please try again.",
+        "contact.form.validation": "Please fill in all fields.",
+        
         // Footer
         "footer.title": "Home Assistant Projects",
         "footer.description": "Simplifying daily routines, enhancing comfort, and saving energy in the smart home environment.",
@@ -182,37 +187,6 @@ const translations = {
     // ----------------------------------------------------------------------------------------
     // ----------------------------------------------------------------------------------------
     bg: {
-        // проекти - SПазаруване 
-        "projects.shopping.title": "🛒 Списък за пазаруване с изображения",
-        "projects.shopping.li1": "Бързо намиране на артикули по категории",
-        "projects.shopping.li2": "Визуална идентификация чрез изображения",
-        "projects.shopping.li3": "Членовете на домакинството получават известия за нови артикули",
-        "projects.shopping.li4": "Автоматично премахва отметнати артикули",
-
-        // Документация sраздел
-        "documentation.description": "Документация за Home Assistant проекти",
-        "documentation.repositories": "Списък с add-on хранилища", 
-        "documentation.automations": "Видове автоматизации",
-        "documentation.configurations": "Методи на конфигуриране",
-
-        // Support/Generators section
-        // "support.generators.description": "В случай на проблеми с генераторите, пишете ми на pasevdenislav@gmail.com със тема 'HASS Генератори' или чрез контактната форма на сайта.",
-        // "support.generators.ntfy": "Генератор за ntfy известия",
-        // "support.generators.mobile": "Генератор на известия до mobile app", 
-        // "support.generators.shell": "Генератор на command shell кодове",
-
-        // Форма за контакт (ДОБАВЕТЕ ТЕЗИ)
-        "contact.title": "Контакт",
-        "contact.description": "Изпратете ни съобщение и ще ви отговорим възможно най-бързо.",
-        "contact.form.name": "Име",
-        "contact.form.email": "Имейл", 
-        "contact.form.subject": "Тема",
-        "contact.form.message": "Съобщение",
-        "contact.form.submit": "Изпрати съобщение",
-        "contact.form.loading": "Изпращане...",
-        "contact.form.success": "Съобщението е изпратено успешно! Ще се свържем с вас скоро.",
-        "contact.form.error": "Грешка при изпращане. Моля, опитайте отново.",
-        "contact.form.validation": "Моля, попълнете всички полета.",
         // Навигация
         "nav.home": "Начало",
         "nav.projects": "Проекти",
@@ -220,6 +194,8 @@ const translations = {
         "nav.documentation": "Документация",
         "nav.contact": "Контакт",
         "nav.support": "Генератори",
+        
+        // Hero
         "hero.title": "🏠 HOME ASSISTANT ПРОЕКТИ И РАЗРАБОТКИ",
         "hero.badge1": "🔧 Умен дом",
         "hero.badge2": "🧠 Автоматизации",
@@ -242,10 +218,11 @@ const translations = {
         "summary.item6.title": "Офлайн Функционалност",
         "summary.item6.text": "Всичко функционира без интернет връзка.",
         
-        // проекти
+        // Проекти
         "projects.title": "🛠️ ПРОЕКТИ", 
         "projects.advantages": "Предимства:",
         "projects.goto": "↪️ КЪМ ПРОЕКТА ▶️",
+        
         // Проект Zigbee (BG)
         "projects.zigbee.title": "🛜 Създаване и интегриране на Zigbee мрежа",
         "projects.zigbee.imageAlt": "Zigbee мрежа",
@@ -255,9 +232,16 @@ const translations = {
         "projects.zigbee.li4": "Zigbee устройствата действат като ретранслатори",
         "projects.zigbee.li5": "Достъпен Zigbee хардуер",
         "projects.zigbee.li6": "Възможност за ъпгрейд при натоварване на мрежата",
+        
+        // Проект пазаруване
+        "projects.shopping.title": "🛒 Списък за пазаруване с изображения",
         "projects.shopping.imageAlt": "Списък за пазаруване",
+        "projects.shopping.li1": "Бързо намиране на артикули по категории",
+        "projects.shopping.li2": "Визуална идентификация чрез изображения",
+        "projects.shopping.li3": "Членовете на домакинството получават известия за нови артикули",
+        "projects.shopping.li4": "Автоматично премахва отметнати артикули",
 
-        // Zusätzlich прпревежfürмаProjekteи
+        // WLED проект
         "projects.wled.title": "🎤🔉 WLED SoundReactive Интелигентно светлинно шоу",
         "projects.wled.imageAlt": "WLED SoundReactive анимация",
         "projects.wled.li1": "Реакция в реално време извън човешкото възприятие",
@@ -266,6 +250,7 @@ const translations = {
         "projects.wled.li4": "Пълен WLED мод с официални функции на фърмуера",
         "projects.wled.li5": "Уеб интерфейс и мобилни приложения — съвместими с Home Assistant",
 
+        // Tasmota проект
         "projects.tasmota.title": "🤖 TASMOTA – Интеграция и устройства",
         "projects.tasmota.imageAlt": "Tasmota устройства",
         "projects.tasmota.li1": "Пълен контрол върху устройствата",
@@ -273,6 +258,7 @@ const translations = {
         "projects.tasmota.li3": "Моментален контрол чрез TASMOTA, Home Assistant и Alexa",
         "projects.tasmota.li4": "Не натоварва интернет мрежата",
 
+        // HASS 2 Zigbee проект
         "projects.hass2zigbee.title": "🏠 HASS с две Zigbee мрежи",
         "projects.hass2zigbee.imageAlt": "Две Zigbee мрежи",
         "projects.hass2zigbee.li1": "Поддържа повече устройства",
@@ -280,12 +266,14 @@ const translations = {
         "projects.hass2zigbee.li3": "Подобрено тестване за съвместимост",
         "projects.hass2zigbee.li4": "Гъвкава миграция и експериментиране",
 
+        // Гласово управление проект
         "projects.voice.title": "🎙️ Гласово управление на HASS устройства (Alexa / Google Home)",
         "projects.voice.imageAlt": "Гласово управление интеграция",
         "projects.voice.li1": "Управление на автоматизации и скриптове с глас",
         "projects.voice.li2": "Управление на устройства и мониторинг чрез глас",
         "projects.voice.li3": "Лесно добавяне и премахване на устройства",
 
+        // Fingerbot проект
         "projects.fingerbot.title": "🖲️ Управление на Zigbee Fingerbot чрез NFC и Home Assistant",
         "projects.fingerbot.imageAlt": "Fingerbot NFC врата",
         "projects.fingerbot.li1": "Безконтактен достъп",
@@ -293,44 +281,75 @@ const translations = {
         "projects.fingerbot.li3": "Локален и офлайн контрол",
         "projects.fingerbot.li4": "Съвместим с всяко NFC устройство",
 
+        // Eco режим проект
         "projects.eco.title": "🌿 Eco режим за термостати в Home Assistant",
         "projects.eco.imageAlt": "Еко режим термостат",
         "projects.eco.li1": "Спестяване на енергия",
         "projects.eco.li2": "Комфорт без компромис",
         "projects.eco.li3": "Лесна интеграция и персонализация",
 
+        // Dual Zigbee проект (НОВ)
+        "projects.dualzigbee.title": "🏠 HOME ASSISTANT с две Zigbee мрежи чрез Zigbee2MQTT",
+        "projects.dualzigbee.imageAlt": "Две Zigbee мрежи",
+        "projects.dualzigbee.li1": "Две независими Zigbee мрежи",
+        "projects.dualzigbee.li2": "Интеграция с Zigbee2MQTT",
+        "projects.dualzigbee.li3": "Подобрена производителност",
+        "projects.dualzigbee.li4": "Гъвкавост и мащабируемост",
+        "projects.dualzigbee.li5": "Локално управление",
+        "projects.dualzigbee.li6": "Подробна документация",
+
+        // Away режим проект
         "projects.away.title": "🔋 HASS-AWAY-MODE / AWAY MODE",
         "projects.away.imageAlt": "Банер Away Mode",
         "projects.away.li1": "Автоматизирано управление на away режима",
         "projects.away.li2": "Интеграция с Home Assistant",
         "projects.away.li3": "Гъвкави сценарии с input booleans",
 
+        // Таймер проект
         "projects.timer.title": "⏱️ Home Assistant - Гъвкава таймер автоматизация",
         "projects.timer.imageAlt": "Банер гъвкав таймер",
         "projects.timer.li1": "Настройка на интервал чрез UI (часове, минути, секунди)",
         "projects.timer.li2": "Изпълнява действия след изтичане на интервала",
         "projects.timer.li3": "Предотвратява преждевременно задействане",
 
-        // За
+        // За нас
         "about.title": "За нас",
         "about.description": "Това хранилище съдържа моите персонални проекти за Home Assistant, автоматизации, конфигурации и интеграции. Повечето проекти имат поддръжка на английски и български и редовно добавям нови функции и подобрения.",
+        
         // Документация
         "documentation.title": "Документация",
+        "documentation.description": "Документация за Home Assistant проекти",
         "documentation.link1": "Списък с add-on хранилища",
         "documentation.link2": "Видове автоматизации", 
         "documentation.link3": "Методи на конфигуриране",
         
+        // Поддръжка
+        "support.title": "Генератори",
+        "support.description": "Ако срещнете проблеми с генераторите, не се колебайте да се свържете с мен с помощта на контактната ни форма. В случай на трудности с се надяваме да ме потърсите, дори и за критики, те са важни за мен за да не спира стремежа ми да се подобрявам и уча със всеки ден.",
+        "support.generators.title": "Генератори",
+        "support.generators.description": "В случай на проблеми с генераторите, пишете ми на pasevdenislav@gmail.com със тема 'HASS Генератори' или чрез контактната форма на сайта.",
+        "support.generators.ntfy": "Генератор за ntfy известия",
+        "support.generators.mobile": "Генератор на известия до mobile app", 
+        "support.generators.shell": "Генератор на command shell кодове",
+        
+        // Генератори бутони
+        "generator.ntfy": "Генератор за ntfy известия",
+        "generator.mobile": "Генератор на известия до mobile app",
+        "generator.shell": "Генератор на command shell кодове",
         
         // Контакт
         "contact.title": "Контакт",
         "contact.description": "Ако имате нужда от помощ или въпроси, свържете се с мен.",
-        // поддръжка
-        "support.title": "Генератори",
-        "support.description": "Ако срещнете проблеми с генераторите, не се колебайте да се свържете с мен с помощта на контактната ни форма. В случай на трудности с се надяваме да ме потърсите, дори и за критики, те са важни за мен за да не спира стремежа ми да се подобрявам и уча със всеки ден.",
-        "support.generators.title": "Генератори",
-        // "support.generators.item1": "Генератор за ntfy известия",
-        // "support.generators.item2": "Генератор на известия до mobile app",
-        // "support.generators.item3": "Генератор на command shell кодове",
+        "contact.form.name": "Име",
+        "contact.form.email": "Имейл", 
+        "contact.form.subject": "Тема",
+        "contact.form.message": "Съобщение",
+        "contact.form.submit": "Изпрати съобщение",
+        "contact.form.loading": "Изпращане...",
+        "contact.form.success": "Съобщението е изпратено успешно! Ще се свържем с вас скоро.",
+        "contact.form.error": "Грешка при изпращане. Моля, опитайте отново.",
+        "contact.form.validation": "Моля, попълнете всички полета.",
+        
         // Footer
         "footer.title": "Home Assistant Проекти",
         "footer.description": "Оптимизиране на ежедневието, повишаване на комфорта и пестене на енергия в интелигентния дом.",
@@ -346,51 +365,6 @@ const translations = {
     // ----------------------------------------------------------------------------------------
     // ----------------------------------------------------------------------------------------
     de: {
-        // Projekte - Einkaufen
-        "projects.shopping.title": "🛒 Einkaufsliste mit Bildern", 
-        "projects.shopping.li1": "Schnelles Finden von Artikeln nach Kategorien",
-        "projects.shopping.li2": "Visuelle Identifikation durch Bilder",
-        "projects.shopping.li3": "Haushaltsmitglieder erhalten Benachrichtigungen für neue Artikel",
-        "projects.shopping.li4": "Entfernt automatisch abgehakte Artikel",
-
-        // Dokumentationsbereich
-        "documentation.description": "Dokumentation für Home Assistant Projekte",
-        "documentation.repositories": "Liste der Add-on-Repositorys",
-        "documentation.automations": "Arten von Automatisierungen",
-        "documentation.configurations": "Konfigurationsmethoden",
-
-        // Documentation links 
-        
-        
-        
-        "generator.ntfy": "Generator für ntfy-Benachrichtigungen",
-        "generator.mobile": "Generator für Mobile-App-Benachrichtigungen",
-        "generator.shell": "Generator für Command-Shell-Code",
-
-        // Support/Generators links
-        // "support.generators.item1": "Generator für ntfy-Benachrichtigungen",
-        // "support.generators.item2": "Generator für Mobile-App-Benachrichtigungen",
-        // "support.generators.item3": "Generator für Command-Shell-Code",
-
-        // Support/Generators section
-        "support.generators.description": "Bei Problemen mit den Generatoren schreiben Sie mir an pasevdenislav@gmail.com mit dem Betreff 'HASS Generatoren' oder über das Kontaktformular auf der Website.",
-        "support.generators.ntfy": "Generator für ntfy-Benachrichtigungen",
-        "support.generators.mobile": "Generator für Mobile-App-Benachrichtigungen",
-        "support.generators.shell": "Generator für Command-Shell-Code",
-
-        // Contact Form (ADD THESE)
-        "contact.title": "Kontakt",
-        "contact.description": "Senden Sie uns eine Nachricht und wir antworten so schnell wie möglich.",
-        "contact.form.name": "Name",
-        "contact.form.email": "E-Mail", 
-        "contact.form.subject": "Betreff",
-        "contact.form.message": "Nachricht",
-        "contact.form.submit": "Nachricht Senden",
-        "contact.form.loading": "Wird gesendet...",
-        "contact.form.success": "Nachricht erfolgreich gesendet! Wir werden uns bald bei Ihnen melden.",
-        "contact.form.error": "Fehler beim Senden. Bitte versuchen Sie es erneut.",
-        "contact.form.validation": "Bitte füllen Sie alle Felder aus.",
-
         // Navigation
         "nav.home": "Startseite",
         "nav.projects": "Projekte",
@@ -422,11 +396,12 @@ const translations = {
         "summary.item6.title": "Offline-Funktionalität",
         "summary.item6.text": "Alles funktioniert ohne Internetverbindung.",
         
-        // Projects
+        // Projekte
         "projects.title": "🛠️ PROJEKT",
         "projects.advantages": "Vorteile:",
         "projects.goto": "↪️ ZUM PROJEKT ▶️",
-        // Zigbee project (DE)
+        
+        // Zigbee Projekt (DE)
         "projects.zigbee.title": "🛜 Erstellen/Integration eines Zigbee-Netzwerks",
         "projects.zigbee.imageAlt": "Zigbee Netzwerk",
         "projects.zigbee.li1": "Internet-unabhängig mit Zigbee2MQTT",
@@ -435,9 +410,16 @@ const translations = {
         "projects.zigbee.li4": "Zigbee-Geräte fungieren als Repeater",
         "projects.zigbee.li5": "Erschwingliche Zigbee-Hardware",
         "projects.zigbee.li6": "Aufrüstbar bei hoher Netzbelastung",
+        
+        // Einkaufsliste Projekt
+        "projects.shopping.title": "🛒 Einkaufsliste mit Bildern", 
         "projects.shopping.imageAlt": "Einkaufsliste",
+        "projects.shopping.li1": "Schnelles Finden von Artikeln nach Kategorien",
+        "projects.shopping.li2": "Visuelle Identifikation durch Bilder",
+        "projects.shopping.li3": "Haushaltsmitglieder erhalten Benachrichtigungen für neue Artikel",
+        "projects.shopping.li4": "Entfernt automatisch abgehakte Artikel",
 
-        // Zusätzliche Projektübersetzungen
+        // WLED Projekt
         "projects.wled.title": "🎤🔉 WLED SoundReactive Intelligente Lichtshow",
         "projects.wled.imageAlt": "WLED SoundReactive Animation",
         "projects.wled.li1": "Echtzeitreaktion jenseits der menschlichen Wahrnehmung",
@@ -446,6 +428,7 @@ const translations = {
         "projects.wled.li4": "Vollständiger WLED-Mod mit offiziellen Firmware-Funktionen",
         "projects.wled.li5": "Webinterface und mobile Apps — Home Assistant kompatibel",
 
+        // TASMOTA Projekt
         "projects.tasmota.title": "🤖 TASMOTA – Integration und Geräte",
         "projects.tasmota.imageAlt": "Tasmota Geräte",
         "projects.tasmota.li1": "Vollständige Geräteverwaltung",
@@ -453,6 +436,7 @@ const translations = {
         "projects.tasmota.li3": "Sofortige Steuerung über TASMOTA, Home Assistant und Alexa",
         "projects.tasmota.li4": "Belastet Ihr Internetnetzwerk nicht",
 
+        // HASS mit zwei Zigbee-Netzwerken Projekt
         "projects.hass2zigbee.title": "🏠 HASS mit zwei Zigbee-Netzwerken",
         "projects.hass2zigbee.imageAlt": "Zwei Zigbee Netzwerke",
         "projects.hass2zigbee.li1": "Unterstützt mehr Geräte",
@@ -460,12 +444,14 @@ const translations = {
         "projects.hass2zigbee.li3": "Verbesserte Kompatibilitätstests",
         "projects.hass2zigbee.li4": "Flexible Migration und Experimente",
 
+        // Sprachsteuerung Projekt
         "projects.voice.title": "🎙️ Sprachsteuerung von HASS-Geräten (Alexa / Google Home)",
         "projects.voice.imageAlt": "Sprachsteuerungsintegration",
         "projects.voice.li1": "Steuerung von Automatisierungen und Skripten per Sprache",
         "projects.voice.li2": "Geräte steuern und Sensoren per Sprache überwachen",
         "projects.voice.li3": "Einfaches Hinzufügen und Entfernen von Geräten",
 
+        // Fingerbot Projekt
         "projects.fingerbot.title": "🖲️ Zigbee Fingerbot Steuerung via NFC & Home Assistant",
         "projects.fingerbot.imageAlt": "Fingerbot NFC Tür",
         "projects.fingerbot.li1": "Kontaktloser Zugang",
@@ -473,44 +459,75 @@ const translations = {
         "projects.fingerbot.li3": "Lokale und Offline-Steuerung",
         "projects.fingerbot.li4": "Kompatibel mit jedem NFC-fähigen Gerät",
 
+        // Eco Modus Projekt
         "projects.eco.title": "🌿 Eco Modus für Thermostate in Home Assistant",
         "projects.eco.imageAlt": "Eco Modus Thermostat",
         "projects.eco.li1": "Energieeinsparung",
         "projects.eco.li2": "Komfort ohne Kompromisse",
         "projects.eco.li3": "Einfache Integration und Anpassung",
 
+        // Dual Zigbee Projekt (NEU)
+        "projects.dualzigbee.title": "🏠 HOME ASSISTANT mit zwei Zigbee-Netzwerken über Zigbee2MQTT",
+        "projects.dualzigbee.imageAlt": "Zwei Zigbee Netzwerke",
+        "projects.dualzigbee.li1": "Zwei unabhängige Zigbee-Netzwerke",
+        "projects.dualzigbee.li2": "Integration mit Zigbee2MQTT",
+        "projects.dualzigbee.li3": "Verbesserte Leistung",
+        "projects.dualzigbee.li4": "Flexibilität und Skalierbarkeit",
+        "projects.dualzigbee.li5": "Lokale Steuerung",
+        "projects.dualzigbee.li6": "Detaillierte Dokumentation",
+
+        // Away Mode Projekt
         "projects.away.title": "🔋 HASS-AWAY-MODE / AWAY MODE",
         "projects.away.imageAlt": "Away Mode Banner",
         "projects.away.li1": "Automatisiertes Away-Mode-Management",
         "projects.away.li2": "Home Assistant Integration",
         "projects.away.li3": "Flexible Szenarien mit Input-Booleans",
 
+        // Timer Projekt
         "projects.timer.title": "⏱️ Home Assistant - Flexible Timer Automation",
         "projects.timer.imageAlt": "Flexibler Timer Banner",
         "projects.timer.li1": "Intervall über UI einstellen (Stunden, Minuten, Sekunden)",
         "projects.timer.li2": "Aktionen nach Ablauf des Intervalls ausführen",
         "projects.timer.li3": "Verhindert vorzeitiges Auslösen",
 
-        // About
+        // Über uns
         "about.title": "Über uns",
         "about.description": "Dieses Repository enthält meine persönlichen Home Assistant Projekte, Automatisierungen, Konfigurationen und Integrationen. Die meisten Projekte unterstützen Englisch und Bulgarisch und werden laufend erweitert.",
-        // Documentation
+        
+        // Dokumentation
         "documentation.title": "Dokumentation",
+        "documentation.description": "Dokumentation für Home Assistant Projekte",
         "documentation.link1": "Liste der Add-on-Repositorys",
         "documentation.link2": "Arten von Automatisierungen",
         "documentation.link3": "Konfigurationsmethoden",
         
-        
-        // Contact
-        "contact.title": "Kontakt",
-        "contact.description": "Wenn Sie Hilfe benötigen oder Fragen haben, kontaktieren Sie mich gerne.",
         // Support
         "support.title": "Generators",
         "support.description": "Sollten Sie Probleme mit den Generatoren haben, können Sie mich gerne über unser Kontaktformular kontaktieren. Bei Schwierigkeiten hoffen wir, dass Sie sich an mich wenden, auch bei Kritik, sie ist mir wichtig, um meinen Wunsch, mich jeden Tag zu verbessern und zu lernen, nicht zu stoppen.",
         "support.generators.title": "Generatoren",
-        // "support.generators.item1": "Generator für ntfy-Benachrichtigungen",
-        // "support.generators.item2": "Generator für Mobile-App-Benachrichtigungen",
-        // "support.generators.item3": "Generator für command shell-Code",
+        "support.generators.description": "Bei Problemen mit den Generatoren schreiben Sie mir an pasevdenislav@gmail.com mit dem Betreff 'HASS Generatoren' oder über das Kontaktformular auf der Website.",
+        "support.generators.ntfy": "Generator für ntfy-Benachrichtigungen",
+        "support.generators.mobile": "Generator für Mobile-App-Benachrichtigungen",
+        "support.generators.shell": "Generator für Command-Shell-Code",
+        
+        // Generatoren Buttons
+        "generator.ntfy": "Generator für ntfy-Benachrichtigungen",
+        "generator.mobile": "Generator für Mobile-App-Benachrichtigungen",
+        "generator.shell": "Generator für Command-Shell-Code",
+        
+        // Kontakt
+        "contact.title": "Kontakt",
+        "contact.description": "Wenn Sie Hilfe benötigen oder Fragen haben, kontaktieren Sie mich gerne.",
+        "contact.form.name": "Name",
+        "contact.form.email": "E-Mail", 
+        "contact.form.subject": "Betreff",
+        "contact.form.message": "Nachricht",
+        "contact.form.submit": "Nachricht Senden",
+        "contact.form.loading": "Wird gesendet...",
+        "contact.form.success": "Nachricht erfolgreich gesendet! Wir werden uns bald bei Ihnen melden.",
+        "contact.form.error": "Fehler beim Senden. Bitte versuchen Sie es erneut.",
+        "contact.form.validation": "Bitte füllen Sie alle Felder aus.",
+        
         // Footer
         "footer.title": "Home Assistant Projekte",
         "footer.description": "Vereinfachung des Alltags, Erhöhung des Komforts und Einsparung von Energie im Smart Home.",
