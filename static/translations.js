@@ -1,3 +1,4 @@
+
 //---------------------------------------------------------------------------------------- 
 // В този файл се съхраняват всички преводи за различните езици, използвани в index.html
 //----------------------------------------------------------------------------------------
@@ -39,6 +40,11 @@ const translations = {
         "summary.item5.text": "Utilize existing devices for home protection when no one is home.",
         "summary.item6.title": "Offline Functionality", 
         "summary.item6.text": "Everything operates without internet access.",
+        
+        // Platforms
+        "platforms.homeassistant": "HomeAssistant",
+        "platforms.web": "WEB", 
+        "platforms.android": "ANDROID",
         
         // Projects
         "projects.title": "🛠️ PROJECTS",
@@ -218,6 +224,11 @@ const translations = {
         "summary.item6.title": "Офлайн Функционалност",
         "summary.item6.text": "Всичко функционира без интернет връзка.",
         
+        // Platforms
+        "platforms.homeassistant": "HomeAssistant",
+        "platforms.web": "WEB",
+        "platforms.android": "ANDROID",
+        
         // Проекти
         "projects.title": "🛠️ ПРОЕКТИ", 
         "projects.advantages": "Предимства:",
@@ -395,6 +406,11 @@ const translations = {
         "summary.item5.text": "Nutzung vorhandener Geräte zum Schutz des Hauses, wenn niemand anwesend ist.",
         "summary.item6.title": "Offline-Funktionalität",
         "summary.item6.text": "Alles funktioniert ohne Internetverbindung.",
+        
+        // Platforms
+        "platforms.homeassistant": "HomeAssistant", 
+        "platforms.web": "WEB",
+        "platforms.android": "ANDROID",
         
         // Projekte
         "projects.title": "🛠️ PROJEKT",
