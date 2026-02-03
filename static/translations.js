@@ -1,4 +1,3 @@
-
 //---------------------------------------------------------------------------------------- 
 // В този файл се съхраняват всички преводи за различните езици, използвани в index.html
 //----------------------------------------------------------------------------------------
@@ -167,7 +166,7 @@ const translations = {
         
         // Contact
         "contact.title": "Contact",
-        "contact.description": "If you need help or have questions, feel free to contact me.",
+        "contact.description": "Send us a message and we'll respond as soon as possible.",
         "contact.form.name": "Name",
         "contact.form.email": "Email", 
         "contact.form.subject": "Subject",
@@ -350,7 +349,7 @@ const translations = {
         
         // Контакт
         "contact.title": "Контакт",
-        "contact.description": "Ако имате нужда от помощ или въпроси, свържете се с мен.",
+        "contact.description": "Изпратете ни съобщение и ще ви отговорим възможно най-бързо.",
         "contact.form.name": "Име",
         "contact.form.email": "Имейл", 
         "contact.form.subject": "Тема",
@@ -531,9 +530,9 @@ const translations = {
         "generator.mobile": "Generator für Mobile-App-Benachrichtigungen",
         "generator.shell": "Generator für Command-Shell-Code",
         
-        // Kontakt
+        // Контакт - ДОБАВЕНИ ЛИПСВАЩИТЕ ПРЕВОДИ
         "contact.title": "Kontakt",
-        "contact.description": "Wenn Sie Hilfe benötigen oder Fragen haben, kontaktieren Sie mich gerne.",
+        "contact.description": "Senden Sie uns eine Nachricht und wir antworten so schnell wie möglich.",
         "contact.form.name": "Name",
         "contact.form.email": "E-Mail", 
         "contact.form.subject": "Betreff",
