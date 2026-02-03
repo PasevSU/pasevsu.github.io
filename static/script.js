@@ -11,6 +11,15 @@ contactLinks.forEach(link => {
         if (contactModal) {
             contactModal.style.display = 'block';
             document.body.style.overflow = 'hidden';
+            
+            // Добавяме клас за да предотвратим скролиране
+            document.body.classList.add('modal-open');
+            
+            // Фокусираме се върху първото поле
+            setTimeout(() => {
+                const nameInput = document.getElementById('name');
+                if (nameInput) nameInput.focus();
+            }, 100);
         }
     });
 });
@@ -20,6 +29,7 @@ if (closeBtn && contactModal) {
     closeBtn.addEventListener('click', function() {
         contactModal.style.display = 'none';
         document.body.style.overflow = 'auto';
+        document.body.classList.remove('modal-open');
     });
 }
 
@@ -29,6 +39,7 @@ if (contactModal) {
         if (e.target === contactModal) {
             contactModal.style.display = 'none';
             document.body.style.overflow = 'auto';
+            document.body.classList.remove('modal-open');
         }
     });
 }
@@ -38,6 +49,7 @@ document.addEventListener('keydown', function(e) {
     if (e.key === 'Escape' && contactModal && contactModal.style.display === 'block') {
         contactModal.style.display = 'none';
         document.body.style.overflow = 'auto';
+        document.body.classList.remove('modal-open');
     }
 });
 
@@ -45,26 +57,39 @@ document.addEventListener('keydown', function(e) {
 const hamburger = document.querySelector('.hamburger');
 const navMenu = document.querySelector('.nav-menu');
 
-hamburger.addEventListener('click', () => {
-    hamburger.classList.toggle('active');
-    navMenu.classList.toggle('active');
+if (hamburger && navMenu) {
+    hamburger.addEventListener('click', () => {
+        hamburger.classList.toggle('active');
+        navMenu.classList.toggle('active');
+    });
+}
+
+// Close mobile menu when clicking on nav links
+document.querySelectorAll('.nav-link').forEach(n => {
+    n.addEventListener('click', () => {
+        if (hamburger && navMenu) {
+            hamburger.classList.remove('active');
+            navMenu.classList.remove('active');
+        }
+    });
 });
 
-// Close mobile menu
-document.querySelectorAll('.nav-link').forEach(n => n.addEventListener('click', () => {
-    hamburger.classList.remove('active');
-    navMenu.classList.remove('active');
-}));
-
-// Smooth scrolling
+// Smooth scrolling - НАПРАВИХМЕ ИЗКЛЮЧЕНИЕ ЗА КОНТАКТ ЛИНКОВЕТЕ
 document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     anchor.addEventListener('click', function (e) {
-        e.preventDefault();
         const targetId = this.getAttribute('href');
+        
+        // Ако е контакт линк, не правим smooth scrolling
+        if (targetId === '#contact') {
+            e.preventDefault();
+            return;
+        }
+        
         if (targetId === '#') return;
         
         const targetElement = document.querySelector(targetId);
         if (targetElement) {
+            e.preventDefault();
             window.scrollTo({
                 top: targetElement.offsetTop - 80,
                 behavior: 'smooth'
@@ -120,6 +145,8 @@ if (contactForm) {
             setTimeout(() => {
                 if (contactModal) {
                     contactModal.style.display = 'none';
+                    document.body.style.overflow = 'auto';
+                    document.body.classList.remove('modal-open');
                 }
             }, 2000);
             
@@ -282,23 +309,83 @@ prefersDarkScheme.addEventListener('change', (e) => {
     align-items: center;
     justify-content: center;
 }
+
 // Banner hide on scroll
 let lastScrollTop = 0;
 const banner = document.querySelector('.banner');
 const navbar = document.querySelector('.navbar');
-const bannerHeight = banner.offsetHeight;
 
-window.addEventListener('scroll', function() {
-    let scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+if (banner && navbar) {
+    const bannerHeight = banner.offsetHeight;
     
-    if (scrollTop > lastScrollTop && scrollTop > bannerHeight) {
-        // Scrolling down & past banner - hide banner
-        banner.style.transform = 'translateY(-100%)';
-        banner.style.transition = 'transform 0.3s ease';
-    } else {
-        // Scrolling up - show banner
-        banner.style.transform = 'translateY(0)';
-    }
-    
-    lastScrollTop = scrollTop;
-});
+    window.addEventListener('scroll', function() {
+        let scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+        
+        if (scrollTop > lastScrollTop && scrollTop > bannerHeight) {
+            // Scrolling down & past banner - hide banner
+            banner.style.transform = 'translateY(-100%)';
+            banner.style.transition = 'transform 0.3s ease';
+        } else {
+            // Scrolling up - show banner
+            banner.style.transform = 'translateY(0)';
+        }
+        
+        lastScrollTop = scrollTop;
+    });
+}
+
+// Добавяме CSS за модал
+if (document.head) {
+    const style = document.createElement('style');
+    style.textContent = `
+        .modal-open {
+            overflow: hidden;
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 9999;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            overflow-y: auto;
+        }
+        
+        .modal-content {
+            background-color: white;
+            margin: 50px auto;
+            padding: 2rem;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 500px;
+            position: relative;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+        
+        .close {
+            position: absolute;
+            right: 1.5rem;
+            top: 1rem;
+            font-size: 1.8rem;
+            cursor: pointer;
+            color: #333;
+            background: none;
+            border: none;
+            padding: 0;
+            line-height: 1;
+        }
+        
+        .close:hover {
+            color: #ff0000;
+        }
+    `;
+    document.head.appendChild(style);
+}
+
+// Добавяме дебъг информация
+console.log('Script loaded successfully');
+console.log('Contact modal found:', contactModal);
+console.log('Contact links found:', contactLinks.length);
