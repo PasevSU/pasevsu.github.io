@@ -74,26 +74,32 @@ document.querySelectorAll('.nav-link').forEach(n => {
     });
 });
 
-// Smooth scrolling - НАПРАВИХМЕ ИЗКЛЮЧЕНИЕ ЗА КОНТАКТ ЛИНКОВЕТЕ
+// Smooth scrolling - ПРОВЕРЕНО РАБОТЕЩ ВАРИАНТ
 document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     anchor.addEventListener('click', function (e) {
         const targetId = this.getAttribute('href');
         
         // Ако е контакт линк, не правим smooth scrolling
-        if (targetId === '#contact') {
+        if (targetId === '#contact' || targetId === '#') {
             e.preventDefault();
             return;
         }
         
-        if (targetId === '#') return;
-        
         const targetElement = document.querySelector(targetId);
         if (targetElement) {
             e.preventDefault();
+            
+            // Изчисляване на правилната позиция
+            const navbarHeight = document.querySelector('.navbar')?.offsetHeight || 80;
+            const targetPosition = targetElement.getBoundingClientRect().top + window.pageYOffset - navbarHeight;
+            
             window.scrollTo({
-                top: targetElement.offsetTop - 80,
+                top: targetPosition,
                 behavior: 'smooth'
             });
+            
+            // Алтернативно, актуализирайте URL без да презареждате страницата
+            history.pushState(null, null, targetId);
         }
     });
 });
@@ -334,56 +340,57 @@ if (banner && navbar) {
     });
 }
 
+// ПРЕМАХНЕТЕ ТОЗИ КОД - ДУБЛИРА СЕ С ВЕЧЕ СЪЩЕСТВУВАЩИЯ CSS
 // Добавяме CSS за модал
-if (document.head) {
-    const style = document.createElement('style');
-    style.textContent = `
-        .modal-open {
-            overflow: hidden;
-        }
-        
-        .modal {
-            display: none;
-            position: fixed;
-            z-index: 9999;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.7);
-            overflow-y: auto;
-        }
-        
-        .modal-content {
-            background-color: white;
-            margin: 50px auto;
-            padding: 2rem;
-            border-radius: 12px;
-            width: 90%;
-            max-width: 500px;
-            position: relative;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-        }
-        
-        .close {
-            position: absolute;
-            right: 1.5rem;
-            top: 1rem;
-            font-size: 1.8rem;
-            cursor: pointer;
-            color: #333;
-            background: none;
-            border: none;
-            padding: 0;
-            line-height: 1;
-        }
-        
-        .close:hover {
-            color: #ff0000;
-        }
-    `;
-    document.head.appendChild(style);
-}
+// if (document.head) {
+//     const style = document.createElement('style');
+//     style.textContent = `
+//         .modal-open {
+//             overflow: hidden;
+//         }
+//         
+//         .modal {
+//             display: none;
+//             position: fixed;
+//             z-index: 9999;
+//             left: 0;
+//             top: 0;
+//             width: 100%;
+//             height: 100%;
+//             background-color: rgba(0, 0, 0, 0.7);
+//             overflow-y: auto;
+//         }
+//         
+//         .modal-content {
+//             background-color: white;
+//             margin: 50px auto;
+//             padding: 2rem;
+//             border-radius: 12px;
+//             width: 90%;
+//             max-width: 500px;
+//             position: relative;
+//             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+//         }
+//         
+//         .close {
+//             position: absolute;
+//             right: 1.5rem;
+//             top: 1rem;
+- [ ]             font-size: 1.8rem;
+//             cursor: pointer;
+//             color: #333;
+//             background: none;
+//             border: none;
+//             padding: 0;
+//             line-height: 1;
+//         }
+//         
+//         .close:hover {
+//             color: #ff0000;
+//         }
+//     `;
+//     document.head.appendChild(style);
+// }
 
 // Добавяме дебъг информация
 console.log('Script loaded successfully');
