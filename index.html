@@ -476,7 +476,7 @@
             </div>
         </div>
     </div>
-    <script>
+        <script>
     // CODE FOR SENDING VIA CURL-LIKE METHOD - ONLY IMAGE TAG METHOD
     document.addEventListener('DOMContentLoaded', function() {
         const modal = document.getElementById('contact-modal');
@@ -486,7 +486,7 @@
         const formMessage = document.getElementById('form-message');
         
         // Open/close modal
-        contactTriggers.forEach(trigger => {
+        contactTriggers.forEach(function(trigger) {
             trigger.addEventListener('click', function(e) {
                 e.preventDefault();
                 modal.style.display = 'block';
@@ -497,14 +497,14 @@
         closeBtn.addEventListener('click', function() {
             modal.style.display = 'none';
             document.body.style.overflow = 'auto';
-            formMessage.style.display = 'none';
+            if (formMessage) formMessage.style.display = 'none';
         });
         
         window.addEventListener('click', function(e) {
             if (e.target === modal) {
                 modal.style.display = 'none';
                 document.body.style.overflow = 'auto';
-                formMessage.style.display = 'none';
+                if (formMessage) formMessage.style.display = 'none';
             }
         });
         
@@ -512,7 +512,7 @@
             if (e.key === 'Escape' && modal.style.display === 'block') {
                 modal.style.display = 'none';
                 document.body.style.overflow = 'auto';
-                formMessage.style.display = 'none';
+                if (formMessage) formMessage.style.display = 'none';
             }
         });
         
@@ -521,10 +521,20 @@
             contactForm.addEventListener('submit', function(e) {
                 e.preventDefault();
                 
-                const name = document.getElementById('name').value.trim();
-                const email = document.getElementById('email').value.trim();
-                const subject = document.getElementById('subject').value.trim();
-                const message = document.getElementById('message').value.trim();
+                const nameField = document.getElementById('name');
+                const emailField = document.getElementById('email');
+                const subjectField = document.getElementById('subject');
+                const messageField = document.getElementById('message');
+                
+                if (!nameField || !emailField || !subjectField || !messageField) {
+                    showMessage('Please fill in all fields.', 'error');
+                    return;
+                }
+                
+                const name = nameField.value.trim();
+                const email = emailField.value.trim();
+                const subject = subjectField.value.trim();
+                const message = messageField.value.trim();
                 
                 // Validation
                 if (!name || !email || !subject || !message) {
@@ -540,25 +550,27 @@
                 
                 // Show loading
                 const submitBtn = contactForm.querySelector('button[type="submit"]');
+                if (!submitBtn) return;
+                
                 const originalText = submitBtn.textContent;
                 submitBtn.textContent = 'Sending...';
                 submitBtn.disabled = true;
                 
                 showMessage('Sending message...', 'loading');
                 
-                // Create body like in your curl command
+                // Create body with English labels
                 const body = `Name: ${name}\nEmail: ${email}\nSubject: ${subject}\n\nMessage:\n${message}`;
                 
                 console.log('Executing curl command via Image tag:');
                 console.log('curl -d "' + body.replace(/\n/g, '\\n') + '" -H "Title: Message from: ' + name + '" -H "Priority: default" -H "Tags: test,email" -H "Click: mailto:' + email + '" https://ntfy.sh/pasevsu_messages');
                 
-                // Encode for URL - encodeURIComponent correctly encodes text
+                // Encode for URL
                 const encodedBody = encodeURIComponent(body);
-                const encodedTitle = encodeURIComponent(`Message from: ${name}`);
+                const encodedTitle = encodeURIComponent('Message from: ' + name);
                 const encodedEmail = encodeURIComponent(email);
                 
                 // Create URL for GET request
-                const curlUrl = `https://ntfy.sh/pasevsu_messages?message=${encodedBody}&title=${encodedTitle}&priority=default&tags=test,email&click=mailto:${encodedEmail}`;
+                const curlUrl = 'https://ntfy.sh/pasevsu_messages?message=' + encodedBody + '&title=' + encodedTitle + '&priority=default&tags=test,email&click=mailto:' + encodedEmail;
                 
                 console.log('URL for sending:', curlUrl);
                 
@@ -568,14 +580,14 @@
                 
                 // Check if image is loaded (request sent)
                 img.onload = function() {
-                    console.log('✅ Message sent successfully!');
-                    showMessage('✅ Message sent successfully!', 'success');
+                    console.log('Message sent successfully!');
+                    showMessage('Message sent successfully!', 'success');
                     contactForm.reset();
                     
-                    setTimeout(() => {
+                    setTimeout(function() {
                         modal.style.display = 'none';
                         document.body.style.overflow = 'auto';
-                        formMessage.style.display = 'none';
+                        if (formMessage) formMessage.style.display = 'none';
                     }, 3000);
                     
                     submitBtn.textContent = originalText;
@@ -583,8 +595,8 @@
                 };
                 
                 img.onerror = function() {
-                    console.log('❌ Error sending message');
-                    showMessage('❌ An error occurred while sending. Please try again later.', 'error');
+                    console.log('Error sending message');
+                    showMessage('An error occurred while sending. Please try again later.', 'error');
                     
                     // Fallback: create mailto link
                     createMailtoFallback(name, email, subject, message);
@@ -597,13 +609,13 @@
                 setTimeout(function() {
                     if (submitBtn.disabled) {
                         console.log('Timeout - assuming message was sent');
-                        showMessage('✅ Message sent successfully!', 'success');
+                        showMessage('Message sent successfully!', 'success');
                         contactForm.reset();
                         
-                        setTimeout(() => {
+                        setTimeout(function() {
                             modal.style.display = 'none';
                             document.body.style.overflow = 'auto';
-                            formMessage.style.display = 'none';
+                            if (formMessage) formMessage.style.display = 'none';
                         }, 2000);
                         
                         submitBtn.textContent = originalText;
@@ -616,13 +628,15 @@
         // Create mailto fallback link
         function createMailtoFallback(name, email, subject, message) {
             const mailtoBody = encodeURIComponent(
-                `Name: ${name}\nEmail: ${email}\nSubject: ${subject}\n\nMessage:\n${message}\n\nSent from: Contact form`
+                'Name: ' + name + '\nEmail: ' + email + '\nSubject: ' + subject + '\n\nMessage:\n' + message + '\n\nSent from: Contact form'
             );
-            const mailtoUrl = `mailto:pasevdenislav@gmail.com?subject=${encodeURIComponent('Message from website: ' + subject)}&body=${mailtoBody}`;
+            const mailtoUrl = 'mailto:pasevdenislav@gmail.com?subject=' + encodeURIComponent('Message from website: ' + subject) + '&body=' + mailtoBody;
+            
+            if (!formMessage) return;
             
             const mailtoLink = document.createElement('a');
             mailtoLink.href = mailtoUrl;
-            mailtoLink.textContent = '📧 Send email manually';
+            mailtoLink.textContent = 'Send email manually';
             mailtoLink.style.display = 'block';
             mailtoLink.style.marginTop = '10px';
             mailtoLink.style.color = '#3498db';
@@ -635,15 +649,22 @@
         }
         
         function showMessage(text, type) {
-            if (formMessage) {
-                formMessage.innerHTML = '';
-                formMessage.textContent = text;
-                formMessage.className = 'form-message ' + type;
-                formMessage.style.display = 'block';
+            if (!formMessage) return;
+            
+            formMessage.innerHTML = '';
+            formMessage.textContent = text;
+            formMessage.className = 'form-message ' + type;
+            formMessage.style.display = 'block';
+            
+            // Safe scrolling
+            try {
                 formMessage.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            } catch (e) {
+                formMessage.scrollIntoView();
             }
         }
     });
     </script>
+   
 </body>
 </html>
