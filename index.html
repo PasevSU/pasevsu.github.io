@@ -477,7 +477,7 @@
         </div>
     </div>
     <script>
-    // КОД ЗА ИЗПРАЩАНЕ ЧРЕЗ CURL-ПОДОБЕН МЕТОД - БЕЗ ПОВРЕЖДАЩО КОДИРАНЕ
+    // КОД ЗА ИЗПРАЩАНЕ ЧРЕЗ CURL-ПОДОБЕН МЕТОД - СЪС СИГУРНО КОДИРАНЕ
     document.addEventListener('DOMContentLoaded', function() {
         const modal = document.getElementById('contact-modal');
         const closeBtn = document.querySelector('.close');
@@ -546,29 +546,39 @@
                 
                 showMessage('Изпращане на съобщението...', 'loading');
                 
-                try {
-                    // Създаваме body точно както във вашата curl команда
-                    const body = `Име: ${name}\nИмейл: ${email}\nТема: ${subject}\n\nСъобщение:\n${message}`;
-                    
-                    console.log('Изпълнявам curl команда:');
-                    console.log('curl -d "' + body.replace(/\n/g, '\\n') + '" -H "Title: Съобщение от: ' + name + '" -H "Priority: default" -H "Tags: test,email" -H "Click: mailto:' + email + '" https://ntfy.sh/pasevsu_messages');
-                    
-                    // МЕТОД 1: Използваме XMLHttpRequest с правилните headers
-                    const xhr = new XMLHttpRequest();
-                    xhr.open('POST', 'https://ntfy.sh/pasevsu_messages', true);
-                    
-                    // Задаваме headers точно както в curl
-                    xhr.setRequestHeader('Title', `Съобщение от: ${name}`);
-                    xhr.setRequestHeader('Priority', 'default');
-                    xhr.setRequestHeader('Tags', 'test,email');
-                    xhr.setRequestHeader('Click', `mailto:${email}`);
-                    
-                    xhr.onreadystatechange = function() {
-                        if (xhr.readyState === 4) {
-                            submitBtn.textContent = originalText;
-                            submitBtn.disabled = false;
+                // Директно използваме Image tag метода, тъй като XMLHttpRequest има проблеми с кирилица
+                sendViaImageTag(name, email, subject, message);
+                
+                // Функция за изпращане чрез Image tag (работи без CORS и няма проблеми с кирилица)
+                function sendViaImageTag(name, email, subject, messageText) {
+                    try {
+                        const body = `Име: ${name}\nИмейл: ${email}\nТема: ${subject}\n\nСъобщение:\n${messageText}`;
+                        
+                        console.log('Изпълнявам curl команда чрез Image tag:');
+                        console.log('curl -d "' + body.replace(/\n/g, '\\n') + '" -H "Title: Съобщение от: ' + name + '" -H "Priority: default" -H "Tags: test,email" -H "Click: mailto:' + email + '" https://ntfy.sh/pasevsu_messages');
+                        
+                        // ПРАВИЛНО КОДИРАНЕ ЗА URL
+                        // encodeURIComponent работи добре за ntfy GET заявки
+                        const encodedBody = encodeURIComponent(body);
+                        const encodedTitle = encodeURIComponent(`Съобщение от: ${name}`);
+                        const encodedEmail = encodeURIComponent(email);
+                        
+                        // Създаваме URL за GET заявка
+                        // ntfy разбира encodeURIComponent правилно - новите редове стават %0A
+                        const curlUrl = `https://ntfy.sh/pasevsu_messages?message=${encodedBody}&title=${encodedTitle}&priority=default&tags=test,email&click=mailto:${encodedEmail}`;
+                        
+                        console.log('URL за Image tag:', curlUrl);
+                        
+                        // Тестваме дали ntfy връзката работи
+                        const testImg = new Image();
+                        testImg.onload = function() {
+                            console.log('ntfy връзката работи, изпращам съобщението...');
                             
-                            if (xhr.status === 200) {
+                            // Създаваме Image tag за действителното изпращане
+                            const img = new Image();
+                            img.src = curlUrl;
+                            
+                            img.onload = function() {
                                 showMessage('✅ Съобщението е изпратено успешно!', 'success');
                                 contactForm.reset();
                                 
@@ -577,88 +587,108 @@
                                     document.body.style.overflow = 'auto';
                                     formMessage.style.display = 'none';
                                 }, 3000);
-                            } else {
-                                // Ако XMLHttpRequest не работи поради CORS, опитваме с Image tag
-                                console.log('XMLHttpRequest не успя (статус ' + xhr.status + '), опитваме с Image tag...');
-                                sendViaImageTag(name, email, subject, message);
-                            }
-                        }
-                    };
-                    
-                    xhr.onerror = function() {
-                        console.log('XMLHttpRequest грешка, опитваме с Image tag...');
+                                
+                                submitBtn.textContent = originalText;
+                                submitBtn.disabled = false;
+                            };
+                            
+                            img.onerror = function() {
+                                showMessage('❌ Възникна грешка при изпращане. Моля, опитайте отново по-късно.', 'error');
+                                submitBtn.textContent = originalText;
+                                submitBtn.disabled = false;
+                            };
+                        };
+                        
+                        testImg.onerror = function() {
+                            console.log('ntfy не отговаря, опитваме с алтернативен метод...');
+                            sendViaAlternativeMethod(name, email, subject, messageText);
+                        };
+                        
+                        // Тестваме с много кратко съобщение
+                        testImg.src = 'https://ntfy.sh/pasevsu_messages?message=Тест&priority=low';
+                        
+                    } catch (error) {
+                        console.error('Грешка при Image tag метод:', error);
+                        showMessage('❌ Възникна грешка при изпращане. Моля, опитайте отново по-късно.', 'error');
                         submitBtn.textContent = originalText;
                         submitBtn.disabled = false;
-                        sendViaImageTag(name, email, subject, message);
-                    };
-                    
-                    // Изпращаме заявката със същия body както в curl
-                    xhr.send(body);
-                    
-                } catch (error) {
-                    console.error('Грешка:', error);
-                    submitBtn.textContent = originalText;
-                    submitBtn.disabled = false;
-                    sendViaImageTag(name, email, subject, message);
+                    }
                 }
                 
-                // Функция за изпращане чрез Image tag (работи без CORS)
-                // ИЗПРАЩА СЪОБЩЕНИЕТО БЕЗ encodeURIComponent, за да запази новите редове
-                function sendViaImageTag(name, email, subject, messageText) {
+                // Алтернативен метод, ако Image tag не работи
+                function sendViaAlternativeMethod(name, email, subject, messageText) {
                     try {
+                        // Създаваме форма в нов прозорец
                         const body = `Име: ${name}\nИмейл: ${email}\nТема: ${subject}\n\nСъобщение:\n${messageText}`;
                         
-                        // ВАЖНО: Използваме по-просто кодиране, за да запазим новите редове
-                        // Заменяме само специалните символи, които могат да създадат проблеми
-                        const safeBody = body
-                            .replace(/%/g, '%25')     // Първо кодираме процента
-                            .replace(/&/g, '%26')     // След това амперсанд
-                            .replace(/#/g, '%23')     // Диез
-                            .replace(/\+/g, '%2B')    // Плюс
-                            .replace(/=/g, '%3D')     // Равно
-                            .replace(/\?/g, '%3F')    // Въпросителен знак
-                            .replace(/\n/g, '%0A');   // Запазваме новите редове като %0A
+                        const formHtml = `
+                            <!DOCTYPE html>
+                            <html>
+                            <head>
+                                <title>Изпращане на съобщение</title>
+                            </head>
+                            <body>
+                                <form id="ntfyForm" method="POST" action="https://ntfy.sh/pasevsu_messages">
+                                    <input type="hidden" name="Title" value="Съобщение от: ${name.replace(/"/g, '&quot;')}">
+                                    <input type="hidden" name="Priority" value="default">
+                                    <input type="hidden" name="Tags" value="test,email">
+                                    <input type="hidden" name="Click" value="mailto:${email}">
+                                    <textarea name="message" style="display:none">${body.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</textarea>
+                                </form>
+                                <script>
+                                    document.getElementById('ntfyForm').submit();
+                                    setTimeout(function() {
+                                        window.close();
+                                    }, 1000);
+                                <\/script>
+                            </body>
+                            </html>
+                        `;
                         
-                        // Заглавието също трябва да бъде кодирано
-                        const safeTitle = `Съобщение от: ${name}`
-                            .replace(/%/g, '%25')
-                            .replace(/&/g, '%26')
-                            .replace(/#/g, '%23')
-                            .replace(/\+/g, '%2B')
-                            .replace(/=/g, '%3D')
-                            .replace(/\?/g, '%3F');
-                        
-                        // Email адресът трябва да бъде кодиран
-                        const safeEmail = encodeURIComponent(email);
-                        
-                        // Създаваме URL точно както би било в curl командата чрез GET
-                        // Използваме tags=test,email вместо tags=email,contact за да съвпада с curl командата
-                        const curlUrl = `https://ntfy.sh/pasevsu_messages?message=${safeBody}&title=${safeTitle}&priority=default&tags=test,email&click=mailto:${safeEmail}`;
-                        
-                        console.log('Изпълнявам curl чрез Image tag:', curlUrl);
-                        
-                        const img = new Image();
-                        img.src = curlUrl;
-                        
-                        img.onload = function() {
-                            showMessage('✅ Съобщението е изпратено успешно!', 'success');
+                        const win = window.open('', '_blank', 'width=1,height=1');
+                        if (win) {
+                            win.document.write(formHtml);
+                            win.document.close();
+                            
+                            showMessage('✅ Съобщението се изпраща...', 'success');
                             contactForm.reset();
                             
                             setTimeout(() => {
                                 modal.style.display = 'none';
                                 document.body.style.overflow = 'auto';
                                 formMessage.style.display = 'none';
-                            }, 3000);
-                        };
-                        
-                        img.onerror = function() {
-                            showMessage('❌ Възникна грешка при изпращане. Моля, опитайте отново по-късно.', 'error');
-                        };
+                            }, 2000);
+                        } else {
+                            throw new Error('Не може да се отвори нов прозорец');
+                        }
                         
                     } catch (error) {
-                        console.error('Грешка при Image tag метод:', error);
-                        showMessage('❌ Възникна грешка при изпращане. Моля, опитайте отново по-късно.', 'error');
+                        console.error('Грешка при алтернативен метод:', error);
+                        showMessage('❌ Не можа да се изпрати автоматично. Моля, изпратете имейл ръчно.', 'error');
+                        
+                        // Показваме mailto връзка като fallback
+                        const mailtoBody = encodeURIComponent(
+                            `Име: ${name}\nИмейл: ${email}\nТема: ${subject}\n\nСъобщение:\n${message}\n\nИзпратено от: Контактна форма`
+                        );
+                        const mailtoUrl = `mailto:pasevdenislav@gmail.com?subject=${encodeURIComponent('Съобщение от сайта: ' + subject)}&body=${mailtoBody}`;
+                        
+                        const mailtoLink = document.createElement('a');
+                        mailtoLink.href = mailtoUrl;
+                        mailtoLink.textContent = '📧 Изпрати имейл ръчно';
+                        mailtoLink.style.display = 'block';
+                        mailtoLink.style.marginTop = '10px';
+                        mailtoLink.style.color = '#3498db';
+                        mailtoLink.style.textDecoration = 'none';
+                        mailtoLink.style.fontWeight = 'bold';
+                        
+                        formMessage.innerHTML = '❌ Не можа да се изпрати автоматично:';
+                        formMessage.appendChild(mailtoLink);
+                        formMessage.className = 'form-message error';
+                        formMessage.style.display = 'block';
                     }
+                    
+                    submitBtn.textContent = originalText;
+                    submitBtn.disabled = false;
                 }
             });
         }
