@@ -340,6 +340,7 @@
                 </div>
             </div>
             
+<<<<<<< HEAD
             <!-- Project 2 -->
             <div class="project-card">
                 <div class="project-header">
@@ -575,6 +576,10 @@
                     </div>
                 </div>
             </div>
+=======
+            <!-- Останалите проекти остават същите... -->
+            <!-- Project 2 до 11 остават същите -->
+>>>>>>> 943b024b637254d133fe9162aa9c7ae8a96f955b
             
         </section>
 
@@ -631,7 +636,10 @@
                     <li><a href="#projects" data-translate="nav.projects">Проекти</a></li>
                     <li><a href="#about" data-translate="nav.about">За нас</a></li>
                     <li><a href="#documentation" data-translate="nav.documentation">Документация</a></li>
+<<<<<<< HEAD
                     <li><a href="#generators" data-translate="nav.generators">Генератори</a></li>
+=======
+>>>>>>> 943b024b637254d133fe9162aa9c7ae8a96f955b
                     <li><a href="#" class="contact-trigger" data-translate="nav.contact">Контакт</a></li>
                 </ul>
             </div>
@@ -698,12 +706,38 @@
             
             <div id="form-message" class="form-message"></div>
             
+<<<<<<< HEAD
   
+=======
+            <div class="contact-info-modal">
+                <h4 data-translate="contact.info.title">Алтернативни начини за връзка</h4>
+                <ul>
+                    <li>
+                        <i>📧</i>
+                        <strong data-translate="contact.info.email">Имейл:</strong> 
+                        <a href="mailto:pasevdenislav@gmail.com">pasevdenislav@gmail.com</a>
+                    </li>
+                    <li>
+                        <i>🐙</i>
+                        <strong data-translate="contact.info.github">GitHub:</strong> 
+                        <a href="https://github.com/PasevSU" target="_blank">github.com/PasevSU</a>
+                    </li>
+                    <li>
+                        <i>❤️</i>
+                        <strong data-translate="contact.info.donate">Дарение:</strong> 
+                        <a href="https://www.paypal.com/donate/?hosted_button_id=AAWFZVF2XCP5A" target="_blank">PayPal Дарение</a>
+                    </li>
+                </ul>
+>>>>>>> 943b024b637254d133fe9162aa9c7ae8a96f955b
             </div>
         </div>
     </div>
     <script>
+<<<<<<< HEAD
     // CONTACT FORM THAT SENDS DIRECTLY TO NTFY.SH
+=======
+    // CONTACT FORM THAT SHOWS CURL COMMAND FOR MANUAL EXECUTION
+>>>>>>> 943b024b637254d133fe9162aa9c7ae8a96f955b
     document.addEventListener('DOMContentLoaded', function() {
         const modal = document.getElementById('contact-modal');
         const closeBtn = document.querySelector('.close');
@@ -711,10 +745,13 @@
         const contactForm = document.getElementById('contact-form');
         const formMessage = document.getElementById('form-message');
         
+<<<<<<< HEAD
         // Rate limiting
         let lastSubmission = 0;
         const MIN_SUBMISSION_INTERVAL = 5000; // 5 seconds between submissions
         
+=======
+>>>>>>> 943b024b637254d133fe9162aa9c7ae8a96f955b
         // Open modal
         contactTriggers.forEach(function(trigger) {
             trigger.addEventListener('click', function(e) {
@@ -729,10 +766,14 @@
             closeBtn.addEventListener('click', function() {
                 if (modal) modal.style.display = 'none';
                 document.body.style.overflow = 'auto';
+<<<<<<< HEAD
                 if (formMessage) {
                     formMessage.style.display = 'none';
                     formMessage.innerHTML = '';
                 }
+=======
+                if (formMessage) formMessage.style.display = 'none';
+>>>>>>> 943b024b637254d133fe9162aa9c7ae8a96f955b
             });
         }
         
@@ -741,10 +782,14 @@
             if (modal && e.target === modal) {
                 modal.style.display = 'none';
                 document.body.style.overflow = 'auto';
+<<<<<<< HEAD
                 if (formMessage) {
                     formMessage.style.display = 'none';
                     formMessage.innerHTML = '';
                 }
+=======
+                if (formMessage) formMessage.style.display = 'none';
+>>>>>>> 943b024b637254d133fe9162aa9c7ae8a96f955b
             }
         });
         
@@ -753,6 +798,7 @@
             if (e.key === 'Escape' && modal && modal.style.display === 'block') {
                 modal.style.display = 'none';
                 document.body.style.overflow = 'auto';
+<<<<<<< HEAD
                 if (formMessage) {
                     formMessage.style.display = 'none';
                     formMessage.innerHTML = '';
@@ -771,6 +817,17 @@
                     return;
                 }
                 
+=======
+                if (formMessage) formMessage.style.display = 'none';
+            }
+        });
+        
+        // Handle form submission - SHOW CURL COMMAND ONLY
+        if (contactForm) {
+            contactForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+>>>>>>> 943b024b637254d133fe9162aa9c7ae8a96f955b
                 // Get form values
                 const name = document.getElementById('name').value.trim();
                 const email = document.getElementById('email').value.trim();
@@ -794,6 +851,7 @@
                 if (!submitBtn) return;
                 
                 const originalText = submitBtn.textContent;
+<<<<<<< HEAD
                 submitBtn.textContent = 'Изпращане...';
                 submitBtn.disabled = true;
                 
@@ -977,6 +1035,130 @@
             commandContainer.appendChild(commandPre);
             commandContainer.appendChild(copyBtn);
             commandContainer.appendChild(instructions);
+=======
+                submitBtn.textContent = 'Генериране на команда...';
+                submitBtn.disabled = true;
+                
+                showMessage('Генериране на curl команда...', 'loading');
+                
+                // Create the body for curl command (escape newlines for bash)
+                const body = `Име: ${name}\\nИмейл: ${email}\\nТема: ${subject}\\n\\nСъобщение:\\n${message}`;
+                
+                // Create the curl command exactly as you want it
+                const curlCommand = `curl -d "${body}" -H "Title: Съобщение от: ${name}" -H "Priority: default" -H "Tags: test,email" -H "Click: mailto:${email}" https://ntfy.sh/pasevsu_messages`;
+                
+                console.log('CURL команда за ръчно изпълнение:');
+                console.log(curlCommand);
+                
+                // Show the curl command to the user
+                setTimeout(function() {
+                    showMessage('✅ Копирайте и изпълнете тази команда в терминал:', 'success');
+                    
+                    // Create container for the command
+                    const commandContainer = document.createElement('div');
+                    commandContainer.style.marginTop = '15px';
+                    commandContainer.style.textAlign = 'left';
+                    
+                    // Create pre element for the command
+                    const commandPre = document.createElement('pre');
+                    commandPre.style.backgroundColor = '#2d2d2d';
+                    commandPre.style.color = '#f8f8f2';
+                    commandPre.style.padding = '15px';
+                    commandPre.style.borderRadius = '5px';
+                    commandPre.style.overflowX = 'auto';
+                    commandPre.style.fontFamily = 'monospace';
+                    commandPre.style.fontSize = '14px';
+                    commandPre.style.whiteSpace = 'pre-wrap';
+                    commandPre.style.wordBreak = 'break-all';
+                    commandPre.textContent = curlCommand;
+                    
+                    // Create copy button
+                    const copyBtn = document.createElement('button');
+                    copyBtn.textContent = '📋 Копирай командата';
+                    copyBtn.style.marginTop = '10px';
+                    copyBtn.style.padding = '10px 20px';
+                    copyBtn.style.backgroundColor = '#3498db';
+                    copyBtn.style.color = 'white';
+                    copyBtn.style.border = 'none';
+                    copyBtn.style.borderRadius = '5px';
+                    copyBtn.style.cursor = 'pointer';
+                    copyBtn.style.fontWeight = 'bold';
+                    copyBtn.style.width = '100%';
+                    
+                    copyBtn.addEventListener('click', function() {
+                        navigator.clipboard.writeText(curlCommand)
+                            .then(function() {
+                                const originalBtnText = copyBtn.textContent;
+                                copyBtn.textContent = '✅ Командата е копирана!';
+                                copyBtn.style.backgroundColor = '#27ae60';
+                                
+                                setTimeout(function() {
+                                    copyBtn.textContent = originalBtnText;
+                                    copyBtn.style.backgroundColor = '#3498db';
+                                }, 2000);
+                            })
+                            .catch(function(err) {
+                                console.error('Грешка при копиране:', err);
+                                // Fallback for older browsers
+                                const textArea = document.createElement('textarea');
+                                textArea.value = curlCommand;
+                                textArea.style.position = 'fixed';
+                                textArea.style.opacity = '0';
+                                document.body.appendChild(textArea);
+                                textArea.select();
+                                
+                                try {
+                                    const successful = document.execCommand('copy');
+                                    if (successful) {
+                                        copyBtn.textContent = '✅ Командата е копирана!';
+                                        copyBtn.style.backgroundColor = '#27ae60';
+                                        setTimeout(function() {
+                                            copyBtn.textContent = '📋 Копирай командата';
+                                            copyBtn.style.backgroundColor = '#3498db';
+                                        }, 2000);
+                                    }
+                                } catch (err) {
+                                    console.error('Fallback копиране не успя:', err);
+                                }
+                                
+                                document.body.removeChild(textArea);
+                            });
+                    });
+                    
+                    // Create instructions
+                    const instructions = document.createElement('div');
+                    instructions.style.marginTop = '15px';
+                    instructions.style.padding = '10px';
+                    instructions.style.backgroundColor = '#fff3cd';
+                    instructions.style.border = '1px solid #ffeaa7';
+                    instructions.style.borderRadius = '5px';
+                    instructions.style.color = '#856404';
+                    instructions.style.fontSize = '14px';
+                    
+                    instructions.innerHTML = `
+                        <strong>Инструкции:</strong>
+                        <ol style="margin: 5px 0 0 0; padding-left: 20px;">
+                            <li>Копирайте командата отгоре</li>
+                            <li>Отворете терминал/команден ред</li>
+                            <li>Поставете и изпълнете командата</li>
+                            <li>Проверете ntfy канала за съобщението</li>
+                        </ol>
+                    `;
+                    
+                    // Append everything to the message container
+                    commandContainer.appendChild(commandPre);
+                    commandContainer.appendChild(copyBtn);
+                    commandContainer.appendChild(instructions);
+                    
+                    formMessage.appendChild(commandContainer);
+                    
+                    // Reset button
+                    submitBtn.textContent = 'Генерирай нова команда';
+                    submitBtn.disabled = false;
+                    
+                }, 1000); // Small delay for better UX
+            });
+>>>>>>> 943b024b637254d133fe9162aa9c7ae8a96f955b
         }
         
         // Helper function to show messages

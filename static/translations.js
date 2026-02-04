@@ -164,9 +164,13 @@ const translations = {
         "generator.ntfy": "ntfy notifications generator",
         "generator.mobile": "Mobile app notification generator", 
         "generator.shell": "Command shell code generator",
+<<<<<<< HEAD
         "generators.title": "Generators",
         "generators.description": "If you encounter any issues with the generators, please contact me using the contact form with the subject 'HASS Generators'.",
 
+=======
+        
+>>>>>>> 943b024b637254d133fe9162aa9c7ae8a96f955b
         // Contact
         "contact.title": "Contact",
         "contact.description": "Send us a message and we'll respond as soon as possible.",
@@ -213,7 +217,11 @@ const translations = {
         "nav.about": "За нас", 
         "nav.documentation": "Документация",
         "nav.contact": "Контакт",
+<<<<<<< HEAD
         "nav.generators": "Генератори",
+=======
+        "nav.support": "Генератори",
+>>>>>>> 943b024b637254d133fe9162aa9c7ae8a96f955b
         
         // Hero
         "hero.title": "🏠 HOME ASSISTANT ПРОЕКТИ И РАЗРАБОТКИ",
@@ -361,8 +369,11 @@ const translations = {
         "generator.ntfy": "Генератор за ntfy известия",
         "generator.mobile": "Генератор на известия до mobile app",
         "generator.shell": "Генератор на command shell кодове",
+<<<<<<< HEAD
         "generators.title": "Генератори",
         "generators.description": "При нередности с генераторите ми пишете на контактната форма с тема 'HASS Генератори'.",
+=======
+>>>>>>> 943b024b637254d133fe9162aa9c7ae8a96f955b
         
         // Контакт
         "contact.title": "Контакт",
@@ -558,8 +569,11 @@ const translations = {
         "generator.ntfy": "Generator für ntfy-Benachrichtigungen",
         "generator.mobile": "Generator für Mobile-App-Benachrichtigungen",
         "generator.shell": "Generator für Command-Shell-Code",
+<<<<<<< HEAD
         "generators.title": "Generatoren",
         "generators.description": "Wenn Sie Probleme mit den Generatoren haben, kontaktieren Sie mich bitte über das Kontaktformular mit dem Betreff 'HASS Generatoren'.",
+=======
+>>>>>>> 943b024b637254d133fe9162aa9c7ae8a96f955b
         
         // Kontakt
         "contact.title": "Kontakt",
