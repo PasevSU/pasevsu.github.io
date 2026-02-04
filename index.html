@@ -476,9 +476,8 @@
             </div>
         </div>
     </div>
-
     <script>
-    // КОД ЗА ИЗПРАЩАНЕ ЧРЕЗ CURL-ПОДОБЕН МЕТОД - САМО IMAGE TAG МЕТОД
+    // CODE FOR SENDING VIA CURL-LIKE METHOD - ONLY IMAGE TAG METHOD
     document.addEventListener('DOMContentLoaded', function() {
         const modal = document.getElementById('contact-modal');
         const closeBtn = document.querySelector('.close');
@@ -486,7 +485,7 @@
         const contactForm = document.getElementById('contact-form');
         const formMessage = document.getElementById('form-message');
         
-        // Отваряне/затваряне на модал
+        // Open/close modal
         contactTriggers.forEach(trigger => {
             trigger.addEventListener('click', function(e) {
                 e.preventDefault();
@@ -517,7 +516,7 @@
             }
         });
         
-        // Обработка на формата - САМО IMAGE TAG МЕТОД
+        // Form processing - ONLY IMAGE TAG METHOD
         if (contactForm) {
             contactForm.addEventListener('submit', function(e) {
                 e.preventDefault();
@@ -527,50 +526,50 @@
                 const subject = document.getElementById('subject').value.trim();
                 const message = document.getElementById('message').value.trim();
                 
-                // Валидация
+                // Validation
                 if (!name || !email || !subject || !message) {
-                    showMessage('Моля, попълнете всички полета.', 'error');
+                    showMessage('Please fill in all fields.', 'error');
                     return;
                 }
                 
                 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
                 if (!emailRegex.test(email)) {
-                    showMessage('Моля, въведете валиден имейл адрес.', 'error');
+                    showMessage('Please enter a valid email address.', 'error');
                     return;
                 }
                 
-                // Показване на зареждане
+                // Show loading
                 const submitBtn = contactForm.querySelector('button[type="submit"]');
                 const originalText = submitBtn.textContent;
-                submitBtn.textContent = 'Изпращане...';
+                submitBtn.textContent = 'Sending...';
                 submitBtn.disabled = true;
                 
-                showMessage('Изпращане на съобщението...', 'loading');
+                showMessage('Sending message...', 'loading');
                 
-                // Създаваме body точно както във вашата curl команда
-                const body = `Име: ${name}\nИмейл: ${email}\nТема: ${subject}\n\nСъобщение:\n${message}`;
+                // Create body like in your curl command
+                const body = `Name: ${name}\nEmail: ${email}\nSubject: ${subject}\n\nMessage:\n${message}`;
                 
-                console.log('Изпълнявам curl команда чрез Image tag:');
-                console.log('curl -d "' + body.replace(/\n/g, '\\n') + '" -H "Title: Съобщение от: ' + name + '" -H "Priority: default" -H "Tags: test,email" -H "Click: mailto:' + email + '" https://ntfy.sh/pasevsu_messages');
+                console.log('Executing curl command via Image tag:');
+                console.log('curl -d "' + body.replace(/\n/g, '\\n') + '" -H "Title: Message from: ' + name + '" -H "Priority: default" -H "Tags: test,email" -H "Click: mailto:' + email + '" https://ntfy.sh/pasevsu_messages');
                 
-                // Кодираме за URL - encodeURIComponent правилно кодира кирилицата
+                // Encode for URL - encodeURIComponent correctly encodes text
                 const encodedBody = encodeURIComponent(body);
-                const encodedTitle = encodeURIComponent(`Съобщение от: ${name}`);
+                const encodedTitle = encodeURIComponent(`Message from: ${name}`);
                 const encodedEmail = encodeURIComponent(email);
                 
-                // Създаваме URL за GET заявка
+                // Create URL for GET request
                 const curlUrl = `https://ntfy.sh/pasevsu_messages?message=${encodedBody}&title=${encodedTitle}&priority=default&tags=test,email&click=mailto:${encodedEmail}`;
                 
-                console.log('URL за изпращане:', curlUrl);
+                console.log('URL for sending:', curlUrl);
                 
-                // Изпращаме чрез Image tag (работи без CORS)
+                // Send via Image tag (works without CORS)
                 const img = new Image();
                 img.src = curlUrl;
                 
-                // Проверка дали изображението е заредено (заявката е изпратена)
+                // Check if image is loaded (request sent)
                 img.onload = function() {
-                    console.log('✅ Съобщението е изпратено успешно!');
-                    showMessage('✅ Съобщението е изпратено успешно!', 'success');
+                    console.log('✅ Message sent successfully!');
+                    showMessage('✅ Message sent successfully!', 'success');
                     contactForm.reset();
                     
                     setTimeout(() => {
@@ -584,21 +583,21 @@
                 };
                 
                 img.onerror = function() {
-                    console.log('❌ Грешка при изпращане');
-                    showMessage('❌ Възникна грешка при изпращане. Моля, опитайте отново по-късно.', 'error');
+                    console.log('❌ Error sending message');
+                    showMessage('❌ An error occurred while sending. Please try again later.', 'error');
                     
-                    // Fallback: създаваме mailto връзка
+                    // Fallback: create mailto link
                     createMailtoFallback(name, email, subject, message);
                     
                     submitBtn.textContent = originalText;
                     submitBtn.disabled = false;
                 };
                 
-                // Ако за някаква причина img.onload/onerror не се задействат
+                // If for some reason img.onload/onerror doesn't trigger
                 setTimeout(function() {
                     if (submitBtn.disabled) {
-                        console.log('Таймаут - приемаме че съобщението е изпратено');
-                        showMessage('✅ Съобщението е изпратено успешно!', 'success');
+                        console.log('Timeout - assuming message was sent');
+                        showMessage('✅ Message sent successfully!', 'success');
                         contactForm.reset();
                         
                         setTimeout(() => {
@@ -614,16 +613,16 @@
             });
         }
         
-        // Създаване на mailto fallback връзка
+        // Create mailto fallback link
         function createMailtoFallback(name, email, subject, message) {
             const mailtoBody = encodeURIComponent(
-                `Име: ${name}\nИмейл: ${email}\nТема: ${subject}\n\nСъобщение:\n${message}\n\nИзпратено от: Контактна форма`
+                `Name: ${name}\nEmail: ${email}\nSubject: ${subject}\n\nMessage:\n${message}\n\nSent from: Contact form`
             );
-            const mailtoUrl = `mailto:pasevdenislav@gmail.com?subject=${encodeURIComponent('Съобщение от сайта: ' + subject)}&body=${mailtoBody}`;
+            const mailtoUrl = `mailto:pasevdenislav@gmail.com?subject=${encodeURIComponent('Message from website: ' + subject)}&body=${mailtoBody}`;
             
             const mailtoLink = document.createElement('a');
             mailtoLink.href = mailtoUrl;
-            mailtoLink.textContent = '📧 Изпрати имейл ръчно';
+            mailtoLink.textContent = '📧 Send email manually';
             mailtoLink.style.display = 'block';
             mailtoLink.style.marginTop = '10px';
             mailtoLink.style.color = '#3498db';
