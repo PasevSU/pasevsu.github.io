@@ -749,7 +749,7 @@
 
 
     <script>
-    // ПЪЛНОСТИЮ РАБОТЕЩ СКРИПТ БЕЗ GOOGLE FORMS
+    // РЕШЕНИЕ, КОЕТО ИЗПРАЩА RAW ТЕКСТ КАТО POWERSHELL
     document.addEventListener('DOMContentLoaded', function() {
         const modal = document.getElementById('contact-modal');
         const form = document.getElementById('contact-form');
@@ -767,9 +767,9 @@
             modal.style.display = 'none';
         });
         
-        // ОБРАБОТКА НА ФОРМАТА - 100% РАБОТЕЩ МЕТОД
+        // ОБРАБОТКА НА ФОРМАТА
         if (form) {
-            form.addEventListener('submit', function(e) {
+            form.addEventListener('submit', async function(e) {
                 e.preventDefault();
                 
                 const name = document.getElementById('name').value.trim();
@@ -785,37 +785,41 @@
                 
                 // Показване на зареждане
                 const submitBtn = form.querySelector('button[type="submit"]');
-                submitBtn.disabled = true;
+                const originalText = submitBtn.textContent;
                 submitBtn.textContent = 'Изпращане...';
-                showMessage('Изпращане...', 'loading');
+                submitBtn.disabled = true;
                 
-                // МЕТОД 1: Формуляр в нов прозорец (РАБОТИ ВИНАГИ)
-                const success = sendViaPopup(name, email, subject, message);
+                showMessage('Изпращане на съобщението...', 'loading');
                 
-                if (success) {
-                    showMessage('✅ Съобщението се изпраща... Моля, изчакайте.', 'success');
+                try {
+                    // ИЗПРАЩАНЕ С RAW ТЕКСТ
+                    await sendRawToNtfy(name, email, subject, message);
+                    
+                    showMessage('✅ Съобщението е изпратено успешно!', 'success');
                     form.reset();
                     
                     setTimeout(() => {
                         modal.style.display = 'none';
                         formMessage.style.display = 'none';
-                        submitBtn.disabled = false;
-                        submitBtn.textContent = 'Изпрати съобщение';
                     }, 3000);
-                } else {
-                    // МЕТОД 2: Mailto fallback
-                    showMessage('❌ Моля, изпратете имейл директно:', 'error');
                     
+                } catch (error) {
+                    console.error('Грешка:', error);
+                    showMessage('❌ Грешка при изпращане. Моля, използвайте имейл.', 'error');
+                    
+                    // Fallback към mailto
+                    const mailtoUrl = `mailto:pasevdenislav@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(`Име: ${name}\nИмейл: ${email}\n\nСъобщение:\n${message}`)}`;
                     const mailtoBtn = document.createElement('a');
-                    mailtoBtn.href = `mailto:pasevdenislav@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(`Име: ${name}\nИмейл: ${email}\n\n${message}`)}`;
+                    mailtoBtn.href = mailtoUrl;
                     mailtoBtn.className = 'cta-button';
                     mailtoBtn.style.marginTop = '10px';
                     mailtoBtn.style.display = 'inline-block';
                     mailtoBtn.textContent = '📧 Изпрати имейл';
-                    
                     formMessage.appendChild(mailtoBtn);
+                    
+                } finally {
+                    submitBtn.textContent = originalText;
                     submitBtn.disabled = false;
-                    submitBtn.textContent = 'Изпрати съобщение';
                 }
             });
         }
@@ -826,99 +830,89 @@
             formMessage.style.display = 'block';
         }
         
-        // ГЛАВНА ФУНКЦИЯ - РАБОТИ ВЪВ ВСИЧКИ БРАУЗЪРИ
-        function sendViaPopup(name, email, subject, messageText) {
-            try {
-                // Форматиране на съобщението КАТО В POWERSHELL
-                const message = `Име: ${name}\nИмейл: ${email}\nТема: ${subject}\n\nСъобщение:\n${messageText}\n\nИзпратено от: Контактна форма`;
+        // ГЛАВНА ФУНКЦИЯ - ИЗПРАЩА RAW ТЕКСТ
+        async function sendRawToNtfy(name, email, subject, messageText) {
+            const url = 'https://ntfy.sh/pasevsu_messages';
+            
+            // ФОРМАТИРАНЕ НА СЪОБЩЕНИЕТО ТОЧНО КАТО В POWERSHELL
+            const bodyText = `Име: ${name}\nИмейл: ${email}\nТема: ${subject}\n\nСъобщение:\n${messageText}\n\nИзпратено от: Контактна форма`;
+            const title = `Съобщение от: ${name}`;
+            
+            console.log('Изпращам raw текст:', bodyText);
+            console.log('Заглавие:', title);
+            
+            // ОПИТ 1: Използваме XMLHttpRequest с правилния Content-Type
+            return new Promise((resolve, reject) => {
+                const xhr = new XMLHttpRequest();
+                xhr.open('POST', url, true);
                 
-                // Създаваме HTML страница, която изпраща POST към ntfy
-                const html = `
-                    <!DOCTYPE html>
-                    <html>
-                    <head>
-                        <title>Изпращане...</title>
-                        <script>
-                            // Функция за изпращане
-                            function sendMessage() {
-                                const body = \`${message.replace(/`/g, '\\`')}\`;
-                                const title = \`Съобщение от: ${name.replace(/`/g, '\\`')}\`;
-                                
-                                // Опитваме с XMLHttpRequest
-                                try {
-                                    const xhr = new XMLHttpRequest();
-                                    xhr.open('POST', 'https://ntfy.sh/pasevsu_messages', true);
-                                    xhr.setRequestHeader('Title', title);
-                                    xhr.setRequestHeader('Priority', 'high');
-                                    xhr.setRequestHeader('Tags', 'email,contact');
-                                    xhr.setRequestHeader('Click', \`mailto:${email}\`);
-                                    xhr.send(body);
-                                    
-                                    xhr.onload = function() {
-                                        console.log('Успешно изпратено!');
-                                        setTimeout(() => window.close(), 1000);
-                                    };
-                                    
-                                    xhr.onerror = function() {
-                                        // Ако XMLHttpRequest не работи, опитваме с формуляр
-                                        fallbackSubmit();
-                                    };
-                                } catch (e) {
-                                    fallbackSubmit();
-                                }
-                            }
-                            
-                            function fallbackSubmit() {
-                                // Създаваме формуляр и го изпращаме
-                                const form = document.createElement('form');
-                                form.method = 'POST';
-                                form.action = 'https://ntfy.sh/pasevsu_messages';
-                                
-                                const fields = {
-                                    'Title': \`Съобщение от: ${name.replace(/`/g, '\\`')}\`,
-                                    'Priority': 'high',
-                                    'Tags': 'email,contact',
-                                    'Click': \`mailto:${email}\`,
-                                    'message': \`${message.replace(/`/g, '\\`')}\`
-                                };
-                                
-                                for (const [name, value] of Object.entries(fields)) {
-                                    const input = document.createElement('input');
-                                    input.type = 'hidden';
-                                    input.name = name;
-                                    input.value = value;
-                                    form.appendChild(input);
-                                }
-                                
-                                document.body.appendChild(form);
-                                form.submit();
-                                setTimeout(() => window.close(), 1000);
-                            }
-                            
-                            window.onload = sendMessage;
-                        <\/script>
-                    </head>
-                    <body>
-                        <p style="padding: 20px; text-align: center;">
-                            Изпращане на съобщението... Моля, изчакайте.
-                            <br><br>
-                            <small>Този прозорец ще се затвори автоматично.</small>
-                        </p>
-                    </body>
-                    </html>
-                `;
+                // ВАЖНО: Не задаваме Content-Type header, за да изпратим raw текст
+                // Не използваме xhr.setRequestHeader('Content-Type', ...)
                 
-                // Отваряме нов прозорец и изпращаме
-                const popup = window.open('', '_blank', 'width=400,height=200,left=100,top=100');
-                if (popup) {
-                    popup.document.write(html);
-                    popup.document.close();
-                    return true;
-                }
-            } catch (e) {
-                console.error('Грешка:', e);
-            }
-            return false;
+                // Добавяме headers за ntfy
+                xhr.setRequestHeader('Title', title);
+                xhr.setRequestHeader('Priority', 'high');
+                xhr.setRequestHeader('Tags', 'email,contact');
+                xhr.setRequestHeader('Click', `mailto:${email}`);
+                
+                xhr.onreadystatechange = function() {
+                    if (xhr.readyState === 4) {
+                        if (xhr.status === 200) {
+                            console.log('Успешно изпратено!', xhr.responseText);
+                            resolve();
+                        } else {
+                            console.error('Грешка:', xhr.status, xhr.responseText);
+                            
+                            // ОПИТ 2: Ако XMLHttpRequest не работи, опитваме с fetch и правилния подход
+                            tryAlternativeMethod(bodyText, title, email)
+                                .then(resolve)
+                                .catch(reject);
+                        }
+                    }
+                };
+                
+                xhr.onerror = function() {
+                    console.error('XHR network error');
+                    tryAlternativeMethod(bodyText, title, email)
+                        .then(resolve)
+                        .catch(reject);
+                };
+                
+                // ИЗПРАЩАМЕ RAW ТЕКСТА
+                xhr.send(bodyText);
+            });
+        }
+        
+        // АЛТЕРНАТИВЕН МЕТОД
+        async function tryAlternativeMethod(bodyText, title, email) {
+            return new Promise((resolve, reject) => {
+                // Създаваме Blob от текста
+                const blob = new Blob([bodyText], { type: 'text/plain; charset=utf-8' });
+                
+                // Създаваме FormData и добавяме blob като файл
+                const formData = new FormData();
+                formData.append('file', blob, 'message.txt');
+                
+                // Добавяме headers като FormData fields
+                formData.append('Title', title);
+                formData.append('Priority', 'high');
+                formData.append('Tags', 'email,contact');
+                formData.append('Click', `mailto:${email}`);
+                
+                fetch('https://ntfy.sh/pasevsu_messages', {
+                    method: 'POST',
+                    body: formData,
+                    mode: 'no-cors' // no-cors за да избегнем CORS проблеми
+                })
+                .then(response => {
+                    console.log('Изпратено чрез FormData');
+                    resolve();
+                })
+                .catch(error => {
+                    console.error('FormData грешка:', error);
+                    reject(error);
+                });
+            });
         }
     });
     </script>
