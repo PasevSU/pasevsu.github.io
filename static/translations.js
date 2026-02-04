@@ -177,6 +177,18 @@ const translations = {
         "contact.form.error": "Error sending message. Please try again.",
         "contact.form.validation": "Please fill in all fields.",
         
+        // Contact form placeholders
+        "contact.form.namePlaceholder": "Enter your name",
+        "contact.form.emailPlaceholder": "Enter your email address",
+        "contact.form.subjectPlaceholder": "Message subject",
+        "contact.form.messagePlaceholder": "Write your message here...",
+        
+        // Contact info
+        "contact.info.title": "Alternative ways to contact us",
+        "contact.info.email": "Email:",
+        "contact.info.github": "GitHub:",
+        "contact.info.donate": "Donate:",
+        
         // Footer
         "footer.title": "Home Assistant Projects",
         "footer.description": "Simplifying daily routines, enhancing comfort, and saving energy in the smart home environment.",
@@ -360,6 +372,18 @@ const translations = {
         "contact.form.error": "Грешка при изпращане. Моля, опитайте отново.",
         "contact.form.validation": "Моля, попълнете всички полета.",
         
+        // Placeholder текстове за контактната форма
+        "contact.form.namePlaceholder": "Въведете вашето име",
+        "contact.form.emailPlaceholder": "Въведете вашия имейл адрес",
+        "contact.form.subjectPlaceholder": "Тема на съобщението",
+        "contact.form.messagePlaceholder": "Напишете вашето съобщение тук...",
+        
+        // Контакт информация
+        "contact.info.title": "Алтернативни начини за връзка",
+        "contact.info.email": "Имейл:",
+        "contact.info.github": "GitHub:",
+        "contact.info.donate": "Дарение:",
+        
         // Footer
         "footer.title": "Home Assistant Проекти",
         "footer.description": "Оптимизиране на ежедневието, повишаване на комфорта и пестене на енергия в интелигентния дом.",
@@ -530,7 +554,7 @@ const translations = {
         "generator.mobile": "Generator für Mobile-App-Benachrichtigungen",
         "generator.shell": "Generator für Command-Shell-Code",
         
-        // Контакт - ДОБАВЕНИ ЛИПСВАЩИТЕ ПРЕВОДИ
+        // Kontakt
         "contact.title": "Kontakt",
         "contact.description": "Senden Sie uns eine Nachricht und wir antworten so schnell wie möglich.",
         "contact.form.name": "Name",
@@ -542,6 +566,18 @@ const translations = {
         "contact.form.success": "Nachricht erfolgreich gesendet! Wir werden uns bald bei Ihnen melden.",
         "contact.form.error": "Fehler beim Senden. Bitte versuchen Sie es erneut.",
         "contact.form.validation": "Bitte füllen Sie alle Felder aus.",
+        
+        // Placeholder-Texte für das Kontaktformular
+        "contact.form.namePlaceholder": "Geben Sie Ihren Namen ein",
+        "contact.form.emailPlaceholder": "Geben Sie Ihre E-Mail-Adresse ein",
+        "contact.form.subjectPlaceholder": "Betreff der Nachricht",
+        "contact.form.messagePlaceholder": "Schreiben Sie hier Ihre Nachricht...",
+        
+        // Kontaktinformationen
+        "contact.info.title": "Alternative Kontaktmöglichkeiten",
+        "contact.info.email": "E-Mail:",
+        "contact.info.github": "GitHub:",
+        "contact.info.donate": "Spenden:",
         
         // Footer
         "footer.title": "Home Assistant Projekte",
