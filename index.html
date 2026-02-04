@@ -9,6 +9,205 @@
     <script src="static/translations.js"></script>
     <script src="static/language-manager.js"></script>
     <script src="static/script.js"></script>
+    <style>
+        /* Подобрения за модалната форма */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            overflow-y: auto;
+            padding: 20px 0;
+        }
+
+        .modal-content {
+            background-color: white;
+            margin: 2% auto;
+            padding: 2rem;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 600px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            position: relative;
+            animation: modalFadeIn 0.3s ease-out;
+        }
+
+        @keyframes modalFadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .close {
+            position: absolute;
+            right: 1.5rem;
+            top: 1rem;
+            font-size: 2rem;
+            font-weight: bold;
+            color: #666;
+            cursor: pointer;
+            transition: color 0.3s;
+            line-height: 1;
+        }
+
+        .close:hover {
+            color: var(--primary-color);
+        }
+
+        .modal h3 {
+            color: var(--primary-color);
+            margin-bottom: 1.5rem;
+            padding-right: 2rem;
+        }
+
+        .contact-description {
+            margin-bottom: 2rem;
+            color: #666;
+            line-height: 1.6;
+        }
+
+        .contact-info-modal {
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid #eee;
+        }
+
+        .contact-info-modal h4 {
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+            font-size: 1.1rem;
+        }
+
+        .contact-info-modal ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .contact-info-modal li {
+            margin-bottom: 0.75rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .contact-info-modal li i {
+            color: var(--primary-color);
+            width: 20px;
+            text-align: center;
+        }
+
+        .contact-info-modal a {
+            color: var(--primary-color);
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .contact-info-modal a:hover {
+            color: var(--secondary-color);
+            text-decoration: underline;
+        }
+
+        .form-message {
+            padding: 1rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+            text-align: center;
+            font-weight: 500;
+            display: none;
+        }
+
+        .form-message.success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .form-message.error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .form-message.loading {
+            background-color: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeaa7;
+        }
+
+        /* Подобрения за формата */
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: #333;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s, box-shadow 0.3s;
+            font-family: inherit;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 120px;
+        }
+
+        /* Responsive design */
+        @media (max-width: 768px) {
+            .modal-content {
+                width: 95%;
+                padding: 1.5rem;
+                margin: 1rem auto;
+            }
+
+            .close {
+                right: 1rem;
+                top: 0.5rem;
+                font-size: 1.8rem;
+            }
+
+            .modal h3 {
+                padding-right: 2.5rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .modal-content {
+                padding: 1.25rem;
+            }
+
+            .form-group input,
+            .form-group textarea {
+                padding: 0.625rem 0.875rem;
+            }
+        }
+    </style>
 </head>
 <body>
     <header>
@@ -43,7 +242,7 @@
                         <a data-translate="nav.support" href="#support" class="nav-link">Генератори</a>
                     </li>
                     <li class="nav-item">
-                        <a data-translate="nav.contact" href="#contact" class="nav-link">Контакт</a>
+                        <a data-translate="nav.contact" href="#" class="nav-link contact-trigger">Контакт</a>
                     </li>
                 </ul>
 
@@ -442,9 +641,6 @@
             <p data-translate="about.description">Това хранилище съдържа моите персонални проекти за Home Assistant, автоматизации, конфигурации и интеграции. Повечето проекти имат поддръжка на английски и български и редовно добавям нови функции и подобрения.</p>
         </section>
         
-        <!-- Контакт секция (празна, за навигацията) -->
-        <div id="contact" style="height: 0; overflow: hidden; position: absolute;"></div>
-        
     </main>
 
     <footer>
@@ -460,7 +656,7 @@
                     <li><a href="#projects" data-translate="nav.projects">Проекти</a></li>
                     <li><a href="#about" data-translate="nav.about">За нас</a></li>
                     <li><a href="#documentation" data-translate="nav.documentation">Документация</a></li>
-                    <li><a href="#contact" data-translate="nav.contact">Контакт</a></li>
+                    <li><a href="#" class="contact-trigger" data-translate="nav.contact">Контакт</a></li>
                 </ul>
             </div>
             <div class="footer-section">
@@ -480,30 +676,39 @@
     <div id="contact-modal" class="modal">
         <div class="modal-content">
             <span class="close">&times;</span>
-            <h3 data-translate="contact.title">Контакт</h3>
+            <h3 data-translate="contact.title">Контактна форма</h3>
+            
+            <p class="contact-description" data-translate="contact.description">
+                Изпратете ни съобщение и ще ви отговорим възможно най-бързо.
+            </p>
+            
             <form id="contact-form">
                 <div class="form-group">
                     <label for="name" data-translate="contact.form.name">Име</label>
                     <input type="text" id="name" name="name" required 
-                           data-translate-placeholder="contact.form.name">
+                           placeholder="Въведете вашето име"
+                           data-translate-placeholder="contact.form.namePlaceholder">
                 </div>
                 
                 <div class="form-group">
                     <label for="email" data-translate="contact.form.email">Имейл</label>
                     <input type="email" id="email" name="email" required 
-                           data-translate-placeholder="contact.form.email">
+                           placeholder="Въведете вашия имейл"
+                           data-translate-placeholder="contact.form.emailPlaceholder">
                 </div>
                 
                 <div class="form-group">
                     <label for="subject" data-translate="contact.form.subject">Тема</label>
                     <input type="text" id="subject" name="subject" required 
-                           data-translate-placeholder="contact.form.subject">
+                           placeholder="Тема на съобщението"
+                           data-translate-placeholder="contact.form.subjectPlaceholder">
                 </div>
                 
                 <div class="form-group">
                     <label for="message" data-translate="contact.form.message">Съобщение</label>
-                    <textarea id="message" name="message" rows="5" required 
-                              data-translate-placeholder="contact.form.message"></textarea>
+                    <textarea id="message" name="message" rows="6" required 
+                              placeholder="Напишете вашето съобщение тук..."
+                              data-translate-placeholder="contact.form.messagePlaceholder"></textarea>
                 </div>
                 
                 <button type="submit" class="cta-button" data-translate="contact.form.submit">
@@ -511,10 +716,184 @@
                 </button>
             </form>
             
-            <div id="form-message" class="form-message" style="display: none;"></div>
+            <div id="form-message" class="form-message"></div>
+            
+            <div class="contact-info-modal">
+                <h4 data-translate="contact.info.title">Алтернативни начини за връзка</h4>
+                <ul>
+                    <li>
+                        <i>📧</i>
+                        <strong data-translate="contact.info.email">Имейл:</strong> 
+                        <a href="mailto:pasevdenislav@gmail.com">pasevdenislav@gmail.com</a>
+                    </li>
+                    <li>
+                        <i>🐙</i>
+                        <strong data-translate="contact.info.github">GitHub:</strong> 
+                        <a href="https://github.com/PasevSU" target="_blank">github.com/PasevSU</a>
+                    </li>
+                    <li>
+                        <i>❤️</i>
+                        <strong data-translate="contact.info.donate">Дарение:</strong> 
+                        <a href="https://www.paypal.com/donate/?hosted_button_id=AAWFZVF2XCP5A" target="_blank">PayPal Дарение</a>
+                    </li>
+                </ul>
+            </div>
         </div>
     </div>
 
-    <script src="static/script.js"></script>
+    <script>
+        // Подобрен JavaScript за контактната форма
+        document.addEventListener('DOMContentLoaded', function() {
+            const modal = document.getElementById('contact-modal');
+            const closeBtn = document.querySelector('.close');
+            const contactTriggers = document.querySelectorAll('.contact-trigger');
+            const contactForm = document.getElementById('contact-form');
+            const formMessage = document.getElementById('form-message');
+            
+            // Отваряне на модал
+            contactTriggers.forEach(trigger => {
+                trigger.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    modal.style.display = 'block';
+                    document.body.style.overflow = 'hidden'; // Предотвратява скрол на фона
+                });
+            });
+            
+            // Затваряне на модал
+            closeBtn.addEventListener('click', function() {
+                modal.style.display = 'none';
+                document.body.style.overflow = 'auto';
+            });
+            
+            // Затваряне при клик извън модала
+            window.addEventListener('click', function(e) {
+                if (e.target === modal) {
+                    modal.style.display = 'none';
+                    document.body.style.overflow = 'auto';
+                }
+            });
+            
+            // Затваряне с Escape
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape' && modal.style.display === 'block') {
+                    modal.style.display = 'none';
+                    document.body.style.overflow = 'auto';
+                }
+            });
+            
+            // Обработка на формата
+            if (contactForm) {
+                contactForm.addEventListener('submit', async function(e) {
+                    e.preventDefault();
+                    
+                    // Получаване на данни от формата
+                    const formData = new FormData(contactForm);
+                    const data = {
+                        name: formData.get('name'),
+                        email: formData.get('email'),
+                        subject: formData.get('subject'),
+                        message: formData.get('message')
+                    };
+                    
+                    // Валидация
+                    if (!data.name || !data.email || !data.subject || !data.message) {
+                        showMessage('Моля, попълнете всички полета.', 'error');
+                        return;
+                    }
+                    
+                    // Валидация на имейл
+                    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                    if (!emailRegex.test(data.email)) {
+                        showMessage('Моля, въведете валиден имейл адрес.', 'error');
+                        return;
+                    }
+                    
+                    // Показване на състояние на зареждане
+                    const submitBtn = contactForm.querySelector('button[type="submit"]');
+                    const originalText = submitBtn.textContent;
+                    submitBtn.textContent = 'Изпращане...';
+                    submitBtn.disabled = true;
+                    
+                    showMessage('Изпращане на съобщението...', 'loading');
+                    
+                    try {
+                        // Изпращане към ntfy.sh
+                        await sendToNtfy(data);
+                        
+                        // Успешно изпращане
+                        showMessage('Съобщението е изпратено успешно! Ще ви отговоря скоро.', 'success');
+                        contactForm.reset();
+                        
+                        // Автоматично затваряне след 3 секунди
+                        setTimeout(() => {
+                            modal.style.display = 'none';
+                            document.body.style.overflow = 'auto';
+                        }, 3000);
+                        
+                    } catch (error) {
+                        console.error('Грешка при изпращане:', error);
+                        showMessage('Грешка при изпращане на съобщението. Моля, опитайте отново или използвайте алтернативните методи за връзка.', 'error');
+                    } finally {
+                        // Възстановяване на бутона
+                        submitBtn.textContent = originalText;
+                        submitBtn.disabled = false;
+                    }
+                });
+            }
+            
+            function showMessage(text, type) {
+                if (formMessage) {
+                    formMessage.textContent = text;
+                    formMessage.className = 'form-message ' + type;
+                    formMessage.style.display = 'block';
+                    
+                    // Скролиране до съобщението
+                    formMessage.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                }
+            }
+            
+            async function sendToNtfy(data) {
+                const topic = 'pasevsu_messages';
+                const ntfyUrl = `https://ntfy.sh/${topic}`;
+                
+                // Създаване на съдържанието на съобщението
+                const messageContent = `
+Име: ${data.name}
+Имейл: ${data.email}
+Тема: ${data.subject}
+
+Съобщение:
+${data.message}
+
+Изпратено от: Контактна форма на сайта
+                `.trim();
+                
+                try {
+                    // Изпращане към ntfy.sh
+                    const response = await fetch(ntfyUrl, {
+                        method: 'POST',
+                        body: messageContent,
+                        headers: {
+                            'Title': `Ново съобщение от: ${data.name}`,
+                            'Priority': 'default',
+                            'Tags': 'email,envelope',
+                            'Click': `mailto:${data.email}`
+                        }
+                    });
+                    
+                    if (!response.ok) {
+                        throw new Error(`HTTP грешка! статус: ${response.status}`);
+                    }
+                    
+                    console.log('Съобщението е изпратено успешно към ntfy');
+                    return response;
+                    
+                } catch (error) {
+                    console.error('Грешка при изпращане към ntfy:', error);
+                    throw error;
+                }
+            }
+        });
+    </script>
 </body>
 </html>
