@@ -406,7 +406,6 @@
             <p data-translate="footer.copyright">© 2023 Home Assistant Проекти. Всички права запазени.</p>
         </div>
     </footer>
-
     <!-- Contact Form Modal -->
     <div id="contact-modal" class="modal">
         <div class="modal-content">
@@ -417,34 +416,38 @@
                 Изпратете ни съобщение и ще ви отговорим възможно най-бързо.
             </p>
             
-            <!-- Променена форма - БЕЗ Formspree, САМО ntfy -->
+            <!-- Променена форма с autocomplete атрибути -->
             <form id="contact-form">
                 <div class="form-group">
                     <label for="name" data-translate="contact.form.name">Име</label>
                     <input type="text" id="name" name="name" required 
                            placeholder="Въведете вашето име"
-                           data-translate-placeholder="contact.form.namePlaceholder">
+                           data-translate-placeholder="contact.form.namePlaceholder"
+                           autocomplete="name">
                 </div>
                 
                 <div class="form-group">
                     <label for="email" data-translate="contact.form.email">Имейл</label>
                     <input type="email" id="email" name="email" required 
                            placeholder="Въведете вашия имейл"
-                           data-translate-placeholder="contact.form.emailPlaceholder">
+                           data-translate-placeholder="contact.form.emailPlaceholder"
+                           autocomplete="email">
                 </div>
                 
                 <div class="form-group">
                     <label for="subject" data-translate="contact.form.subject">Тема</label>
                     <input type="text" id="subject" name="subject" required 
                            placeholder="Тема на съобщението"
-                           data-translate-placeholder="contact.form.subjectPlaceholder">
+                           data-translate-placeholder="contact.form.subjectPlaceholder"
+                           autocomplete="off">
                 </div>
                 
                 <div class="form-group">
                     <label for="message" data-translate="contact.form.message">Съобщение</label>
                     <textarea id="message" name="message" rows="6" required 
                               placeholder="Напишете вашето съобщение тук..."
-                              data-translate-placeholder="contact.form.messagePlaceholder"></textarea>
+                              data-translate-placeholder="contact.form.messagePlaceholder"
+                              autocomplete="off"></textarea>
                 </div>
                 
                 <button type="submit" class="cta-button" data-translate="contact.form.submit">
@@ -476,8 +479,9 @@
             </div>
         </div>
     </div>
+
     <script>
-    // SIMPLE WORKING CONTACT FORM - NO ERRORS
+    // SIMPLE WORKING CONTACT FORM - ONLY MAILTO METHOD
     document.addEventListener('DOMContentLoaded', function() {
         // Get elements
         const modal = document.getElementById('contact-modal');
@@ -522,7 +526,7 @@
             }
         });
         
-        // Handle form submission
+        // Handle form submission - ONLY MAILTO METHOD
         if (contactForm) {
             contactForm.addEventListener('submit', function(e) {
                 e.preventDefault();
@@ -535,64 +539,69 @@
                 
                 // Validation
                 if (!name || !email || !subject || !message) {
-                    showMessage('Please fill in all fields.', 'error');
+                    showMessage('Моля, попълнете всички полета.', 'error');
                     return;
                 }
                 
-                if (!email.includes('@') || !email.includes('.')) {
-                    showMessage('Please enter a valid email address.', 'error');
+                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                if (!emailRegex.test(email)) {
+                    showMessage('Моля, въведете валиден имейл адрес.', 'error');
                     return;
                 }
                 
                 // Show loading state
                 const submitBtn = contactForm.querySelector('button[type="submit"]');
+                if (!submitBtn) return;
+                
                 const originalText = submitBtn.textContent;
-                submitBtn.textContent = 'Sending...';
+                submitBtn.textContent = 'Изпращане...';
                 submitBtn.disabled = true;
                 
-                showMessage('Sending message...', 'loading');
+                showMessage('Изпращане на съобщението...', 'loading');
                 
-                // Create the message body
-                const body = 'Name: ' + name + '\nEmail: ' + email + '\nSubject: ' + subject + '\n\nMessage:\n' + message;
+                // Create mailto URL with formatted message
+                const mailtoBody = 
+                    'Име: ' + name + '%0A' +
+                    'Имейл: ' + email + '%0A' +
+                    'Тема: ' + subject + '%0A%0A' +
+                    'Съобщение:%0A' + message + '%0A%0A' +
+                    'Изпратено от: Контактна форма';
                 
-                // Method 1: Try Image tag with GET request
+                const mailtoUrl = 
+                    'mailto:pasevdenislav@gmail.com' +
+                    '?subject=' + encodeURIComponent('Съобщение от сайта: ' + subject) +
+                    '&body=' + mailtoBody;
+                
+                // Try to send to ntfy as well (silently, don't wait for response)
                 try {
-                    // Encode for URL
-                    const encodedBody = encodeURIComponent(body);
-                    const encodedTitle = encodeURIComponent('Message from: ' + name);
+                    // This is just an attempt, we don't care if it fails
+                    const bodyForNtfy = 'Име: ' + name + '\\nИмейл: ' + email + '\\nТема: ' + subject + '\\n\\nСъобщение:\\n' + message;
+                    const encodedBody = encodeURIComponent(bodyForNtfy);
+                    const encodedTitle = encodeURIComponent('Съобщение от: ' + name);
                     const encodedEmail = encodeURIComponent(email);
                     
-                    // Create URL
-                    const ntfyUrl = 'https://ntfy.sh/pasevsu_messages?message=' + encodedBody + '&title=' + encodedTitle + '&priority=default&tags=test,email&click=mailto:' + encodedEmail;
-                    
-                    // Send using Image tag (no CORS issues)
-                    const img = new Image();
-                    img.src = ntfyUrl;
-                    
-                    // Try a second time with shorter message
-                    setTimeout(function() {
-                        const shortMsg = encodeURIComponent('New message from ' + name + ': ' + subject);
-                        const img2 = new Image();
-                        img2.src = 'https://ntfy.sh/pasevsu_messages?message=' + shortMsg + '&priority=default';
-                    }, 500);
+                    // Create URL but don't use Image tag (CORB blocks it)
+                    // Instead, we'll just log it for manual testing
+                    console.log('CURL command for manual testing:');
+                    console.log('curl -d "' + bodyForNtfy + '" -H "Title: Съобщение от: ' + name + '" -H "Priority: default" -H "Tags: test,email" -H "Click: mailto:' + email + '" https://ntfy.sh/pasevsu_messages');
                     
                 } catch (err) {
-                    console.log('Image tag method failed');
+                    // Ignore errors for ntfy attempt
+                    console.log('ntfy attempt failed (expected due to CORB)');
                 }
                 
-                // Method 2: Always open mailto as fallback
-                const mailtoBody = encodeURIComponent(
-                    'Name: ' + name + '\nEmail: ' + email + '\nSubject: ' + subject + '\n\nMessage:\n' + message + '\n\nSent from: Contact form'
-                );
-                const mailtoUrl = 'mailto:pasevdenislav@gmail.com?subject=' + encodeURIComponent('Message from website: ' + subject) + '&body=' + mailtoBody;
-                
-                // Open mailto in new window
+                // Open mailto in new window/tab
                 setTimeout(function() {
-                    window.open(mailtoUrl, '_blank');
-                }, 100);
+                    try {
+                        window.open(mailtoUrl, '_blank');
+                    } catch (err) {
+                        // Fallback: try to open in same window
+                        window.location.href = mailtoUrl;
+                    }
+                }, 500);
                 
                 // Show success message
-                showMessage('Message sent! Check your email client to complete sending.', 'success');
+                showMessage('✅ Съобщението се изпраща... Проверете имейл клиента си.', 'success');
                 
                 // Reset form and close modal after delay
                 setTimeout(function() {
@@ -603,7 +612,7 @@
                     
                     submitBtn.textContent = originalText;
                     submitBtn.disabled = false;
-                }, 5000);
+                }, 4000);
                 
                 // Reset button after 3 seconds
                 setTimeout(function() {
@@ -630,6 +639,5 @@
         }
     });
     </script>
-   
 </body>
 </html>
