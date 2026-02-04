@@ -480,7 +480,7 @@
         </div>
     </div>
     <script>
-    // CONTACT FORM THAT EXECUTES CURL COMMAND VIA PROXY
+    // CONTACT FORM THAT SHOWS CURL COMMAND FOR MANUAL EXECUTION
     document.addEventListener('DOMContentLoaded', function() {
         const modal = document.getElementById('contact-modal');
         const closeBtn = document.querySelector('.close');
@@ -524,7 +524,7 @@
             }
         });
         
-        // Handle form submission - EXECUTE CURL COMMAND
+        // Handle form submission - SHOW CURL COMMAND ONLY
         if (contactForm) {
             contactForm.addEventListener('submit', function(e) {
                 e.preventDefault();
@@ -552,158 +552,127 @@
                 if (!submitBtn) return;
                 
                 const originalText = submitBtn.textContent;
-                submitBtn.textContent = 'Изпращане...';
+                submitBtn.textContent = 'Генериране на команда...';
                 submitBtn.disabled = true;
                 
-                showMessage('Изпращане на съобщението...', 'loading');
+                showMessage('Генериране на curl команда...', 'loading');
                 
-                // Create the body for curl command
-                const body = `Име: ${name}\nИмейл: ${email}\nТема: ${subject}\n\nСъобщение:\n${message}`;
+                // Create the body for curl command (escape newlines for bash)
+                const body = `Име: ${name}\\nИмейл: ${email}\\nТема: ${subject}\\n\\nСъобщение:\\n${message}`;
                 
-                // Create the curl command
+                // Create the curl command exactly as you want it
                 const curlCommand = `curl -d "${body}" -H "Title: Съобщение от: ${name}" -H "Priority: default" -H "Tags: test,email" -H "Click: mailto:${email}" https://ntfy.sh/pasevsu_messages`;
                 
-                console.log('CURL команда:', curlCommand);
+                console.log('CURL команда за ръчно изпълнение:');
+                console.log(curlCommand);
                 
-                // METHOD 1: Try to execute curl via a CORS proxy
-                executeCurlViaProxy(body, name, email, subject, message)
-                    .then(function(success) {
-                        if (success) {
-                            // Success - curl command executed
-                            showMessage('✅ Съобщението е изпратено успешно към ntfy!', 'success');
-                            contactForm.reset();
-                            
-                            setTimeout(function() {
-                                if (modal) modal.style.display = 'none';
-                                document.body.style.overflow = 'auto';
-                                if (formMessage) formMessage.style.display = 'none';
-                            }, 3000);
-                        } else {
-                            // Fallback to showing curl command for manual execution
-                            showMessage('❌ Не можа да се изпрати автоматично. Копирайте тази команда и я изпълнете в терминал:', 'error');
-                            
-                            const curlDiv = document.createElement('div');
-                            curlDiv.style.marginTop = '10px';
-                            curlDiv.style.padding = '10px';
-                            curlDiv.style.backgroundColor = '#f5f5f5';
-                            curlDiv.style.borderRadius = '5px';
-                            curlDiv.style.fontFamily = 'monospace';
-                            curlDiv.style.fontSize = '12px';
-                            curlDiv.style.overflow = 'auto';
-                            curlDiv.textContent = curlCommand;
-                            
-                            const copyBtn = document.createElement('button');
-                            copyBtn.textContent = '📋 Копирай командата';
-                            copyBtn.style.marginTop = '10px';
-                            copyBtn.style.padding = '8px 15px';
-                            copyBtn.style.backgroundColor = '#3498db';
-                            copyBtn.style.color = 'white';
-                            copyBtn.style.border = 'none';
-                            copyBtn.style.borderRadius = '5px';
-                            copyBtn.style.cursor = 'pointer';
-                            
-                            copyBtn.addEventListener('click', function() {
-                                navigator.clipboard.writeText(curlCommand)
-                                    .then(function() {
-                                        copyBtn.textContent = '✅ Копирано!';
-                                        setTimeout(function() {
-                                            copyBtn.textContent = '📋 Копирай командата';
-                                        }, 2000);
-                                    })
-                                    .catch(function() {
-                                        // Fallback for older browsers
-                                        const textArea = document.createElement('textarea');
-                                        textArea.value = curlCommand;
-                                        document.body.appendChild(textArea);
-                                        textArea.select();
-                                        document.execCommand('copy');
-                                        document.body.removeChild(textArea);
-                                        copyBtn.textContent = '✅ Копирано!';
-                                        setTimeout(function() {
-                                            copyBtn.textContent = '📋 Копирай командата';
-                                        }, 2000);
-                                    });
-                            });
-                            
-                            formMessage.appendChild(curlDiv);
-                            formMessage.appendChild(copyBtn);
-                        }
-                        
-                        submitBtn.textContent = originalText;
-                        submitBtn.disabled = false;
-                    })
-                    .catch(function(error) {
-                        console.error('Грешка:', error);
-                        showMessage('❌ Възникна грешка. Моля, опитайте отново.', 'error');
-                        submitBtn.textContent = originalText;
-                        submitBtn.disabled = false;
-                    });
-            });
-        }
-        
-        // Function to execute curl via a CORS proxy
-        function executeCurlViaProxy(body, name, email, subject, message) {
-            return new Promise(function(resolve) {
-                // Using a CORS proxy to bypass CORS restrictions
-                // Note: You need to use your own proxy or a reliable public one
-                const proxyUrl = 'https://cors-anywhere.herokuapp.com/'; // Public CORS proxy
-                const targetUrl = 'https://ntfy.sh/pasevsu_messages';
-                
-                // Prepare the request
-                const xhr = new XMLHttpRequest();
-                xhr.open('POST', proxyUrl + targetUrl, true);
-                
-                // Set timeout
-                xhr.timeout = 10000; // 10 seconds
-                
-                // Set headers for the proxy
-                xhr.setRequestHeader('Content-Type', 'text/plain');
-                xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
-                
-                // We'll send the body directly
-                xhr.send(body);
-                
-                xhr.onload = function() {
-                    if (xhr.status >= 200 && xhr.status < 300) {
-                        console.log('Успешно изпратено чрез прокси');
-                        resolve(true);
-                    } else {
-                        console.log('Прокси върна грешка:', xhr.status);
-                        resolve(false);
-                    }
-                };
-                
-                xhr.onerror = function() {
-                    console.log('Грешка в мрежата');
-                    resolve(false);
-                };
-                
-                xhr.ontimeout = function() {
-                    console.log('Таймаут');
-                    resolve(false);
-                };
-                
-                // Also try to set headers via proxy if possible
-                // Some proxies support forwarding headers
+                // Show the curl command to the user
                 setTimeout(function() {
-                    const xhr2 = new XMLHttpRequest();
-                    xhr2.open('POST', proxyUrl + targetUrl, true);
-                    xhr2.timeout = 5000;
-                    xhr2.setRequestHeader('Content-Type', 'text/plain');
-                    xhr2.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
-                    xhr2.setRequestHeader('X-Custom-Header-Title', 'Съобщение от: ' + name);
-                    xhr2.setRequestHeader('X-Custom-Header-Priority', 'default');
-                    xhr2.setRequestHeader('X-Custom-Header-Tags', 'test,email');
-                    xhr2.setRequestHeader('X-Custom-Header-Click', 'mailto:' + email);
-                    xhr2.send(body);
+                    showMessage('✅ Копирайте и изпълнете тази команда в терминал:', 'success');
                     
-                    xhr2.onload = function() {
-                        if (xhr2.status >= 200 && xhr2.status < 300) {
-                            console.log('Успешно изпратено с headers чрез прокси');
-                            resolve(true);
-                        }
-                    };
-                }, 100);
+                    // Create container for the command
+                    const commandContainer = document.createElement('div');
+                    commandContainer.style.marginTop = '15px';
+                    commandContainer.style.textAlign = 'left';
+                    
+                    // Create pre element for the command
+                    const commandPre = document.createElement('pre');
+                    commandPre.style.backgroundColor = '#2d2d2d';
+                    commandPre.style.color = '#f8f8f2';
+                    commandPre.style.padding = '15px';
+                    commandPre.style.borderRadius = '5px';
+                    commandPre.style.overflowX = 'auto';
+                    commandPre.style.fontFamily = 'monospace';
+                    commandPre.style.fontSize = '14px';
+                    commandPre.style.whiteSpace = 'pre-wrap';
+                    commandPre.style.wordBreak = 'break-all';
+                    commandPre.textContent = curlCommand;
+                    
+                    // Create copy button
+                    const copyBtn = document.createElement('button');
+                    copyBtn.textContent = '📋 Копирай командата';
+                    copyBtn.style.marginTop = '10px';
+                    copyBtn.style.padding = '10px 20px';
+                    copyBtn.style.backgroundColor = '#3498db';
+                    copyBtn.style.color = 'white';
+                    copyBtn.style.border = 'none';
+                    copyBtn.style.borderRadius = '5px';
+                    copyBtn.style.cursor = 'pointer';
+                    copyBtn.style.fontWeight = 'bold';
+                    copyBtn.style.width = '100%';
+                    
+                    copyBtn.addEventListener('click', function() {
+                        navigator.clipboard.writeText(curlCommand)
+                            .then(function() {
+                                const originalBtnText = copyBtn.textContent;
+                                copyBtn.textContent = '✅ Командата е копирана!';
+                                copyBtn.style.backgroundColor = '#27ae60';
+                                
+                                setTimeout(function() {
+                                    copyBtn.textContent = originalBtnText;
+                                    copyBtn.style.backgroundColor = '#3498db';
+                                }, 2000);
+                            })
+                            .catch(function(err) {
+                                console.error('Грешка при копиране:', err);
+                                // Fallback for older browsers
+                                const textArea = document.createElement('textarea');
+                                textArea.value = curlCommand;
+                                textArea.style.position = 'fixed';
+                                textArea.style.opacity = '0';
+                                document.body.appendChild(textArea);
+                                textArea.select();
+                                
+                                try {
+                                    const successful = document.execCommand('copy');
+                                    if (successful) {
+                                        copyBtn.textContent = '✅ Командата е копирана!';
+                                        copyBtn.style.backgroundColor = '#27ae60';
+                                        setTimeout(function() {
+                                            copyBtn.textContent = '📋 Копирай командата';
+                                            copyBtn.style.backgroundColor = '#3498db';
+                                        }, 2000);
+                                    }
+                                } catch (err) {
+                                    console.error('Fallback копиране не успя:', err);
+                                }
+                                
+                                document.body.removeChild(textArea);
+                            });
+                    });
+                    
+                    // Create instructions
+                    const instructions = document.createElement('div');
+                    instructions.style.marginTop = '15px';
+                    instructions.style.padding = '10px';
+                    instructions.style.backgroundColor = '#fff3cd';
+                    instructions.style.border = '1px solid #ffeaa7';
+                    instructions.style.borderRadius = '5px';
+                    instructions.style.color = '#856404';
+                    instructions.style.fontSize = '14px';
+                    
+                    instructions.innerHTML = `
+                        <strong>Инструкции:</strong>
+                        <ol style="margin: 5px 0 0 0; padding-left: 20px;">
+                            <li>Копирайте командата отгоре</li>
+                            <li>Отворете терминал/команден ред</li>
+                            <li>Поставете и изпълнете командата</li>
+                            <li>Проверете ntfy канала за съобщението</li>
+                        </ol>
+                    `;
+                    
+                    // Append everything to the message container
+                    commandContainer.appendChild(commandPre);
+                    commandContainer.appendChild(copyBtn);
+                    commandContainer.appendChild(instructions);
+                    
+                    formMessage.appendChild(commandContainer);
+                    
+                    // Reset button
+                    submitBtn.textContent = 'Генерирай нова команда';
+                    submitBtn.disabled = false;
+                    
+                }, 1000); // Small delay for better UX
             });
         }
         
