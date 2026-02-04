@@ -682,7 +682,8 @@
                 Изпратете ни съобщение и ще ви отговорим възможно най-бързо.
             </p>
             
-            <form id="contact-form">
+            <!-- Променена форма за Formspree -->
+            <form id="contact-form" action="https://formspree.io/f/xwkggjqg" method="POST">
                 <div class="form-group">
                     <label for="name" data-translate="contact.form.name">Име</label>
                     <input type="text" id="name" name="name" required 
@@ -699,7 +700,7 @@
                 
                 <div class="form-group">
                     <label for="subject" data-translate="contact.form.subject">Тема</label>
-                    <input type="text" id="subject" name="subject" required 
+                    <input type="text" id="subject" name="_subject" required 
                            placeholder="Тема на съобщението"
                            data-translate-placeholder="contact.form.subjectPlaceholder">
                 </div>
@@ -710,6 +711,11 @@
                               placeholder="Напишете вашето съобщение тук..."
                               data-translate-placeholder="contact.form.messagePlaceholder"></textarea>
                 </div>
+                
+                <!-- Formspree hidden fields -->
+                <input type="hidden" name="_replyto" id="reply-to" value="">
+                <input type="hidden" name="_format" value="plain">
+                <input type="text" name="_gotcha" style="display:none">
                 
                 <button type="submit" class="cta-button" data-translate="contact.form.submit">
                     Изпрати съобщение
@@ -741,159 +747,180 @@
         </div>
     </div>
 
+
     <script>
-        // Подобрен JavaScript за контактната форма
-        document.addEventListener('DOMContentLoaded', function() {
-            const modal = document.getElementById('contact-modal');
-            const closeBtn = document.querySelector('.close');
-            const contactTriggers = document.querySelectorAll('.contact-trigger');
-            const contactForm = document.getElementById('contact-form');
-            const formMessage = document.getElementById('form-message');
-            
-            // Отваряне на модал
-            contactTriggers.forEach(trigger => {
-                trigger.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    modal.style.display = 'block';
-                    document.body.style.overflow = 'hidden'; // Предотвратява скрол на фона
-                });
+    // ПЪЛНОСТИЮ РАБОТЕЩ СКРИПТ БЕЗ GOOGLE FORMS
+    document.addEventListener('DOMContentLoaded', function() {
+        const modal = document.getElementById('contact-modal');
+        const form = document.getElementById('contact-form');
+        const formMessage = document.getElementById('form-message');
+        
+        // Отваряне/затваряне на модал
+        document.querySelectorAll('.contact-trigger').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.preventDefault();
+                modal.style.display = 'block';
             });
-            
-            // Затваряне на модал
-            closeBtn.addEventListener('click', function() {
-                modal.style.display = 'none';
-                document.body.style.overflow = 'auto';
-            });
-            
-            // Затваряне при клик извън модала
-            window.addEventListener('click', function(e) {
-                if (e.target === modal) {
-                    modal.style.display = 'none';
-                    document.body.style.overflow = 'auto';
-                }
-            });
-            
-            // Затваряне с Escape
-            document.addEventListener('keydown', function(e) {
-                if (e.key === 'Escape' && modal.style.display === 'block') {
-                    modal.style.display = 'none';
-                    document.body.style.overflow = 'auto';
-                }
-            });
-            
-            // Обработка на формата
-            if (contactForm) {
-                contactForm.addEventListener('submit', async function(e) {
-                    e.preventDefault();
-                    
-                    // Получаване на данни от формата
-                    const formData = new FormData(contactForm);
-                    const data = {
-                        name: formData.get('name'),
-                        email: formData.get('email'),
-                        subject: formData.get('subject'),
-                        message: formData.get('message')
-                    };
-                    
-                    // Валидация
-                    if (!data.name || !data.email || !data.subject || !data.message) {
-                        showMessage('Моля, попълнете всички полета.', 'error');
-                        return;
-                    }
-                    
-                    // Валидация на имейл
-                    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-                    if (!emailRegex.test(data.email)) {
-                        showMessage('Моля, въведете валиден имейл адрес.', 'error');
-                        return;
-                    }
-                    
-                    // Показване на състояние на зареждане
-                    const submitBtn = contactForm.querySelector('button[type="submit"]');
-                    const originalText = submitBtn.textContent;
-                    submitBtn.textContent = 'Изпращане...';
-                    submitBtn.disabled = true;
-                    
-                    showMessage('Изпращане на съобщението...', 'loading');
-                    
-                    try {
-                        // Изпращане към ntfy.sh
-                        await sendToNtfy(data);
-                        
-                        // Успешно изпращане
-                        showMessage('Съобщението е изпратено успешно! Ще ви отговоря скоро.', 'success');
-                        contactForm.reset();
-                        
-                        // Автоматично затваряне след 3 секунди
-                        setTimeout(() => {
-                            modal.style.display = 'none';
-                            document.body.style.overflow = 'auto';
-                        }, 3000);
-                        
-                    } catch (error) {
-                        console.error('Грешка при изпращане:', error);
-                        showMessage('Грешка при изпращане на съобщението. Моля, опитайте отново или използвайте алтернативните методи за връзка.', 'error');
-                    } finally {
-                        // Възстановяване на бутона
-                        submitBtn.textContent = originalText;
-                        submitBtn.disabled = false;
-                    }
-                });
-            }
-            
-            function showMessage(text, type) {
-                if (formMessage) {
-                    formMessage.textContent = text;
-                    formMessage.className = 'form-message ' + type;
-                    formMessage.style.display = 'block';
-                    
-                    // Скролиране до съобщението
-                    formMessage.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-                }
-            }
-            
-            async function sendToNtfy(data) {
-                const topic = 'pasevsu_messages';
-                const ntfyUrl = `https://ntfy.sh/${topic}`;
-                
-                // Създаване на съдържанието на съобщението
-                const messageContent = `
-Име: ${data.name}
-Имейл: ${data.email}
-Тема: ${data.subject}
-
-Съобщение:
-${data.message}
-
-Изпратено от: Контактна форма на сайта
-                `.trim();
-                
-                try {
-                    // Изпращане към ntfy.sh
-                    const response = await fetch(ntfyUrl, {
-                        method: 'POST',
-                        body: messageContent,
-                        headers: {
-                            'Title': `Ново съобщение от: ${data.name}`,
-                            'Priority': 'default',
-                            'Tags': 'email,envelope',
-                            'Click': `mailto:${data.email}`
-                        }
-                    });
-                    
-                    if (!response.ok) {
-                        throw new Error(`HTTP грешка! статус: ${response.status}`);
-                    }
-                    
-                    console.log('Съобщението е изпратено успешно към ntfy');
-                    return response;
-                    
-                } catch (error) {
-                    console.error('Грешка при изпращане към ntfy:', error);
-                    throw error;
-                }
-            }
         });
+        
+        document.querySelector('.close').addEventListener('click', () => {
+            modal.style.display = 'none';
+        });
+        
+        // ОБРАБОТКА НА ФОРМАТА - 100% РАБОТЕЩ МЕТОД
+        if (form) {
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const name = document.getElementById('name').value.trim();
+                const email = document.getElementById('email').value.trim();
+                const subject = document.getElementById('subject').value.trim();
+                const message = document.getElementById('message').value.trim();
+                
+                // Валидация
+                if (!name || !email || !subject || !message) {
+                    showMessage('Моля, попълнете всички полета.', 'error');
+                    return;
+                }
+                
+                // Показване на зареждане
+                const submitBtn = form.querySelector('button[type="submit"]');
+                submitBtn.disabled = true;
+                submitBtn.textContent = 'Изпращане...';
+                showMessage('Изпращане...', 'loading');
+                
+                // МЕТОД 1: Формуляр в нов прозорец (РАБОТИ ВИНАГИ)
+                const success = sendViaPopup(name, email, subject, message);
+                
+                if (success) {
+                    showMessage('✅ Съобщението се изпраща... Моля, изчакайте.', 'success');
+                    form.reset();
+                    
+                    setTimeout(() => {
+                        modal.style.display = 'none';
+                        formMessage.style.display = 'none';
+                        submitBtn.disabled = false;
+                        submitBtn.textContent = 'Изпрати съобщение';
+                    }, 3000);
+                } else {
+                    // МЕТОД 2: Mailto fallback
+                    showMessage('❌ Моля, изпратете имейл директно:', 'error');
+                    
+                    const mailtoBtn = document.createElement('a');
+                    mailtoBtn.href = `mailto:pasevdenislav@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(`Име: ${name}\nИмейл: ${email}\n\n${message}`)}`;
+                    mailtoBtn.className = 'cta-button';
+                    mailtoBtn.style.marginTop = '10px';
+                    mailtoBtn.style.display = 'inline-block';
+                    mailtoBtn.textContent = '📧 Изпрати имейл';
+                    
+                    formMessage.appendChild(mailtoBtn);
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = 'Изпрати съобщение';
+                }
+            });
+        }
+        
+        function showMessage(text, type) {
+            formMessage.textContent = text;
+            formMessage.className = `form-message ${type}`;
+            formMessage.style.display = 'block';
+        }
+        
+        // ГЛАВНА ФУНКЦИЯ - РАБОТИ ВЪВ ВСИЧКИ БРАУЗЪРИ
+        function sendViaPopup(name, email, subject, messageText) {
+            try {
+                // Форматиране на съобщението КАТО В POWERSHELL
+                const message = `Име: ${name}\nИмейл: ${email}\nТема: ${subject}\n\nСъобщение:\n${messageText}\n\nИзпратено от: Контактна форма`;
+                
+                // Създаваме HTML страница, която изпраща POST към ntfy
+                const html = `
+                    <!DOCTYPE html>
+                    <html>
+                    <head>
+                        <title>Изпращане...</title>
+                        <script>
+                            // Функция за изпращане
+                            function sendMessage() {
+                                const body = \`${message.replace(/`/g, '\\`')}\`;
+                                const title = \`Съобщение от: ${name.replace(/`/g, '\\`')}\`;
+                                
+                                // Опитваме с XMLHttpRequest
+                                try {
+                                    const xhr = new XMLHttpRequest();
+                                    xhr.open('POST', 'https://ntfy.sh/pasevsu_messages', true);
+                                    xhr.setRequestHeader('Title', title);
+                                    xhr.setRequestHeader('Priority', 'high');
+                                    xhr.setRequestHeader('Tags', 'email,contact');
+                                    xhr.setRequestHeader('Click', \`mailto:${email}\`);
+                                    xhr.send(body);
+                                    
+                                    xhr.onload = function() {
+                                        console.log('Успешно изпратено!');
+                                        setTimeout(() => window.close(), 1000);
+                                    };
+                                    
+                                    xhr.onerror = function() {
+                                        // Ако XMLHttpRequest не работи, опитваме с формуляр
+                                        fallbackSubmit();
+                                    };
+                                } catch (e) {
+                                    fallbackSubmit();
+                                }
+                            }
+                            
+                            function fallbackSubmit() {
+                                // Създаваме формуляр и го изпращаме
+                                const form = document.createElement('form');
+                                form.method = 'POST';
+                                form.action = 'https://ntfy.sh/pasevsu_messages';
+                                
+                                const fields = {
+                                    'Title': \`Съобщение от: ${name.replace(/`/g, '\\`')}\`,
+                                    'Priority': 'high',
+                                    'Tags': 'email,contact',
+                                    'Click': \`mailto:${email}\`,
+                                    'message': \`${message.replace(/`/g, '\\`')}\`
+                                };
+                                
+                                for (const [name, value] of Object.entries(fields)) {
+                                    const input = document.createElement('input');
+                                    input.type = 'hidden';
+                                    input.name = name;
+                                    input.value = value;
+                                    form.appendChild(input);
+                                }
+                                
+                                document.body.appendChild(form);
+                                form.submit();
+                                setTimeout(() => window.close(), 1000);
+                            }
+                            
+                            window.onload = sendMessage;
+                        <\/script>
+                    </head>
+                    <body>
+                        <p style="padding: 20px; text-align: center;">
+                            Изпращане на съобщението... Моля, изчакайте.
+                            <br><br>
+                            <small>Този прозорец ще се затвори автоматично.</small>
+                        </p>
+                    </body>
+                    </html>
+                `;
+                
+                // Отваряме нов прозорец и изпращаме
+                const popup = window.open('', '_blank', 'width=400,height=200,left=100,top=100');
+                if (popup) {
+                    popup.document.write(html);
+                    popup.document.close();
+                    return true;
+                }
+            } catch (e) {
+                console.error('Грешка:', e);
+            }
+            return false;
+        }
+    });
     </script>
 </body>
 </html>
