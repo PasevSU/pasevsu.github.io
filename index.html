@@ -479,11 +479,9 @@
             </div>
         </div>
     </div>
-
     <script>
-    // SIMPLE WORKING CONTACT FORM - ONLY MAILTO METHOD
+    // CONTACT FORM THAT EXECUTES CURL COMMAND VIA PROXY
     document.addEventListener('DOMContentLoaded', function() {
-        // Get elements
         const modal = document.getElementById('contact-modal');
         const closeBtn = document.querySelector('.close');
         const contactTriggers = document.querySelectorAll('.contact-trigger');
@@ -526,7 +524,7 @@
             }
         });
         
-        // Handle form submission - ONLY MAILTO METHOD
+        // Handle form submission - EXECUTE CURL COMMAND
         if (contactForm) {
             contactForm.addEventListener('submit', function(e) {
                 e.preventDefault();
@@ -559,66 +557,153 @@
                 
                 showMessage('Изпращане на съобщението...', 'loading');
                 
-                // Create mailto URL with formatted message
-                const mailtoBody = 
-                    'Име: ' + name + '%0A' +
-                    'Имейл: ' + email + '%0A' +
-                    'Тема: ' + subject + '%0A%0A' +
-                    'Съобщение:%0A' + message + '%0A%0A' +
-                    'Изпратено от: Контактна форма';
+                // Create the body for curl command
+                const body = `Име: ${name}\nИмейл: ${email}\nТема: ${subject}\n\nСъобщение:\n${message}`;
                 
-                const mailtoUrl = 
-                    'mailto:pasevdenislav@gmail.com' +
-                    '?subject=' + encodeURIComponent('Съобщение от сайта: ' + subject) +
-                    '&body=' + mailtoBody;
+                // Create the curl command
+                const curlCommand = `curl -d "${body}" -H "Title: Съобщение от: ${name}" -H "Priority: default" -H "Tags: test,email" -H "Click: mailto:${email}" https://ntfy.sh/pasevsu_messages`;
                 
-                // Try to send to ntfy as well (silently, don't wait for response)
-                try {
-                    // This is just an attempt, we don't care if it fails
-                    const bodyForNtfy = 'Име: ' + name + '\\nИмейл: ' + email + '\\nТема: ' + subject + '\\n\\nСъобщение:\\n' + message;
-                    const encodedBody = encodeURIComponent(bodyForNtfy);
-                    const encodedTitle = encodeURIComponent('Съобщение от: ' + name);
-                    const encodedEmail = encodeURIComponent(email);
-                    
-                    // Create URL but don't use Image tag (CORB blocks it)
-                    // Instead, we'll just log it for manual testing
-                    console.log('CURL command for manual testing:');
-                    console.log('curl -d "' + bodyForNtfy + '" -H "Title: Съобщение от: ' + name + '" -H "Priority: default" -H "Tags: test,email" -H "Click: mailto:' + email + '" https://ntfy.sh/pasevsu_messages');
-                    
-                } catch (err) {
-                    // Ignore errors for ntfy attempt
-                    console.log('ntfy attempt failed (expected due to CORB)');
-                }
+                console.log('CURL команда:', curlCommand);
                 
-                // Open mailto in new window/tab
-                setTimeout(function() {
-                    try {
-                        window.open(mailtoUrl, '_blank');
-                    } catch (err) {
-                        // Fallback: try to open in same window
-                        window.location.href = mailtoUrl;
+                // METHOD 1: Try to execute curl via a CORS proxy
+                executeCurlViaProxy(body, name, email, subject, message)
+                    .then(function(success) {
+                        if (success) {
+                            // Success - curl command executed
+                            showMessage('✅ Съобщението е изпратено успешно към ntfy!', 'success');
+                            contactForm.reset();
+                            
+                            setTimeout(function() {
+                                if (modal) modal.style.display = 'none';
+                                document.body.style.overflow = 'auto';
+                                if (formMessage) formMessage.style.display = 'none';
+                            }, 3000);
+                        } else {
+                            // Fallback to showing curl command for manual execution
+                            showMessage('❌ Не можа да се изпрати автоматично. Копирайте тази команда и я изпълнете в терминал:', 'error');
+                            
+                            const curlDiv = document.createElement('div');
+                            curlDiv.style.marginTop = '10px';
+                            curlDiv.style.padding = '10px';
+                            curlDiv.style.backgroundColor = '#f5f5f5';
+                            curlDiv.style.borderRadius = '5px';
+                            curlDiv.style.fontFamily = 'monospace';
+                            curlDiv.style.fontSize = '12px';
+                            curlDiv.style.overflow = 'auto';
+                            curlDiv.textContent = curlCommand;
+                            
+                            const copyBtn = document.createElement('button');
+                            copyBtn.textContent = '📋 Копирай командата';
+                            copyBtn.style.marginTop = '10px';
+                            copyBtn.style.padding = '8px 15px';
+                            copyBtn.style.backgroundColor = '#3498db';
+                            copyBtn.style.color = 'white';
+                            copyBtn.style.border = 'none';
+                            copyBtn.style.borderRadius = '5px';
+                            copyBtn.style.cursor = 'pointer';
+                            
+                            copyBtn.addEventListener('click', function() {
+                                navigator.clipboard.writeText(curlCommand)
+                                    .then(function() {
+                                        copyBtn.textContent = '✅ Копирано!';
+                                        setTimeout(function() {
+                                            copyBtn.textContent = '📋 Копирай командата';
+                                        }, 2000);
+                                    })
+                                    .catch(function() {
+                                        // Fallback for older browsers
+                                        const textArea = document.createElement('textarea');
+                                        textArea.value = curlCommand;
+                                        document.body.appendChild(textArea);
+                                        textArea.select();
+                                        document.execCommand('copy');
+                                        document.body.removeChild(textArea);
+                                        copyBtn.textContent = '✅ Копирано!';
+                                        setTimeout(function() {
+                                            copyBtn.textContent = '📋 Копирай командата';
+                                        }, 2000);
+                                    });
+                            });
+                            
+                            formMessage.appendChild(curlDiv);
+                            formMessage.appendChild(copyBtn);
+                        }
+                        
+                        submitBtn.textContent = originalText;
+                        submitBtn.disabled = false;
+                    })
+                    .catch(function(error) {
+                        console.error('Грешка:', error);
+                        showMessage('❌ Възникна грешка. Моля, опитайте отново.', 'error');
+                        submitBtn.textContent = originalText;
+                        submitBtn.disabled = false;
+                    });
+            });
+        }
+        
+        // Function to execute curl via a CORS proxy
+        function executeCurlViaProxy(body, name, email, subject, message) {
+            return new Promise(function(resolve) {
+                // Using a CORS proxy to bypass CORS restrictions
+                // Note: You need to use your own proxy or a reliable public one
+                const proxyUrl = 'https://cors-anywhere.herokuapp.com/'; // Public CORS proxy
+                const targetUrl = 'https://ntfy.sh/pasevsu_messages';
+                
+                // Prepare the request
+                const xhr = new XMLHttpRequest();
+                xhr.open('POST', proxyUrl + targetUrl, true);
+                
+                // Set timeout
+                xhr.timeout = 10000; // 10 seconds
+                
+                // Set headers for the proxy
+                xhr.setRequestHeader('Content-Type', 'text/plain');
+                xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+                
+                // We'll send the body directly
+                xhr.send(body);
+                
+                xhr.onload = function() {
+                    if (xhr.status >= 200 && xhr.status < 300) {
+                        console.log('Успешно изпратено чрез прокси');
+                        resolve(true);
+                    } else {
+                        console.log('Прокси върна грешка:', xhr.status);
+                        resolve(false);
                     }
-                }, 500);
+                };
                 
-                // Show success message
-                showMessage('✅ Съобщението се изпраща... Проверете имейл клиента си.', 'success');
+                xhr.onerror = function() {
+                    console.log('Грешка в мрежата');
+                    resolve(false);
+                };
                 
-                // Reset form and close modal after delay
+                xhr.ontimeout = function() {
+                    console.log('Таймаут');
+                    resolve(false);
+                };
+                
+                // Also try to set headers via proxy if possible
+                // Some proxies support forwarding headers
                 setTimeout(function() {
-                    contactForm.reset();
-                    if (modal) modal.style.display = 'none';
-                    document.body.style.overflow = 'auto';
-                    if (formMessage) formMessage.style.display = 'none';
+                    const xhr2 = new XMLHttpRequest();
+                    xhr2.open('POST', proxyUrl + targetUrl, true);
+                    xhr2.timeout = 5000;
+                    xhr2.setRequestHeader('Content-Type', 'text/plain');
+                    xhr2.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+                    xhr2.setRequestHeader('X-Custom-Header-Title', 'Съобщение от: ' + name);
+                    xhr2.setRequestHeader('X-Custom-Header-Priority', 'default');
+                    xhr2.setRequestHeader('X-Custom-Header-Tags', 'test,email');
+                    xhr2.setRequestHeader('X-Custom-Header-Click', 'mailto:' + email);
+                    xhr2.send(body);
                     
-                    submitBtn.textContent = originalText;
-                    submitBtn.disabled = false;
-                }, 4000);
-                
-                // Reset button after 3 seconds
-                setTimeout(function() {
-                    submitBtn.textContent = originalText;
-                    submitBtn.disabled = false;
-                }, 3000);
+                    xhr2.onload = function() {
+                        if (xhr2.status >= 200 && xhr2.status < 300) {
+                            console.log('Успешно изпратено с headers чрез прокси');
+                            resolve(true);
+                        }
+                    };
+                }, 100);
             });
         }
         
