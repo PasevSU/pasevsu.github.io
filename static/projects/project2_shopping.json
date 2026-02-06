@@ -1,0 +1,43 @@
+{
+  "id": 2,
+  "title": {
+    "bg": "🛒 Списък за пазаруване с изображения",
+    "en": "🛒 Shopping List with Images",
+    "de": "🛒 Einkaufsliste mit Bildern"
+  },
+  "platforms": ["ha", "web_inactive", "android_inactive"],
+  "image": "static/img/Projekt_shoplist.gif",
+  "imageAlt": {
+    "bg": "Списък за пазаруване",
+    "en": "Shopping list",
+    "de": "Einkaufsliste"
+  },
+  "advantages": [
+    {
+      "bg": "Бързо намиране на артикули по категории",
+      "en": "Quick item finding by categories",
+      "de": "Schnelles Finden von Artikeln nach Kategorien"
+    },
+    {
+      "bg": "Визуална идентификация чрез изображения",
+      "en": "Visual identification through images",
+      "de": "Visuelle Identifikation durch Bilder"
+    },
+    {
+      "bg": "Членовете на домакинството получават известия за нови артикули",
+      "en": "Household members receive notifications for new items",
+      "de": "Haushaltsmitglieder erhalten Benachrichtigungen für neue Artikel"
+    },
+    {
+      "bg": "Автоматично премахва отметнати артикули",
+      "en": "Automatically removes checked items",
+      "de": "Automatisches Entfernen markierter Artikel"
+    }
+  ],
+  "link": "https://github.com/PasevSU/HASS-shopping-list.git",
+  "buttonText": {
+    "bg": "↪️ КЪМ ПРОЕКТА ▶️",
+    "en": "↪️ GO TO PROJECT ▶️",
+    "de": "↪️ ZUM PROJEKT ▶️"
+  }
+}

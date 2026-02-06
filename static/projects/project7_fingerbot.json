@@ -1,0 +1,43 @@
+{
+  "id": 7,
+  "title": {
+    "bg": "🖲️ Управление на Zigbee Fingerbot чрез NFC и Home Assistant",
+    "en": "🖲️ Zigbee Fingerbot Control via NFC and Home Assistant",
+    "de": "🖲️ Zigbee Fingerbot-Steuerung via NFC und Home Assistant"
+  },
+  "platforms": ["ha", "android"],
+  "image": "static/img/banner_HASS-Fingerbot-NFC-Door.png",
+  "imageAlt": {
+    "bg": "Fingerbot NFC врата",
+    "en": "Fingerbot NFC door",
+    "de": "Fingerbot NFC-Tür"
+  },
+  "advantages": [
+    {
+      "bg": "Безконтактен достъп",
+      "en": "Contactless access",
+      "de": "Kontaktloser Zugang"
+    },
+    {
+      "bg": "Интеграция с Home Assistant",
+      "en": "Integration with Home Assistant",
+      "de": "Integration mit Home Assistant"
+    },
+    {
+      "bg": "Локален и офлайн контрол",
+      "en": "Local and offline control",
+      "de": "Lokale und offline Steuerung"
+    },
+    {
+      "bg": "Съвместим с всяко NFC устройство",
+      "en": "Compatible with any NFC device",
+      "de": "Kompatibel mit jedem NFC-Gerät"
+    }
+  ],
+  "link": "https://github.com/PasevSU/HASS-Fingerbot-NFC.git",
+  "buttonText": {
+    "bg": "↪️ КЪМ ПРОЕКТА ▶️",
+    "en": "↪️ GO TO PROJECT ▶️",
+    "de": "↪️ ZUM PROJEKT ▶️"
+  }
+}

@@ -1,0 +1,53 @@
+{
+  "id": 1,
+  "title": {
+    "bg": "🛜 Създаване и интегриране на Zigbee мрежа",
+    "en": "🛜 Creating and Integrating a Zigbee Network",
+    "de": "🛜 Erstellung und Integration eines Zigbee-Netzwerks"
+  },
+  "platforms": ["ha", "web_inactive", "android_inactive"],
+  "image": "static/img/Zigbee_Network.gif",
+  "imageAlt": {
+    "bg": "Zigbee мрежа",
+    "en": "Zigbee network",
+    "de": "Zigbee-Netzwerk"
+  },
+  "advantages": [
+    {
+      "bg": "Работи без интернет с Zigbee2MQTT",
+      "en": "Works without internet using Zigbee2MQTT",
+      "de": "Funktioniert ohne Internet mit Zigbee2MQTT"
+    },
+    {
+      "bg": "Не натоварва интернет мрежата",
+      "en": "Does not load the internet network",
+      "de": "Belastet das Internetnetzwerk nicht"
+    },
+    {
+      "bg": "Лесна инсталация и преместване на устройства",
+      "en": "Easy installation and device relocation",
+      "de": "Einfache Installation und Geräteverlegung"
+    },
+    {
+      "bg": "Zigbee устройствата действат като ретранслатори",
+      "en": "Zigbee devices act as repeaters",
+      "de": "Zigbee-Geräte fungieren als Repeater"
+    },
+    {
+      "bg": "Достъпен Zigbee хардуер",
+      "en": "Affordable Zigbee hardware",
+      "de": "Erschwingliche Zigbee-Hardware"
+    },
+    {
+      "bg": "Възможност за ъпгрейд при натоварване на мрежата",
+      "en": "Upgrade possibility when network is loaded",
+      "de": "Upgrade-Möglichkeit bei Netzwerkbelastung"
+    }
+  ],
+  "link": "https://github.com/PasevSU/HASS-ZigbeeNetwork.git",
+  "buttonText": {
+    "bg": "↪️ КЪМ ПРОЕКТА ▶️",
+    "en": "↪️ GO TO PROJECT ▶️",
+    "de": "↪️ ZUM PROJEKT ▶️"
+  }
+}

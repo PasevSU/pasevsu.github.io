@@ -1,0 +1,38 @@
+{
+  "id": 9,
+  "title": {
+    "bg": "🔋 HASS-AWAY-MODE / AWAY MODE",
+    "en": "🔋 HASS-AWAY-MODE / AWAY MODE",
+    "de": "🔋 HASS-AWAY-MODE / AWAY MODUS"
+  },
+  "platforms": ["ha"],
+  "image": "static/img/banner_away_mod.png",
+  "imageAlt": {
+    "bg": "Банер Away Mode",
+    "en": "Away Mode banner",
+    "de": "Away-Modus Banner"
+  },
+  "advantages": [
+    {
+      "bg": "Автоматизирано управление на away режима",
+      "en": "Automated away mode management",
+      "de": "Automatisierte Away-Modus-Verwaltung"
+    },
+    {
+      "bg": "Интеграция с Home Assistant",
+      "en": "Integration with Home Assistant",
+      "de": "Integration mit Home Assistant"
+    },
+    {
+      "bg": "Гъвкави сценарии с input booleans",
+      "en": "Flexible scenarios with input booleans",
+      "de": "Flexible Szenarien mit Input-Booleans"
+    }
+  ],
+  "link": "https://github.com/PasevSU/HASS-Away-Mode.git",
+  "buttonText": {
+    "bg": "↪️ КЪМ ПРОЕКТА ▶️",
+    "en": "↪️ GO TO PROJECT ▶️",
+    "de": "↪️ ZUM PROJEKT ▶️"
+  }
+}

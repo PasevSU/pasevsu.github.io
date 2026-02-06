@@ -1,0 +1,43 @@
+{
+  "id": 5,
+  "title": {
+    "bg": "🏠 HASS с две Zigbee мрежи",
+    "en": "🏠 HASS with Two Zigbee Networks",
+    "de": "🏠 HASS mit zwei Zigbee-Netzwerken"
+  },
+  "platforms": ["ha", "web_inactive", "android_inactive"],
+  "image": "static/img/benner_2zigbee.png",
+  "imageAlt": {
+    "bg": "Две Zigbee мрежи",
+    "en": "Two Zigbee networks",
+    "de": "Zwei Zigbee-Netzwerke"
+  },
+  "advantages": [
+    {
+      "bg": "Поддържа повече устройства",
+      "en": "Supports more devices",
+      "de": "Unterstützt mehr Geräte"
+    },
+    {
+      "bg": "Разделяне на товар/функции",
+      "en": "Load/function separation",
+      "de": "Last-/Funktionstrennung"
+    },
+    {
+      "bg": "Подобрено тестване за съвместимост",
+      "en": "Improved compatibility testing",
+      "de": "Verbesserte Kompatibilitätstests"
+    },
+    {
+      "bg": "Гъвкава миграция и експериментиране",
+      "en": "Flexible migration and experimentation",
+      "de": "Flexible Migration und Experimentierung"
+    }
+  ],
+  "link": "https://github.com/PasevSU/HASS-2-ZigbeeNetworks.git",
+  "buttonText": {
+    "bg": "↪️ КЪМ ПРОЕКТА ▶️",
+    "en": "↪️ GO TO PROJECT ▶️",
+    "de": "↪️ ZUM PROJEKT ▶️"
+  }
+}

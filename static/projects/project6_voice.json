@@ -1,0 +1,38 @@
+{
+  "id": 6,
+  "title": {
+    "bg": "🎙️ Гласово управление на HASS устройства (Alexa / Google Home)",
+    "en": "🎙️ Voice Control for HASS Devices (Alexa / Google Home)",
+    "de": "🎙️ Sprachsteuerung für HASS-Geräte (Alexa / Google Home)"
+  },
+  "platforms": ["ha", "web_inactive", "android", "alexa", "google"],
+  "image": "static/img/MATTERHUB_banner.png",
+  "imageAlt": {
+    "bg": "Гласово управление интеграция",
+    "en": "Voice control integration",
+    "de": "Sprachsteuerungsintegration"
+  },
+  "advantages": [
+    {
+      "bg": "Управление на автоматизации и скриптове с глас",
+      "en": "Voice control of automations and scripts",
+      "de": "Sprachsteuerung von Automatisierungen und Skripten"
+    },
+    {
+      "bg": "Управление на устройства и мониторинг чрез глас",
+      "en": "Device control and monitoring through voice",
+      "de": "Gerätesteuerung und -überwachung per Sprache"
+    },
+    {
+      "bg": "Лесно добавяне и премахване на устройства",
+      "en": "Easy addition and removal of devices",
+      "de": "Einfaches Hinzufügen und Entfernen von Geräten"
+    }
+  ],
+  "link": "https://github.com/PasevSU/HASS-Voice-Control.git",
+  "buttonText": {
+    "bg": "↪️ КЪМ ПРОЕКТА ▶️",
+    "en": "↪️ GO TO PROJECT ▶️",
+    "de": "↪️ ZUM PROJEKT ▶️"
+  }
+}

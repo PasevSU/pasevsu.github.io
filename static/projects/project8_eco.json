@@ -1,0 +1,38 @@
+{
+  "id": 8,
+  "title": {
+    "bg": "🌿 Eco режим за термостати в Home Assistant",
+    "en": "🌿 Eco Mode for Thermostats in Home Assistant",
+    "de": "🌿 Eco-Modus für Thermostate in Home Assistant"
+  },
+  "platforms": ["ha"],
+  "image": "static/img/eco_mod.png",
+  "imageAlt": {
+    "bg": "Еко режим термостат",
+    "en": "Eco mode thermostat",
+    "de": "Eco-Modus Thermostat"
+  },
+  "advantages": [
+    {
+      "bg": "Спестяване на енергия",
+      "en": "Energy saving",
+      "de": "Energieeinsparung"
+    },
+    {
+      "bg": "Комфорт без компромис",
+      "en": "Comfort without compromise",
+      "de": "Komfort ohne Kompromisse"
+    },
+    {
+      "bg": "Лесна интеграция и персонализация",
+      "en": "Easy integration and customization",
+      "de": "Einfache Integration und Anpassung"
+    }
+  ],
+  "link": "https://github.com/PasevSU/HASS-Eco-Mode.git",
+  "buttonText": {
+    "bg": "↪️ КЪМ ПРОЕКТА ▶️",
+    "en": "↪️ GO TO PROJECT ▶️",
+    "de": "↪️ ZUM PROJEKT ▶️"
+  }
+}

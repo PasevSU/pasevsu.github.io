@@ -1,0 +1,48 @@
+{
+  "id": 3,
+  "title": {
+    "bg": "🎤🔉 WLED SoundReactive Интелигентно светлинно шоу",
+    "en": "🎤🔉 WLED SoundReactive Intelligent Light Show",
+    "de": "🎤🔉 WLED SoundReactive Intelligente Lichtshow"
+  },
+  "platforms": ["ha", "web", "android"],
+  "image": "static/img/WLED SaundReactive.gif",
+  "imageAlt": {
+    "bg": "WLED SoundReactive анимация",
+    "en": "WLED SoundReactive animation",
+    "de": "WLED SoundReactive Animation"
+  },
+  "advantages": [
+    {
+      "bg": "Реакция в реално време извън човешкото възприятие",
+      "en": "Real-time reaction beyond human perception",
+      "de": "Echtzeit-Reaktion jenseits der menschlichen Wahrnehmung"
+    },
+    {
+      "bg": "Автоматично регулиране на чувствителността на микрофона",
+      "en": "Automatic microphone sensitivity adjustment",
+      "de": "Automatische Mikrofonempfindlichkeitsregelung"
+    },
+    {
+      "bg": "Ниска цена и енергийна ефективност",
+      "en": "Low cost and energy efficiency",
+      "de": "Geringe Kosten und Energieeffizienz"
+    },
+    {
+      "bg": "Пълен WLED мод с официални функции на фърмуера",
+      "en": "Full WLED mod with official firmware features",
+      "de": "Vollständiger WLED-Mod mit offiziellen Firmware-Funktionen"
+    },
+    {
+      "bg": "Уеб интерфейс и мобилни приложения — съвместими с Home Assistant",
+      "en": "Web interface and mobile apps - compatible with Home Assistant",
+      "de": "Webinterface und mobile Apps - kompatibel mit Home Assistant"
+    }
+  ],
+  "link": "https://github.com/PasevSU/WLED_SoundReactive_Light_Show.git",
+  "buttonText": {
+    "bg": "↪️ КЪМ ПРОЕКТА ▶️",
+    "en": "↪️ GO TO PROJECT ▶️",
+    "de": "↪️ ZUM PROJEKT ▶️"
+  }
+}

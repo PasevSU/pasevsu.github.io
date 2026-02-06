@@ -1,0 +1,38 @@
+{
+  "id": 10,
+  "title": {
+    "bg": "⏱️ Home Assistant - Гъвкава таймер автоматизация",
+    "en": "⏱️ Home Assistant - Flexible Timer Automation",
+    "de": "⏱️ Home Assistant - Flexible Timer-Automatisierung"
+  },
+  "platforms": ["ha"],
+  "image": "static/img/banner_flexible_taimer.png",
+  "imageAlt": {
+    "bg": "Банер гъвкав таймер",
+    "en": "Flexible timer banner",
+    "de": "Flexibler Timer Banner"
+  },
+  "advantages": [
+    {
+      "bg": "Настройка на интервал чрез UI (часове, минути, секунди)",
+      "en": "Interval setting through UI (hours, minutes, seconds)",
+      "de": "Intervalleinstellung über UI (Stunden, Minuten, Sekunden)"
+    },
+    {
+      "bg": "Изпълнява действия след изтичане на интервала",
+      "en": "Executes actions after interval expires",
+      "de": "Führt Aktionen nach Ablauf des Intervalls aus"
+    },
+    {
+      "bg": "Предотвратява преждевременно задействане",
+      "en": "Prevents premature triggering",
+      "de": "Verhindert vorzeitiges Auslösen"
+    }
+  ],
+  "link": "https://github.com/PasevSU/HASS-Flexible-Timer.git",
+  "buttonText": {
+    "bg": "↪️ КЪМ ПРОЕКТА ▶️",
+    "en": "↪️ GO TO PROJECT ▶️",
+    "de": "↪️ ZUM PROJEKT ▶️"
+  }
+}

@@ -1,0 +1,43 @@
+{
+  "id": 4,
+  "title": {
+    "bg": "🤖 TASMOTA – Интеграция и устройства",
+    "en": "🤖 TASMOTA – Integration and Devices",
+    "de": "🤖 TASMOTA – Integration und Geräte"
+  },
+  "platforms": ["ha", "web", "android"],
+  "image": "static/img/Tasmota-banner.png",
+  "imageAlt": {
+    "bg": "Tasmota устройства",
+    "en": "Tasmota devices",
+    "de": "Tasmota-Geräte"
+  },
+  "advantages": [
+    {
+      "bg": "Пълен контрол върху устройствата",
+      "en": "Full control over devices",
+      "de": "Vollständige Kontrolle über die Geräte"
+    },
+    {
+      "bg": "Независимо от интернет връзка",
+      "en": "Independent of internet connection",
+      "de": "Unabhängig von Internetverbindung"
+    },
+    {
+      "bg": "Моментален контрол чрез TASMOTA, Home Assistant и Alexa",
+      "en": "Instant control through TASMOTA, Home Assistant and Alexa",
+      "de": "Sofortige Kontrolle über TASMOTA, Home Assistant und Alexa"
+    },
+    {
+      "bg": "Не натоварва интернет мрежата",
+      "en": "Does not load the internet network",
+      "de": "Belastet das Internetnetzwerk nicht"
+    }
+  ],
+  "link": "https://github.com/PasevSU/HASS-TASMOTA.git",
+  "buttonText": {
+    "bg": "↪️ КЪМ ПРОЕКТА ▶️",
+    "en": "↪️ GO TO PROJECT ▶️",
+    "de": "↪️ ZUM PROJEKT ▶️"
+  }
+}
