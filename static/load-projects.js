@@ -1,40 +1,16 @@
-// static/load-projects.js - КОРИГИРАН ВАРИАНТ (БЕЗ FETCH)
+// static/load-projects.js - АКТУАЛИЗИРАН ВАРИАНТ САМО С БЪЛГАРСКИ ПРЕВОДИ
 
 let currentLanguage = 'bg';
 let allProjects = [];
 
-// Локални преводи само за проектите
+// Локални преводи само за проектите (само български)
 const localProjectTranslations = {
-    "projects.advantages": {
-        "bg": "Предимства:",
-        "en": "Advantages:",
-        "de": "Vorteile:"
-    },
-    "platforms.ha": {
-        "bg": "HomeAssistant",
-        "en": "HomeAssistant",
-        "de": "HomeAssistant"
-    },
-    "platforms.web": {
-        "bg": "WEB",
-        "en": "WEB",
-        "de": "WEB"
-    },
-    "platforms.android": {
-        "bg": "ANDROID",
-        "en": "ANDROID",
-        "de": "ANDROID"
-    },
-    "platforms.alexa": {
-        "bg": "Alexa",
-        "en": "Alexa",
-        "de": "Alexa"
-    },
-    "platforms.google": {
-        "bg": "Google",
-        "en": "Google",
-        "de": "Google"
-    }
+    "projects.advantages": "Предимства:",
+    "platforms.ha": "HomeAssistant",
+    "platforms.web": "WEB",
+    "platforms.android": "ANDROID",
+    "platforms.alexa": "Alexa",
+    "platforms.google": "Google"
 };
 
 function loadAllProjects() {
@@ -70,54 +46,30 @@ function getFallbackProjects() {
     return [
         {
             "id": 1,
-            "title": {
-                "bg": "🛜 Zigbee мрежа (Тест)",
-                "en": "🛜 Zigbee Network (Test)",
-                "de": "🛜 Zigbee Netzwerk (Test)"
-            },
+            "title": "🛜 Zigbee мрежа (Тест)",
             "platforms": ["ha"],
             "image": "static/img/banner-w-bg.png",
-            "imageAlt": {
-                "bg": "Zigbee мрежа",
-                "en": "Zigbee network",
-                "de": "Zigbee-Netzwerk"
-            },
+            "imageAlt": "Zigbee мрежа",
             "advantages": [
-                {"bg": "Тестово предимство 1", "en": "Test advantage 1", "de": "Testvorteil 1"},
-                {"bg": "Тестово предимство 2", "en": "Test advantage 2", "de": "Testvorteil 2"},
-                {"bg": "Тестово предимство 3", "en": "Test advantage 3", "de": "Testvorteil 3"}
+                "Тестово предимство 1",
+                "Тестово предимство 2",
+                "Тестово предимство 3"
             ],
             "link": "#",
-            "buttonText": {
-                "bg": "↪️ КЪМ ПРОЕКТА ▶️",
-                "en": "↪️ GO TO PROJECT ▶️",
-                "de": "↪️ ZUM PROJEKT ▶️"
-            }
+            "buttonText": "↪️ КЪМ ПРОЕКТА ▶️"
         },
         {
             "id": 2,
-            "title": {
-                "bg": "🛒 Пазарна листа (Тест)",
-                "en": "🛒 Shopping List (Test)",
-                "de": "🛒 Einkaufsliste (Test)"
-            },
+            "title": "🛒 Пазарна листа (Тест)",
             "platforms": ["ha", "android"],
             "image": "static/img/banner-w-bg.png",
-            "imageAlt": {
-                "bg": "Списък за пазаруване",
-                "en": "Shopping list",
-                "de": "Einkaufsliste"
-            },
+            "imageAlt": "Списък за пазаруване",
             "advantages": [
-                {"bg": "Тестово предимство A", "en": "Test advantage A", "de": "Testvorteil A"},
-                {"bg": "Тестово предимство B", "en": "Test advantage B", "de": "Testvorteil B"}
+                "Тестово предимство A",
+                "Тестово предимство B"
             ],
             "link": "#",
-            "buttonText": {
-                "bg": "↪️ КЪМ ПРОЕКТА ▶️",
-                "en": "↪️ GO TO PROJECT ▶️",
-                "de": "↪️ ZUM PROJEKT ▶️"
-            }
+            "buttonText": "↪️ КЪМ ПРОЕКТА ▶️"
         }
     ];
 }
@@ -143,12 +95,12 @@ function renderProjects() {
 
 function generateProjectHTML(project) {
     // Взимане на заглавие на текущия език
-    const title = project.title?.[currentLanguage] || project.title?.bg || 'Без заглавие';
-    const imageAlt = project.imageAlt?.[currentLanguage] || project.imageAlt?.bg || 'Изображение';
-    const buttonText = project.buttonText?.[currentLanguage] || project.buttonText?.bg || 'Към проекта';
+    const title = getProjectTranslation(project, 'title');
+    const imageAlt = getProjectTranslation(project, 'imageAlt');
+    const buttonText = getProjectTranslation(project, 'buttonText');
     
     const platformsHTML = generatePlatformsHTML(project.platforms || []);
-    const advantagesHTML = generateAdvantagesHTML(project.advantages || []);
+    const advantagesHTML = generateAdvantagesHTML(project.advantages || [], project.id);
     
     return `
         <div class="project-card">
@@ -165,7 +117,7 @@ function generateProjectHTML(project) {
                 </div>
                 ` : ''}
                 <div class="project-info">
-                    <h4>${localProjectTranslations["projects.advantages"]?.[currentLanguage] || "Предимства:"}</h4>
+                    <h4>${localProjectTranslations["projects.advantages"] || "Предимства:"}</h4>
                     <ul>
                         ${advantagesHTML}
                     </ul>
@@ -180,6 +132,53 @@ function generateProjectHTML(project) {
     `;
 }
 
+function getProjectTranslation(project, field) {
+    // Взимане на превод от translations.js
+    const projectId = project.id;
+    const translationKey = getTranslationKeyForProject(projectId, field);
+    
+    if (translations[currentLanguage] && translations[currentLanguage][translationKey]) {
+        return translations[currentLanguage][translationKey];
+    }
+    
+    // Връщане на българския превод ако няма за текущия език
+    if (translations['bg'] && translations['bg'][translationKey]) {
+        return translations['bg'][translationKey];
+    }
+    
+    // Връщане на оригиналната стойност
+    return project[field] || '';
+}
+
+function getTranslationKeyForProject(projectId, field) {
+    // Мапване на ID на проекти към имена
+    const projectNames = {
+        1: 'zigbee',
+        2: 'shopping',
+        3: 'wled',
+        4: 'tasmota',
+        5: 'hass2zigbee',
+        6: 'voice',
+        7: 'fingerbot',
+        8: 'eco',
+        9: 'away',
+        10: 'timer'
+    };
+    
+    const projectName = projectNames[projectId] || `project${projectId}`;
+    
+    // Поле -> ключ за превод
+    const fieldMap = {
+        'title': 'title',
+        'imageAlt': 'imageAlt',
+        'buttonText': 'button'
+    };
+    
+    const fieldKey = fieldMap[field] || field;
+    
+    return `projects.${projectName}.${fieldKey}`;
+}
+
 function generatePlatformsHTML(platforms) {
     if (!platforms || platforms.length === 0) return '';
     
@@ -187,28 +186,51 @@ function generatePlatformsHTML(platforms) {
         const isActive = !platform.includes('_inactive');
         const platformClass = isActive ? 'platform-badge' : 'platform-badge inactive';
         const platformKey = platform.replace('_inactive', '').toLowerCase();
-        const platformText = localProjectTranslations[`platforms.${platformKey}`]?.[currentLanguage] || 
-                           localProjectTranslations[`platforms.${platformKey}`]?.bg || 
+        const platformText = localProjectTranslations[`platforms.${platformKey}`] || 
                            platformKey.toUpperCase();
         
         return `<span class="${platformClass}">${platformText}</span>`;
     }).join('');
 }
 
-function generateAdvantagesHTML(advantages) {
+function generateAdvantagesHTML(advantages, projectId) {
     if (!advantages || advantages.length === 0) {
         return '<li>Няма информация за предимства</li>';
     }
     
-    return advantages.map(advantage => {
-        // Проверка дали advantage е обект или низ
-        if (typeof advantage === 'object') {
-            const text = advantage[currentLanguage] || advantage.bg || JSON.stringify(advantage);
-            return `<li>${text}</li>`;
-        } else {
+    return advantages.map((advantage, index) => {
+        // Опитваме първо да вземем превод от translations.js
+        const projectName = getProjectNameById(projectId);
+        const translationKey = `projects.${projectName}.adv${index + 1}`;
+        
+        if (translations[currentLanguage] && translations[currentLanguage][translationKey]) {
+            return `<li>${translations[currentLanguage][translationKey]}</li>`;
+        }
+        
+        // Ако няма превод, използваме оригиналния текст
+        if (typeof advantage === 'string') {
             return `<li>${advantage}</li>`;
+        } else {
+            return `<li>${JSON.stringify(advantage)}</li>`;
         }
     }).join('');
+}
+
+function getProjectNameById(projectId) {
+    const projectNames = {
+        1: 'zigbee',
+        2: 'shopping',
+        3: 'wled',
+        4: 'tasmota',
+        5: 'hass2zigbee',
+        6: 'voice',
+        7: 'fingerbot',
+        8: 'eco',
+        9: 'away',
+        10: 'timer'
+    };
+    
+    return projectNames[projectId] || `project${projectId}`;
 }
 
 function setLanguage(lang) {
@@ -225,6 +247,11 @@ function setLanguage(lang) {
 document.addEventListener('DOMContentLoaded', function() {
     console.log('🚀 Инициализация на зареждане на проекти...');
     
+    // Задаваме текущия език от languageManager
+    if (window.languageManager && window.languageManager.currentLang) {
+        currentLanguage = window.languageManager.currentLang;
+    }
+    
     // Свързване на бутоните за език
     document.querySelectorAll('.lang-btn').forEach(btn => {
         btn.addEventListener('click', function() {
@@ -237,6 +264,18 @@ document.addEventListener('DOMContentLoaded', function() {
     setTimeout(() => {
         loadAllProjects();
     }, 500);
+});
+
+// Слушане за смяна на езика от language-manager
+document.addEventListener('DOMContentLoaded', function() {
+    // Слушане за смяна на езика
+    document.addEventListener('languageChanged', function() {
+        // Актуализиране на текущия език от languageManager
+        if (window.languageManager && window.languageManager.currentLang) {
+            currentLanguage = window.languageManager.currentLang;
+            renderProjects();
+        }
+    });
 });
 
 // Експорт на функции за достъп от други скриптове
