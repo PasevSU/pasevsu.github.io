@@ -15,7 +15,6 @@ const contactLinks = document.querySelectorAll('a[href="#contact"]');
 const closeBtn = document.querySelector('.close');
 
 // Open modal when clicking contact links in navigation
-<<<<<<< HEAD
 if (contactLinks.length > 0) {
     contactLinks.forEach(link => {
         link.addEventListener('click', function(e) {
@@ -34,24 +33,6 @@ if (contactLinks.length > 0) {
                 }, 100);
             }
         });
-=======
-contactLinks.forEach(link => {
-    link.addEventListener('click', function(e) {
-        e.preventDefault();
-        if (contactModal) {
-            contactModal.style.display = 'block';
-            document.body.style.overflow = 'hidden';
-            
-            // Добавяме клас за да предотвратим скролиране
-            document.body.classList.add('modal-open');
-            
-            // Фокусираме се върху първото поле
-            setTimeout(() => {
-                const nameInput = document.getElementById('name');
-                if (nameInput) nameInput.focus();
-            }, 100);
-        }
->>>>>>> 4826362cd52ffb8b6600945478687084a21e142d
     });
 }
 
@@ -301,9 +282,6 @@ if (prefersDarkScheme.addEventListener) {
 /* Admin Styles - само ако са необходими */
 /*
 .admin-login-btn {
-<<<<<<< HEAD
-    background-color: #ff6b6b !
-=======
     background-color: #ff6b6b !important;
     border-radius: 20px;
     padding: 5px 15px !important;
@@ -332,7 +310,7 @@ if (prefersDarkScheme.addEventListener) {
     background-color: #2980b9;
 }
 
-/* Edit indicators for admin */
+// Edit indicators for admin
 .admin-edit-mode .editable {
     position: relative;
     border: 1px dashed #3498db;
@@ -355,28 +333,34 @@ if (prefersDarkScheme.addEventListener) {
     align-items: center;
     justify-content: center;
 }
+*/
 
+// Модифицираме функционалността за скриване на банера при скролиране, така че да не се скрива навигацията, а само банера. 
+// Това ще позволи на потребителите да имат достъп до навигацията и важната информация, докато скролят надолу по страницата,
+//  без да се губи видимостта на навигационното меню.
+// Banner hide on scroll
 // Banner hide on scroll
 let lastScrollTop = 0;
 const banner = document.querySelector('.banner');
-const navbar = document.querySelector('.navbar');
 
-if (banner && navbar) {
+if (banner) {
     const bannerHeight = banner.offsetHeight;
     
     window.addEventListener('scroll', function() {
         let scrollTop = window.pageYOffset || document.documentElement.scrollTop;
         
-        if (scrollTop > lastScrollTop && scrollTop > bannerHeight) {
-            // Scrolling down & past banner - hide banner
-            banner.style.transform = 'translateY(-100%)';
-            banner.style.transition = 'transform 0.3s ease';
+        if (scrollTop > lastScrollTop && scrollTop > 100) {
+            // Scrolling down - hide banner
+            banner.style.opacity = '0';
+            banner.style.visibility = 'hidden';
+            banner.style.transition = 'opacity 0.3s ease, visibility 0.3s ease';
         } else {
             // Scrolling up - show banner
-            banner.style.transform = 'translateY(0)';
+            banner.style.opacity = '1';
+            banner.style.visibility = 'visible';
         }
         
-        lastScrollTop = scrollTop;
+        lastScrollTop = scrollTop <= 0 ? 0 : scrollTop;
     });
 }
 
@@ -433,6 +417,5 @@ if (document.head) {
 
 // Добавяме дебъг информация
 console.log('Script loaded successfully');
-console.log('Contact modal found:', contactModal);
+console.log('Contact modal found:', !!contactModal);
 console.log('Contact links found:', contactLinks.length);
->>>>>>> 4826362cd52ffb8b6600945478687084a21e142d
