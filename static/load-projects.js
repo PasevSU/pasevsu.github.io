@@ -1,4 +1,4 @@
-// static/load-projects.js - АКТУАЛИЗИРАН
+// static/load-projects.js - КОРИГИРАН ВАРИАНТ
 
 const projectFiles = [
     'projects/project1_zigbee.json',
@@ -16,14 +16,14 @@ const projectFiles = [
 let currentLanguage = 'bg';
 let allProjects = [];
 
-// ПРЕИМЕНУВАНО от "translations" на "projectTranslations"
-const projectTranslations = {
+// Локални преводи само за проектите
+const localProjectTranslations = {
     "projects.advantages": {
         "bg": "Предимства:",
         "en": "Advantages:",
         "de": "Vorteile:"
     },
-    "platforms.homeassistant": {
+    "platforms.ha": {
         "bg": "HomeAssistant",
         "en": "HomeAssistant",
         "de": "HomeAssistant"
@@ -38,38 +38,58 @@ const projectTranslations = {
         "en": "ANDROID",
         "de": "ANDROID"
     },
-    "projects.title": {
-        "bg": "🛠️ ПРОЕКТИ",
-        "en": "🛠️ PROJECTS",
-        "de": "🛠️ PROJEKTE"
+    "platforms.alexa": {
+        "bg": "Alexa",
+        "en": "Alexa",
+        "de": "Alexa"
+    },
+    "platforms.google": {
+        "bg": "Google",
+        "en": "Google",
+        "de": "Google"
     }
 };
 
 async function loadAllProjects() {
     const container = document.getElementById('projects-container');
     
-    // Проверка на локацията
-    const isFileProtocol = window.location.protocol === 'file:';
+    if (!container) {
+        console.error('Не е намерен контейнер за проекти!');
+        return;
+    }
     
+    // Показване на съобщение за зареждане
+    container.innerHTML = '<div class="loading-projects">Зареждане на проектите...</div>';
+    
+    allProjects = []; // Изчистване на старите проекти
+    
+    // Зареждане на всички JSON файлове
     for (const file of projectFiles) {
         try {
-            let fileUrl = file;
+            console.log(`Зареждане на: ${file}`);
+            const response = await fetch(file);
             
-            // Ако сме в file:// протокол, променяме пътя
-            if (isFileProtocol) {
-                // Премахваме 'static/' от началото
-                fileUrl = file.replace('static/', '');
+            if (!response.ok) {
+                throw new Error(`HTTP ${response.status}: ${response.statusText}`);
             }
             
-            const response = await fetch(fileUrl);
-            // ... останалия код ...
+            const projectData = await response.json();
+            allProjects.push(projectData);
+            console.log(`✅ Успешно зареден: ${projectData.title?.bg || file}`);
+            
         } catch (error) {
             console.error(`❌ Грешка при зареждане на ${file}:`, error);
+            
+            // Показване на грешка в контейнера
+            const errorDiv = document.createElement('div');
+            errorDiv.className = 'project-error';
+            errorDiv.innerHTML = `<strong>Грешка при зареждане на ${file}:</strong> ${error.message}`;
+            container.appendChild(errorDiv);
         }
     }
-}    
+    
     // Сортиране по ID
-    allProjects.sort((a, b) => a.id - b.id);
+    allProjects.sort((a, b) => (a.id || 0) - (b.id || 0));
     
     console.log(`✅ Заредени общо ${allProjects.length} проекта`);
     renderProjects();
@@ -79,32 +99,30 @@ function renderProjects() {
     const container = document.getElementById('projects-container');
     const projectsSection = document.getElementById('projects');
     
-    if (!container) return;
+    if (!container) {
+        console.error('Не е намерен контейнер за проекти!');
+        return;
+    }
     
     if (allProjects.length === 0) {
         container.innerHTML = '<div class="error-message">Няма заредени проекти</div>';
         return;
     }
     
-    // Актуализиране на заглавието на секцията
-    if (projectsSection) {
-        const title = projectsSection.querySelector('h2');
-        if (title && projectTranslations["projects.title"]) {
-            title.textContent = projectTranslations["projects.title"][currentLanguage] || projectTranslations["projects.title"].bg;
-        }
-    }
-    
     // Генериране на HTML за всички проекти
     container.innerHTML = allProjects.map(project => generateProjectHTML(project)).join('');
+    
+    console.log(`✅ Рендирани ${allProjects.length} проекта`);
 }
 
 function generateProjectHTML(project) {
-    const title = project.title[currentLanguage] || project.title.bg;
-    const imageAlt = project.imageAlt[currentLanguage] || project.imageAlt.bg;
-    const buttonText = project.buttonText[currentLanguage] || project.buttonText.bg;
+    // Взимане на заглавие на текущия език
+    const title = project.title?.[currentLanguage] || project.title?.bg || 'Без заглавие';
+    const imageAlt = project.imageAlt?.[currentLanguage] || project.imageAlt?.bg || 'Изображение';
+    const buttonText = project.buttonText?.[currentLanguage] || project.buttonText?.bg || 'Към проекта';
     
-    const platformsHTML = generatePlatformsHTML(project.platforms);
-    const advantagesHTML = generateAdvantagesHTML(project.advantages);
+    const platformsHTML = generatePlatformsHTML(project.platforms || []);
+    const advantagesHTML = generateAdvantagesHTML(project.advantages || []);
     
     return `
         <div class="project-card">
@@ -121,7 +139,7 @@ function generateProjectHTML(project) {
                 </div>
                 ` : ''}
                 <div class="project-info">
-                    <h4>${projectTranslations["projects.advantages"][currentLanguage] || projectTranslations["projects.advantages"].bg}</h4>
+                    <h4>${localProjectTranslations["projects.advantages"]?.[currentLanguage] || "Предимства:"}</h4>
                     <ul>
                         ${advantagesHTML}
                     </ul>
@@ -140,12 +158,12 @@ function generatePlatformsHTML(platforms) {
     if (!platforms || platforms.length === 0) return '';
     
     return platforms.map(platform => {
-        const isActive = !platform.includes('inactive');
+        const isActive = !platform.includes('_inactive');
         const platformClass = isActive ? 'platform-badge' : 'platform-badge inactive';
         const platformKey = platform.replace('_inactive', '').toLowerCase();
-        const platformText = projectTranslations[`platforms.${platformKey}`] ? 
-            projectTranslations[`platforms.${platformKey}`][currentLanguage] || 
-            projectTranslations[`platforms.${platformKey}`].bg : platformKey.toUpperCase();
+        const platformText = localProjectTranslations[`platforms.${platformKey}`]?.[currentLanguage] || 
+                           localProjectTranslations[`platforms.${platformKey}`]?.bg || 
+                           platformKey.toUpperCase();
         
         return `<span class="${platformClass}">${platformText}</span>`;
     }).join('');
@@ -157,8 +175,13 @@ function generateAdvantagesHTML(advantages) {
     }
     
     return advantages.map(advantage => {
-        const text = advantage[currentLanguage] || advantage.bg || advantage;
-        return `<li>${text}</li>`;
+        // Проверка дали advantage е обект или низ
+        if (typeof advantage === 'object') {
+            const text = advantage[currentLanguage] || advantage.bg || JSON.stringify(advantage);
+            return `<li>${text}</li>`;
+        } else {
+            return `<li>${advantage}</li>`;
+        }
     }).join('');
 }
 
@@ -168,38 +191,13 @@ function setLanguage(lang) {
     currentLanguage = lang;
     console.log(`🌍 Сменен език на: ${lang}`);
     
-    // Актуализиране на бутоните за език
-    updateLanguageButtons(lang);
-    
     // Рендиране на проектите с новия език
     renderProjects();
-    
-    // Актуализиране на други елементи от страницата (ако са се заредили)
-    setTimeout(() => {
-        updatePageLanguage(lang);
-    }, 100);
-}
-
-function updateLanguageButtons(activeLang) {
-    document.querySelectorAll('.lang-btn').forEach(btn => {
-        const lang = btn.getAttribute('data-lang');
-        if (lang === activeLang) {
-            btn.classList.add('active');
-        } else {
-            btn.classList.remove('active');
-        }
-    });
-}
-
-function updatePageLanguage(lang) {
-    // Тук може да добавите актуализация на други елементи, ако е необходимо
-    // Внимание: Не използвайте 'translations' тук, защото може да е вече дефиниран в друг файл
-    console.log('Актуализиран език на страницата:', lang);
 }
 
 // Инициализация при зареждане на страницата
 document.addEventListener('DOMContentLoaded', function() {
-    console.log('🚀 Зареждане на проекти...');
+    console.log('🚀 Инициализация на зареждане на проекти...');
     
     // Свързване на бутоните за език
     document.querySelectorAll('.lang-btn').forEach(btn => {
@@ -209,18 +207,10 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
     
-    // Поставяне на активния език (по подразбиране BG)
-    setTimeout(() => {
-        const bgBtn = document.querySelector('.lang-btn[data-lang="bg"]');
-        if (bgBtn) {
-            bgBtn.classList.add('active');
-        }
-    }, 100);
-    
-    // Зареждане на проектите
+    // Зареждане на проектите след малко забавяне
     setTimeout(() => {
         loadAllProjects();
-    }, 500);
+    }, 1000);
 });
 
 // Експорт на функции за достъп от други скриптове
