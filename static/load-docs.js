@@ -1,61 +1,94 @@
 // static/load-docs.js
+
+/**
+ * ФАЙЛ ЗА ЗАРЕЖДАНЕ И УПРАВЛЕНИЕ НА ДОКУМЕНТАЦИЯТА
+ * Вече работи с преводите от translations.js
+ */
+
+// ИНИЦИАЛИЗАЦИЯ ПРИ ЗАРЕЖДАНЕ НА DOM
 document.addEventListener('DOMContentLoaded', function() {
-    // Инициализация на документационния модал
+    // 1. Инициализиране на документационния модал
     initDocsModal();
     
-    // Слушател за смяна на език - обновява модала ако е отворен
+    // 2. Слушател за събитието "languageChanged"
     document.addEventListener('languageChanged', function() {
         const docsModal = document.getElementById('docs-modal');
         if (docsModal && docsModal.style.display === 'block') {
-            loadDocsIntoModal();
+            loadDocsIntoModal(); // Презареждане на документацията с новия език
         }
     });
 });
 
+/**
+ * ФУНКЦИЯ ЗА ИНИЦИАЛИЗИРАНЕ НА ДОКУМЕНТАЦИОННИЯ МОДАЛ
+ */
 function initDocsModal() {
     const docsContainer = document.getElementById('docs-modal-content');
     if (!docsContainer) return;
     
-    // Ако allDocs не е зареден, зареди го
+    // Проверка дали данните за документацията са заредени
     if (!window.allDocs) {
         console.error('allDocs не е зареден. Моля, проверете дали all-docs.js е включен.');
         docsContainer.innerHTML = '<div class="error-message">Грешка при зареждане на документите.</div>';
         return;
     }
     
-    // Първоначално зареждане
+    // Първоначално зареждане на документацията
     loadDocsIntoModal();
 }
 
+/**
+ * ОСНОВНА ФУНКЦИЯ ЗА ЗАРЕЖДАНЕ НА ДОКУМЕНТИТЕ В МОДАЛА
+ */
 function loadDocsIntoModal() {
     const docsContainer = document.getElementById('docs-modal-content');
     const docsModal = document.getElementById('docs-modal');
     
-    // Проверка дали модалът е видим
-    if (!docsContainer) {
-        return;
-    }
+    if (!docsContainer) return;
     
-    const currentLang = getCurrentLanguage();
+    const currentLang = getCurrentLanguage(); // Определяне на текущия език
     
     // Изчистване на контейнера
     docsContainer.innerHTML = '';
     
-    // Зареждане на всеки документ
+    // ИТЕРИРАНЕ ПРЕЗ ВСИЧКИ ДОКУМЕНТИ
     window.allDocs.documents.forEach(doc => {
+        // Създаване на елемент за всеки документ
         const docItem = createDocListItem(doc, currentLang);
         docsContainer.appendChild(docItem);
     });
 }
 
+/**
+ * ФУНКЦИЯ ЗА СЪЗДАВАНЕ НА ЕЛЕМЕНТ ЗА ДОКУМЕНТ
+ * Сега използва преводите от translations.js
+ */
 function createDocListItem(doc, lang) {
     const docDiv = document.createElement('div');
     docDiv.className = 'doc-item';
     
-    // Създаване на хиперлинк за документа
+    // КЛЮЧОВЕ ЗА ПРЕВОДИ
+    const docKeys = {
+        'repositories': 'doc.repositories',
+        'automations': 'doc.automations',
+        'config-methods': 'doc.config-methods'
+    };
+    
+    const docKey = docKeys[doc.id] || doc.id;
+    const langData = translations[lang];
+    
+    // ВЗИМАНЕ НА ПРЕВОДИ ЗА СЕКЦИИТЕ
+    const title = langData ? (langData[`${docKey}.title`] || doc.title) : doc.title;
+    const description = langData ? (langData[`${docKey}.description`] || doc.description) : doc.description;
+    const content = langData ? (langData[`${docKey}.content`] || doc.content) : doc.content;
+    const linkText = doc.link ? '🔗 ' + getLinkText(lang) : '';
+    
+    // СЪЗДАВАНЕ НА ХИПЕРЛИНК ЗА ДОКУМЕНТА
     const docLink = document.createElement('a');
     docLink.href = doc.link || '#';
     docLink.className = 'doc-link-item';
+    
+    // ИНЛАЙН СТИЛОВЕ
     docLink.style.cssText = `
         display: block;
         text-decoration: none;
@@ -70,19 +103,18 @@ function createDocListItem(doc, lang) {
         border: 2px solid transparent;
     `;
     
-    // Ако няма линк, добавяме click event за отваряне на модал
+    // ПРОВЕРКА ЗА ЛИНК И ДОБАВЯНЕ НА СЛУШАТЕЛИ
     if (!doc.link || doc.link === '#') {
         docLink.addEventListener('click', function(e) {
             e.preventDefault();
-            openDocModal(doc, lang);
+            openDocModal(doc, lang, content); // Подаваме и съдържанието
         });
     } else {
-        // Ако има линк, отваряме в нов таб
         docLink.target = '_blank';
         docLink.rel = 'noopener';
     }
     
-    // Добавяне на hover ефект
+    // АНИМАЦИЯ ПРИ ХОВЪР
     docLink.addEventListener('mouseenter', function() {
         this.style.transform = 'translateY(-2px)';
         this.style.boxShadow = '0 4px 8px rgba(0,0,0,0.15)';
@@ -95,11 +127,7 @@ function createDocListItem(doc, lang) {
         this.style.borderColor = 'transparent';
     });
     
-    // Използваме превод от JSON или fallback
-    const title = doc.title[lang] || doc.title.en || doc.title.bg || 'Без заглавие';
-    const description = doc.description[lang] || doc.description.en || doc.description.bg || 'Без описание';
-    const linkText = doc.link ? '🔗 ' + getLinkText(lang) : '';
-    
+    // СЪЗДАВАНЕ НА СЪДЪРЖАНИЕТО НА КАРТАТА
     docLink.innerHTML = `
         <h4 style="color: var(--primary-color); margin-bottom: 0.5rem; font-size: 1.1rem;">
             ${title}
@@ -114,11 +142,31 @@ function createDocListItem(doc, lang) {
     return docDiv;
 }
 
-function openDocModal(doc, lang) {
-    // Създаване на модал за преглед на документа
+/**
+ * ФУНКЦИЯ ЗА ОТВАРЯНЕ НА МОДАЛ СЪС СЪДЪРЖАНИЕТО НА ДОКУМЕНТ
+ * Сега получава съдържанието като параметър
+ */
+function openDocModal(doc, lang, content) {
+    // КЛЮЧОВЕ ЗА ПРЕВОДИ
+    const docKeys = {
+        'repositories': 'doc.repositories',
+        'automations': 'doc.automations',
+        'config-methods': 'doc.config-methods'
+    };
+    
+    const docKey = docKeys[doc.id] || doc.id;
+    const langData = translations[lang];
+    
+    // ВЗИМАНЕ НА ПРЕВОДИ
+    const title = langData ? (langData[`${docKey}.title`] || doc.title) : doc.title;
+    const docContent = content || doc.content;
+    
+    // СЪЗДАВАНЕ НА МОДАЛЕН ЕЛЕМЕНТ
     const modal = document.createElement('div');
     modal.className = 'modal';
     modal.id = 'doc-view-modal';
+    
+    // ИНЛАЙН СТИЛОВЕ ЗА МОДАЛА
     modal.style.cssText = `
         display: block;
         position: fixed;
@@ -131,10 +179,7 @@ function openDocModal(doc, lang) {
         overflow-y: auto;
     `;
     
-    // Използваме превод от JSON или fallback
-    const title = doc.title[lang] || doc.title.en || doc.title.bg || 'Без заглавие';
-    const content = doc.content[lang] || doc.content.en || doc.content.bg || '<p>Няма налично съдържание.</p>';
-    
+    // СЪЗДАВАНЕ НА СЪДЪРЖАНИЕТО НА МОДАЛА
     modal.innerHTML = `
         <div class="modal-content" style="
             background-color: white;
@@ -167,7 +212,7 @@ function openDocModal(doc, lang) {
                 padding-right: 10px;
                 line-height: 1.6;
             ">
-                ${content}
+                ${docContent}
             </div>
             
             ${doc.link ? `
@@ -188,17 +233,18 @@ function openDocModal(doc, lang) {
         </div>
     `;
     
+    // ДОБАВЯНЕ НА МОДАЛА КЪМ ДОКУМЕНТА
     document.body.appendChild(modal);
     document.body.style.overflow = 'hidden';
     
-    // Затваряне на модала
+    // СЛУШАТЕЛИ ЗА ЗАТВАРЯНЕ НА МОДАЛА
     const closeBtn = modal.querySelector('.close-doc');
     closeBtn.addEventListener('click', function() {
         document.body.removeChild(modal);
         document.body.style.overflow = 'auto';
     });
     
-    // Затваряне при клик извън модала
+    // ЗАТВАРЯНЕ ПРИ КЛИК ИЗВЪН МОДАЛА
     modal.addEventListener('click', function(e) {
         if (e.target === modal) {
             document.body.removeChild(modal);
@@ -206,7 +252,7 @@ function openDocModal(doc, lang) {
         }
     });
     
-    // Затваряне с ESC
+    // ЗАТВАРЯНЕ С ESC КЛАВИШ
     document.addEventListener('keydown', function(e) {
         if (e.key === 'Escape' && document.getElementById('doc-view-modal')) {
             document.body.removeChild(modal);
@@ -215,20 +261,21 @@ function openDocModal(doc, lang) {
     });
 }
 
+/**
+ * ПОМОЩНА ФУНКЦИЯ ЗА ВЗИМАНЕ НА ТЕКУЩИЯ ЕЗИК
+ */
 function getCurrentLanguage() {
-    return localStorage.getItem('preferredLanguage') || 'bg';
+    return localStorage.getItem('preferred-language') || 'bg';
 }
 
+/**
+ * ПОМОЩНА ФУНКЦИЯ ЗА ТЕКСТ НА ЛИНКА
+ */
 function getLinkText(lang) {
-    // Текст за линка в зависимост от езика
-    const texts = {
-        'en': 'Open full documentation',
-        'bg': 'Отвори пълната документация',
-        'de': 'Vollständige Dokumentation öffnen'
-    };
-    return texts[lang] || texts['bg'];
+    const langData = translations[lang];
+    return langData ? (langData['doc.fullDocumentation'] || 'Отвори пълната документация') : 'Отвори пълната документация';
 }
 
-// Експорт на функциите за глобална употреба
+// ЕКСПОРТ НА ФУНКЦИИ ЗА ГЛОБАЛНА УПОТРЕБА
 window.loadDocsIntoModal = loadDocsIntoModal;
 window.openDocModal = openDocModal;

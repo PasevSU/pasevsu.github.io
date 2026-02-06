@@ -1478,3 +1478,83 @@ pre {
     color: #666;
     font-size: 1.1rem;
 }
+/* Добавете в styles.css */
+
+.docs-list {
+    margin-top: 20px;
+    max-height: 70vh;
+    overflow-y: auto;
+}
+
+.doc-item {
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    margin-bottom: 10px;
+    overflow: hidden;
+}
+
+.doc-header {
+    background-color: var(--card-bg);
+    padding: 15px;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: background-color 0.3s;
+}
+
+.doc-header:hover {
+    background-color: var(--hover-color);
+}
+
+.doc-title {
+    margin: 0;
+    font-size: 1.1em;
+    font-weight: 600;
+}
+
+.doc-toggle {
+    font-size: 1.5em;
+    font-weight: bold;
+    color: var(--primary-color);
+}
+
+.doc-content {
+    padding: 15px;
+    background-color: rgba(0, 0, 0, 0.02);
+    border-top: 1px solid var(--border-color);
+}
+
+.doc-body {
+    line-height: 1.6;
+}
+
+.doc-body p {
+    margin-bottom: 10px;
+}
+
+.doc-body ul, .doc-body ol {
+    padding-left: 20px;
+    margin-bottom: 10px;
+}
+
+.doc-tags {
+    margin-top: 15px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+}
+
+.doc-tag {
+    background-color: var(--primary-color);
+    color: white;
+    padding: 3px 8px;
+    border-radius: 4px;
+    font-size: 0.8em;
+}
+
+.loading-docs, .docs-error {
+    text-align: center;
+    padding: 30px;
+    color: var(--text-secondary);
+}
