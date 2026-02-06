@@ -41,6 +41,7 @@ const translations = {
         "summary.item6.text": "Everything operates without internet access.",
         
         // Platforms (съществуващи)
+        "projects.advantages": "Advantages:",
         "platforms.homeassistant": "HomeAssistant",
         "platforms.web": "WEB", 
         "platforms.android": "ANDROID",
@@ -338,6 +339,7 @@ const translations = {
         "summary.item6.text": "Всичко функционира без интернет връзка.",
         
         // Platforms
+        "projects.advantages": "Предимства:",
         "platforms.homeassistant": "HomeAssistant",
         "platforms.web": "WEB",
         "platforms.android": "ANDROID",
@@ -635,6 +637,7 @@ const translations = {
         "summary.item6.text": "Alles funktioniert ohne Internetverbindung.",
         
         // Platforms
+        "projects.advantages": "Vorteile:",
         "platforms.homeassistant": "HomeAssistant", 
         "platforms.web": "WEB",
         "platforms.android": "ANDROID",
