@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -6,6 +7,7 @@
     <title data-translate="footer.title">Home Assistant Проекти</title>
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🏠</text></svg>">
     <link rel="stylesheet" href="static/styles.css">
+<<<<<<< HEAD
     <!-- Първо translations, после language manager, после load-projects -->
     <script src="static/translations.js"></script>
     <script src="static/language-manager.js"></script>
@@ -53,10 +55,214 @@
             padding: 1rem;
             margin: 1rem 0;
             color: #856404;
+=======
+    <!-- Първо translations, после language manager -->
+    <script src="static/translations.js"></script>
+    <script src="static/language-manager.js"></script>
+    <script src="static/script.js"></script>
+    <style>
+        /* Подобрения за модалната форма */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            overflow-y: auto;
+            padding: 20px 0;
+        }
+
+        .modal-content {
+            background-color: white;
+            margin: 2% auto;
+            padding: 2rem;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 600px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            position: relative;
+            animation: modalFadeIn 0.3s ease-out;
+        }
+
+        @keyframes modalFadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .close {
+            position: absolute;
+            right: 1.5rem;
+            top: 1rem;
+            font-size: 2rem;
+            font-weight: bold;
+            color: #666;
+            cursor: pointer;
+            transition: color 0.3s;
+            line-height: 1;
+        }
+
+        .close:hover {
+            color: var(--primary-color);
+        }
+
+        .modal h3 {
+            color: var(--primary-color);
+            margin-bottom: 1.5rem;
+            padding-right: 2rem;
+        }
+
+        .contact-description {
+            margin-bottom: 2rem;
+            color: #666;
+            line-height: 1.6;
+        }
+
+        .contact-info-modal {
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid #eee;
+        }
+
+        .contact-info-modal h4 {
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+            font-size: 1.1rem;
+        }
+
+        .contact-info-modal ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .contact-info-modal li {
+            margin-bottom: 0.75rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .contact-info-modal li i {
+            color: var(--primary-color);
+            width: 20px;
+            text-align: center;
+        }
+
+        .contact-info-modal a {
+            color: var(--primary-color);
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .contact-info-modal a:hover {
+            color: var(--secondary-color);
+            text-decoration: underline;
+        }
+
+        .form-message {
+            padding: 1rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+            text-align: center;
+            font-weight: 500;
+            display: none;
+        }
+
+        .form-message.success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .form-message.error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .form-message.loading {
+            background-color: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeaa7;
+        }
+
+        /* Подобрения за формата */
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: #333;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s, box-shadow 0.3s;
+            font-family: inherit;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 120px;
+        }
+
+        /* Responsive design */
+        @media (max-width: 768px) {
+            .modal-content {
+                width: 95%;
+                padding: 1.5rem;
+                margin: 1rem auto;
+            }
+
+            .close {
+                right: 1rem;
+                top: 0.5rem;
+                font-size: 1.8rem;
+            }
+
+            .modal h3 {
+                padding-right: 2.5rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .modal-content {
+                padding: 1.25rem;
+            }
+
+            .form-group input,
+            .form-group textarea {
+                padding: 0.625rem 0.875rem;
+            }
+>>>>>>> 4826362cd52ffb8b6600945478687084a21e142d
         }
     </style>
 </head>
 <body>
+    <!-- HEADER, NAV, MAIN CONTENT остават същите -->
     <header>
         
         <div class="banner" aria-label="Banner">
@@ -110,6 +316,7 @@
     </header>
 
     <main>
+        <!-- Всички секции остават същите (hero, summary, projects, documentation, support, about) -->
         <section id="home" class="hero">
             <div class="hero-content">
                 <h1 data-translate="hero.title">🏠 ПРОЕКТИ И РАЗРАБОТКИ ЗА HOME ASSISTANT</h1>
@@ -155,10 +362,278 @@
         <section id="projects" class="projects">
             <h2 data-translate="projects.title">🛠️ ПРОЕКТИ</h2>
             
+<<<<<<< HEAD
             <!-- Проектите се зареждат динамично тук от JSON файловете -->
             <div id="projects-container">
                 <div class="loading-projects">Зареждане на проектите...</div>
             </div>
+=======
+            <!-- Project 1 -->
+            <div class="project-card">
+                <div class="project-header">
+                    <h3 data-translate="projects.zigbee.title">🛜 Създаване и интегриране на Zigbee мрежа</h3>
+                    <div class="platform-badges">
+                        <span class="platform-badge ha" data-translate="platforms.homeassistant">HomeAssistant</span>
+                        <span class="platform-badge web inactive" data-translate="platforms.web">WEB</span>
+                        <span class="platform-badge android inactive" data-translate="platforms.android">ANDROID</span>
+                    </div>
+                </div>
+                <div class="project-content">
+                    <div class="project-image">
+                        <img data-translate-alt="projects.zigbee.imageAlt" src="static/img/Zigbee_Network.gif" alt="Zigbee мрежа" style="max-width:100%; height:auto; display:block;">
+                    </div>
+                    <div class="project-info">
+                        <h4 data-translate="projects.advantages">Предимства:</h4>
+                        <ul>
+                            <li data-translate="projects.zigbee.li1">Работи без интернет с Zigbee2MQTT</li>
+                            <li data-translate="projects.zigbee.li2">Не натоварва интернет мрежата</li>
+                            <li data-translate="projects.zigbee.li3">Лесна инсталация и преместване на устройства</li>
+                            <li data-translate="projects.zigbee.li4">Zigbee устройствата действат като ретранслатори</li>
+                            <li data-translate="projects.zigbee.li5">Достъпен Zigbee хардуер</li>
+                            <li data-translate="projects.zigbee.li6">Възможност за ъпгрейд при натоварване на мрежата</li>
+                        </ul>
+                        <a class="project-link" href="https://github.com/PasevSU/HASS-ZigbeeNetwork.git" data-translate="projects.goto">↪️ КЪМ ПРОЕКТА ▶️</a>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Project 2 -->
+            <div class="project-card">
+                <div class="project-header">
+                    <h3 data-translate="projects.shopping.title">🛒 Списък за пазаруване с изображения</h3>
+                    <div class="platform-badges">
+                        <span class="platform-badge ha" data-translate="platforms.homeassistant">HomeAssistant</span>
+                        <span class="platform-badge web inactive" data-translate="platforms.web">WEB</span>
+                        <span class="platform-badge android inactive" data-translate="platforms.android">ANDROID</span>
+                    </div>
+                </div>
+                <div class="project-content">
+                    <div class="project-image">
+                        <img data-translate-alt="projects.shopping.imageAlt" src="static/img/Projekt_shoplist.gif" alt="Списък за пазаруване" style="max-width:100%; height:auto; display:block;">
+                    </div>
+                    <div class="project-info">
+                        <h4 data-translate="projects.advantages">Предимства:</h4>
+                        <ul>
+                            <li data-translate="projects.shopping.li1">Бързо намиране на артикули по категории</li>
+                            <li data-translate="projects.shopping.li2">Визуална идентификация чрез изображения</li>
+                            <li data-translate="projects.shopping.li3">Членовете на домакинството получават известия за нови артикули</li>
+                            <li data-translate="projects.shopping.li4">Автоматично премахва отметнати артикули</li>
+                        </ul>
+                        <a class="project-link" href="https://github.com/PasevSU/HASS-shopping-list.git" data-translate="projects.goto">↪️ КЪМ ПРОЕКТА ▶️</a>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Project 3 -->
+            <div class="project-card">
+                <div class="project-header">
+                    <h3 data-translate="projects.wled.title">🎤🔉 WLED SoundReactive Интелигентно светлинно шоу</h3>
+                    <div class="platform-badges">
+                        <span class="platform-badge ha" data-translate="platforms.homeassistant">HomeAssistant</span>
+                        <span class="platform-badge web" data-translate="platforms.web">WEB</span>
+                        <span class="platform-badge android" data-translate="platforms.android">ANDROID</span>
+                    </div>
+                </div>
+                <div class="project-content">
+                    <div class="project-image">
+                        <img data-translate-alt="projects.wled.imageAlt" src="static/img/WLED SaundReactive.gif" alt="WLED SoundReactive анимация" style="max-width:100%; height:auto; display:block;">
+                    </div>
+                    <div class="project-info">
+                        <h4 data-translate="projects.advantages">Предимства:</h4>
+                        <ul>
+                            <li data-translate="projects.wled.li1">Реакция в реално време извън човешкото възприятие</li>
+                            <li data-translate="projects.wled.li2">Автоматично регулиране на чувствителността на микрофона</li>
+                            <li data-translate="projects.wled.li3">Ниска цена и енергийна ефективност</li>
+                            <li data-translate="projects.wled.li4">Пълен WLED мод с официални функции на фърмуера</li>
+                            <li data-translate="projects.wled.li5">Уеб интерфейс и мобилни приложения — съвместими с Home Assistant</li>
+                        </ul>
+                        <a class="project-link" href="https://github.com/PasevSU/WLED_SoundReactive_Light_Show.git" data-translate="projects.goto">↪️ КЪМ ПРОЕКТА ▶️</a>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Project 4 -->
+            <div class="project-card">
+                <div class="project-header">
+                    <h3 data-translate="projects.tasmota.title">🤖 TASMOTA – Интеграция и устройства</h3>
+                    <div class="platform-badges">
+                        <span class="platform-badge ha" data-translate="platforms.homeassistant">HomeAssistant</span>
+                        <span class="platform-badge web" data-translate="platforms.web">WEB</span>
+                        <span class="platform-badge android" data-translate="platforms.android">ANDROID</span>
+                    </div>
+                </div>
+                <div class="project-content">
+                    <div class="project-image">
+                        <img data-translate-alt="projects.tasmota.imageAlt" src="static/img/Tasmota-banner.png" alt="Tasmota устройства" style="max-width:100%; height:auto; display:block;">
+                    </div>
+                    <div class="project-info">
+                        <h4 data-translate="projects.advantages">Предимства:</h4>
+                        <ul>
+                            <li data-translate="projects.tasmota.li1">Пълен контрол върху устройствата</li>
+                            <li data-translate="projects.tasmota.li2">Независимо от интернет връзка</li>
+                            <li data-translate="projects.tasmota.li3">Моментален контрол чрез TASMOTA, Home Assistant и Alexa</li>
+                            <li data-translate="projects.tasmota.li4">Не натоварва интернет мрежата</li>
+                        </ul>
+                        <a class="project-link" href="https://github.com/PasevSU/HASS-TASMOTA.git" data-translate="projects.goto">↪️ КЪМ ПРОЕКТА ▶️</a>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Project 5 -->
+            <div class="project-card">
+                <div class="project-header">
+                    <h3 data-translate="projects.hass2zigbee.title">🏠 HASS с две Zigbee мрежи</h3>
+                    <div class="platform-badges">
+                        <span class="platform-badge ha" data-translate="platforms.homeassistant">HomeAssistant</span>
+                        <span class="platform-badge web inactive" data-translate="platforms.web">WEB</span>
+                        <span class="platform-badge android inactive" data-translate="platforms.android">ANDROID</span>
+                    </div>
+                </div>
+                <div class="project-content">
+                    <div class="project-image">
+                        <img data-translate-alt="projects.hass2zigbee.imageAlt" src="static/img/benner_2zigbee.png" alt="Две Zigbee мрежи" style="max-width:100%; height:auto; display:block;">
+                    </div>
+                    <div class="project-info">
+                        <h4 data-translate="projects.advantages">Предимства:</h4>
+                        <ul>
+                            <li data-translate="projects.hass2zigbee.li1">Поддържа повече устройства</li>
+                            <li data-translate="projects.hass2zigbee.li2">Разделяне на товар/функции</li>
+                            <li data-translate="projects.hass2zigbee.li3">Подобрено тестване за съвместимост</li>
+                            <li data-translate="projects.hass2zigbee.li4">Гъвкава миграция и експериментиране</li>
+                        </ul>
+                        <a class="project-link" href="https://github.com/PasevSU/HASS-2-ZigbeeNetworks.git" data-translate="projects.goto">↪️ КЪМ ПРОЕКТА ▶️</a>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Project 6 -->
+            <div class="project-card">
+                <div class="project-header">
+                    <h3 data-translate="projects.voice.title">🎙️ Гласово управление на HASS устройства (Alexa / Google Home)</h3>
+                    <div class="platform-badges">
+                        <span class="platform-badge ha" data-translate="platforms.homeassistant">HomeAssistant</span>
+                        <span class="platform-badge web inactive" data-translate="platforms.web">WEB</span>
+                        <span class="platform-badge android" data-translate="platforms.android">ANDROID</span>
+                        <span class="platform-badge alexa">ALEXA</span>
+                        <span class="platform-badge google">GOOGLE</span>
+                    </div>
+                </div>
+                <div class="project-content">
+                    <div class="project-image">
+                        <img data-translate-alt="projects.voice.imageAlt" src="static/img/MATTERHUB_banner.png" alt="Гласово управление интеграция" style="max-width:100%; height:auto; display:block;">
+                    </div>
+                    <div class="project-info">
+                        <h4 data-translate="projects.advantages">Предимства:</h4>
+                        <ul>
+                            <li data-translate="projects.voice.li1">Управление на автоматизации и скриптове с глас</li>
+                            <li data-translate="projects.voice.li2">Управление на устройства и мониторинг чрез глас</li>
+                            <li data-translate="projects.voice.li3">Лесно добавяне и премахване на устройства</li>
+                        </ul>
+                        <a class="project-link" href="https://github.com/PasevSU/HASS-Voice-Control.git" data-translate="projects.goto">↪️ КЪМ ПРОЕКТА ▶️</a>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Project 7 -->
+            <div class="project-card">
+                <div class="project-header">
+                    <h3 data-translate="projects.fingerbot.title">🖲️ Управление на Zigbee Fingerbot чрез NFC и Home Assistant</h3>
+                    <div class="platform-badges">
+                        <span class="platform-badge ha" data-translate="platforms.homeassistant">HomeAssistant</span>
+                        <span class="platform-badge android" data-translate="platforms.android">ANDROID</span>
+                    </div>
+                </div>
+                <div class="project-content">
+                    <div class="project-image">
+                        <img data-translate-alt="projects.fingerbot.imageAlt" src="static/img/banner_HASS-Fingerbot-NFC-Door.png" alt="Fingerbot NFC врата" style="max-width:100%; height:auto; display:block;">
+                    </div>
+                    <div class="project-info">
+                        <h4 data-translate="projects.advantages">Предимства:</h4>
+                        <ul>
+                            <li data-translate="projects.fingerbot.li1">Безконтактен достъп</li>
+                            <li data-translate="projects.fingerbot.li2">Интеграция с Home Assistant</li>
+                            <li data-translate="projects.fingerbot.li3">Локален и офлайн контрол</li>
+                            <li data-translate="projects.fingerbot.li4">Съвместим с всяко NFC устройство</li>
+                        </ul>
+                        <a class="project-link" href="https://github.com/PasevSU/HASS-Fingerbot-NFC.git" data-translate="projects.goto">↪️ КЪМ ПРОЕКТА ▶️</a>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Project 8 -->
+            <div class="project-card">
+                <div class="project-header">
+                    <h3 data-translate="projects.eco.title">🌿 Eco режим за термостати в Home Assistant</h3>
+                    <div class="platform-badges">
+                        <span class="platform-badge ha" data-translate="platforms.homeassistant">HomeAssistant</span>
+                    </div>
+                </div>
+                <div class="project-content">
+                    <div class="project-image">
+                        <img data-translate-alt="projects.eco.imageAlt" src="static/img/eco_mod.png" alt="Еко режим термостат" style="max-width:100%; height:auto; display:block;">
+                    </div>
+                    <div class="project-info">
+                        <h4 data-translate="projects.advantages">Предимства:</h4>
+                        <ul>
+                            <li data-translate="projects.eco.li1">Спестяване на енергия</li>
+                            <li data-translate="projects.eco.li2">Комфорт без компромис</li>
+                            <li data-translate="projects.eco.li3">Лесна интеграция и персонализация</li>
+                        </ul>
+                        <a class="project-link" href="https://github.com/PasevSU/HASS-Eco-Mode.git" data-translate="projects.goto">↪️ КЪМ ПРОЕКТА ▶️</a>
+                    </div>
+                </div>
+            </div>
+            
+
+            <!-- Project 9 -->
+            <div class="project-card">
+                <div class="project-header">
+                    <h3 data-translate="projects.away.title">🔋 HASS-AWAY-MODE / AWAY MODE</h3>
+                    <div class="platform-badges">
+                        <span class="platform-badge ha" data-translate="platforms.homeassistant">HomeAssistant</span>
+                    </div>
+                </div>
+                <div class="project-content">
+                    <div class="project-image">
+                        <img data-translate-alt="projects.away.imageAlt" src="static/img/banner_away_mod.png" alt="Банер Away Mode" style="max-width:100%; height:auto; display:block;">
+                    </div>
+                    <div class="project-info">
+                        <h4 data-translate="projects.advantages">Предимства:</h4>
+                        <ul>
+                            <li data-translate="projects.away.li1">Автоматизирано управление на away режима</li>
+                            <li data-translate="projects.away.li2">Интеграция с Home Assistant</li>
+                            <li data-translate="projects.away.li3">Гъвкави сценарии с input booleans</li>
+                        </ul>
+                        <a class="project-link" href="https://github.com/PasevSU/HASS-Away-Mode.git" data-translate="projects.goto">↪️ КЪМ ПРОЕКТА ▶️</a>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Project 10 -->
+            <div class="project-card">
+                <div class="project-header">
+                    <h3 data-translate="projects.timer.title">⏱️ Home Assistant - Гъвкава таймер автоматизация</h3>
+                    <div class="platform-badges">
+                        <span class="platform-badge ha" data-translate="platforms.homeassistant">HomeAssistant</span>
+                    </div>
+                </div>
+                <div class="project-content">
+                    <div class="project-image">
+                        <img data-translate-alt="projects.timer.imageAlt" src="static/img/banner_flexible_taimer.png" alt="Банер гъвкав таймер" style="max-width:100%; height:auto; display:block;">
+                    </div>
+                    <div class="project-info">
+                        <h4 data-translate="projects.advantages">Предимства:</h4>
+                        <ul>
+                            <li data-translate="projects.timer.li1">Настройка на интервал чрез UI (часове, минути, секунди)</li>
+                            <li data-translate="projects.timer.li2">Изпълнява действия след изтичане на интервала</li>
+                            <li data-translate="projects.timer.li3">Предотвратява преждевременно задействане</li>
+                        </ul>
+                        <a class="project-link" href="https://github.com/PasevSU/HASS-Flexible-Timer.git" data-translate="projects.goto">↪️ КЪМ ПРОЕКТА ▶️</a>
+                    </div>
+                </div>
+            </div>
+            
+>>>>>>> 4826362cd52ffb8b6600945478687084a21e142d
         </section>
 
         <section id="documentation" class="documentation">
@@ -280,6 +755,12 @@
             </form>
             
             <div id="form-message" class="form-message"></div>
+<<<<<<< HEAD
+=======
+            
+  
+            </div>
+>>>>>>> 4826362cd52ffb8b6600945478687084a21e142d
         </div>
     </div>
     <script>
@@ -339,7 +820,10 @@
                 }
             }
         });
+<<<<<<< HEAD
         
+=======
+>>>>>>> 4826362cd52ffb8b6600945478687084a21e142d
         // Handle form submission - DIRECT SEND TO NTFY.SH
         if (contactForm) {
             contactForm.addEventListener('submit', async function(e) {

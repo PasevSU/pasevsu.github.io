@@ -987,6 +987,7 @@ footer {
 .close:hover {
     color: #ff0000;
 }
+<<<<<<< HEAD
 /* Подобрения за модалната форма */
 .modal {
     display: none;
@@ -1226,3 +1227,5 @@ footer {
 .project-card {
     animation: fadeIn 0.5s ease-out;
 }
+=======
+>>>>>>> 4826362cd52ffb8b6600945478687084a21e142d

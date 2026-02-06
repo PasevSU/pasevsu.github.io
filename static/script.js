@@ -15,6 +15,7 @@ const contactLinks = document.querySelectorAll('a[href="#contact"]');
 const closeBtn = document.querySelector('.close');
 
 // Open modal when clicking contact links in navigation
+<<<<<<< HEAD
 if (contactLinks.length > 0) {
     contactLinks.forEach(link => {
         link.addEventListener('click', function(e) {
@@ -33,6 +34,24 @@ if (contactLinks.length > 0) {
                 }, 100);
             }
         });
+=======
+contactLinks.forEach(link => {
+    link.addEventListener('click', function(e) {
+        e.preventDefault();
+        if (contactModal) {
+            contactModal.style.display = 'block';
+            document.body.style.overflow = 'hidden';
+            
+            // Добавяме клас за да предотвратим скролиране
+            document.body.classList.add('modal-open');
+            
+            // Фокусираме се върху първото поле
+            setTimeout(() => {
+                const nameInput = document.getElementById('name');
+                if (nameInput) nameInput.focus();
+            }, 100);
+        }
+>>>>>>> 4826362cd52ffb8b6600945478687084a21e142d
     });
 }
 
@@ -282,4 +301,138 @@ if (prefersDarkScheme.addEventListener) {
 /* Admin Styles - само ако са необходими */
 /*
 .admin-login-btn {
+<<<<<<< HEAD
     background-color: #ff6b6b !
+=======
+    background-color: #ff6b6b !important;
+    border-radius: 20px;
+    padding: 5px 15px !important;
+    margin-left: 10px;
+}
+
+.admin-actions {
+    display: grid;
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.admin-btn {
+    background-color: #3498db;
+    color: white;
+    border: none;
+    padding: 15px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s;
+    text-align: left;
+}
+
+.admin-btn:hover {
+    background-color: #2980b9;
+}
+
+/* Edit indicators for admin */
+.admin-edit-mode .editable {
+    position: relative;
+    border: 1px dashed #3498db;
+    padding: 5px;
+    margin: 2px;
+}
+
+.admin-edit-mode .editable::after {
+    content: '✏️';
+    position: absolute;
+    top: -10px;
+    right: -10px;
+    background: #3498db;
+    color: white;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    font-size: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+// Banner hide on scroll
+let lastScrollTop = 0;
+const banner = document.querySelector('.banner');
+const navbar = document.querySelector('.navbar');
+
+if (banner && navbar) {
+    const bannerHeight = banner.offsetHeight;
+    
+    window.addEventListener('scroll', function() {
+        let scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+        
+        if (scrollTop > lastScrollTop && scrollTop > bannerHeight) {
+            // Scrolling down & past banner - hide banner
+            banner.style.transform = 'translateY(-100%)';
+            banner.style.transition = 'transform 0.3s ease';
+        } else {
+            // Scrolling up - show banner
+            banner.style.transform = 'translateY(0)';
+        }
+        
+        lastScrollTop = scrollTop;
+    });
+}
+
+// Добавяме CSS за модал
+if (document.head) {
+    const style = document.createElement('style');
+    style.textContent = `
+        .modal-open {
+            overflow: hidden;
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 9999;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            overflow-y: auto;
+        }
+        
+        .modal-content {
+            background-color: white;
+            margin: 50px auto;
+            padding: 2rem;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 500px;
+            position: relative;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+        
+        .close {
+            position: absolute;
+            right: 1.5rem;
+            top: 1rem;
+            font-size: 1.8rem;
+            cursor: pointer;
+            color: #333;
+            background: none;
+            border: none;
+            padding: 0;
+            line-height: 1;
+        }
+        
+        .close:hover {
+            color: #ff0000;
+        }
+    `;
+    document.head.appendChild(style);
+}
+
+// Добавяме дебъг информация
+console.log('Script loaded successfully');
+console.log('Contact modal found:', contactModal);
+console.log('Contact links found:', contactLinks.length);
+>>>>>>> 4826362cd52ffb8b6600945478687084a21e142d
