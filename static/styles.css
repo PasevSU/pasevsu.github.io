@@ -1226,3 +1226,110 @@ footer {
 .project-card {
     animation: fadeIn 0.5s ease-out;
 }
+/* Допълнителни стилове за съобщения и контакт форма */
+.loading-projects {
+    text-align: center;
+    padding: 2rem;
+    font-style: italic;
+    color: #666;
+    font-size: 1.1rem;
+}
+
+.error-message {
+    background-color: #ffe6e6;
+    border: 2px solid #ff6b6b;
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin: 2rem 0;
+    color: #d32f2f;
+}
+
+.error-message code {
+    background-color: #fff;
+    padding: 2px 4px;
+    border-radius: 4px;
+    font-family: monospace;
+}
+
+.error-message ul {
+    margin: 10px 0;
+    padding-left: 20px;
+}
+
+.error-message li {
+    margin: 5px 0;
+}
+
+.project-error {
+    background-color: #fff3cd;
+    border: 1px solid #ffeaa7;
+    border-radius: 4px;
+    padding: 1rem;
+    margin: 1rem 0;
+    color: #856404;
+}
+
+/* Анимация за зареждане на проекти */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.project-card {
+    animation: fadeIn 0.5s ease-out;
+}
+
+/* Подобрения за curl командата в контактната форма */
+pre {
+    background-color: #2d2d2d;
+    color: #f8f8f2;
+    padding: 15px;
+    border-radius: 5px;
+    overflow-x: auto;
+    font-family: monospace;
+    font-size: 14px;
+    white-space: pre-wrap;
+    word-break: break-all;
+}
+
+/* Стилове за бутона за копиране */
+.copy-btn {
+    margin-top: 10px;
+    padding: 10px 20px;
+    background-color: #3498db;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+    width: 100%;
+    transition: background-color 0.3s;
+}
+
+.copy-btn:hover {
+    background-color: #2980b9;
+}
+
+.copy-btn.copied {
+    background-color: #27ae60;
+}
+
+/* Инструкции за curl командата */
+.curl-instructions {
+    margin-top: 15px;
+    padding: 10px;
+    background-color: #fff3cd;
+    border: 1px solid #ffeaa7;
+    border-radius: 5px;
+    color: #856404;
+    font-size: 14px;
+}
+
+.curl-instructions ol {
+    margin: 5px 0 0 0;
+    padding-left: 20px;
+}
+
+.curl-instructions li {
+    margin: 5px 0;
+}

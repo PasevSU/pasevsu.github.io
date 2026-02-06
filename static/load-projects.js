@@ -1,17 +1,4 @@
-// static/load-projects.js - КОРИГИРАН ВАРИАНТ
-
-const projectFiles = [
-    'projects/project1_zigbee.json',
-    'projects/project2_shopping.json',
-    'projects/project3_wled.json',
-    'projects/project4_tasmota.json',
-    'projects/project5_hass2zigbee.json',
-    'projects/project6_voice.json',
-    'projects/project7_fingerbot.json',
-    'projects/project8_eco.json',
-    'projects/project9_away.json',
-    'projects/project10_timer.json'
-];
+// static/load-projects.js - КОРИГИРАН ВАРИАНТ (БЕЗ FETCH)
 
 let currentLanguage = 'bg';
 let allProjects = [];
@@ -50,7 +37,7 @@ const localProjectTranslations = {
     }
 };
 
-async function loadAllProjects() {
+function loadAllProjects() {
     const container = document.getElementById('projects-container');
     
     if (!container) {
@@ -61,31 +48,14 @@ async function loadAllProjects() {
     // Показване на съобщение за зареждане
     container.innerHTML = '<div class="loading-projects">Зареждане на проектите...</div>';
     
-    allProjects = []; // Изчистване на старите проекти
-    
-    // Зареждане на всички JSON файлове
-    for (const file of projectFiles) {
-        try {
-            console.log(`Зареждане на: ${file}`);
-            const response = await fetch(file);
-            
-            if (!response.ok) {
-                throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-            }
-            
-            const projectData = await response.json();
-            allProjects.push(projectData);
-            console.log(`✅ Успешно зареден: ${projectData.title?.bg || file}`);
-            
-        } catch (error) {
-            console.error(`❌ Грешка при зареждане на ${file}:`, error);
-            
-            // Показване на грешка в контейнера
-            const errorDiv = document.createElement('div');
-            errorDiv.className = 'project-error';
-            errorDiv.innerHTML = `<strong>Грешка при зареждане на ${file}:</strong> ${error.message}`;
-            container.appendChild(errorDiv);
-        }
+    // Проверяваме дали има вградени данни
+    if (window.allProjectsData && window.allProjectsData.length > 0) {
+        allProjects = window.allProjectsData;
+        console.log(`✅ Заредени ${allProjects.length} проекта от вградени данни`);
+    } else {
+        // Ако няма вградени данни, използваме тестови
+        allProjects = getFallbackProjects();
+        console.log(`⚠️ Използвани тестови проекти: ${allProjects.length}`);
     }
     
     // Сортиране по ID
@@ -95,9 +65,65 @@ async function loadAllProjects() {
     renderProjects();
 }
 
+// Тестови проекти за fallback
+function getFallbackProjects() {
+    return [
+        {
+            "id": 1,
+            "title": {
+                "bg": "🛜 Zigbee мрежа (Тест)",
+                "en": "🛜 Zigbee Network (Test)",
+                "de": "🛜 Zigbee Netzwerk (Test)"
+            },
+            "platforms": ["ha"],
+            "image": "static/img/banner-w-bg.png",
+            "imageAlt": {
+                "bg": "Zigbee мрежа",
+                "en": "Zigbee network",
+                "de": "Zigbee-Netzwerk"
+            },
+            "advantages": [
+                {"bg": "Тестово предимство 1", "en": "Test advantage 1", "de": "Testvorteil 1"},
+                {"bg": "Тестово предимство 2", "en": "Test advantage 2", "de": "Testvorteil 2"},
+                {"bg": "Тестово предимство 3", "en": "Test advantage 3", "de": "Testvorteil 3"}
+            ],
+            "link": "#",
+            "buttonText": {
+                "bg": "↪️ КЪМ ПРОЕКТА ▶️",
+                "en": "↪️ GO TO PROJECT ▶️",
+                "de": "↪️ ZUM PROJEKT ▶️"
+            }
+        },
+        {
+            "id": 2,
+            "title": {
+                "bg": "🛒 Пазарна листа (Тест)",
+                "en": "🛒 Shopping List (Test)",
+                "de": "🛒 Einkaufsliste (Test)"
+            },
+            "platforms": ["ha", "android"],
+            "image": "static/img/banner-w-bg.png",
+            "imageAlt": {
+                "bg": "Списък за пазаруване",
+                "en": "Shopping list",
+                "de": "Einkaufsliste"
+            },
+            "advantages": [
+                {"bg": "Тестово предимство A", "en": "Test advantage A", "de": "Testvorteil A"},
+                {"bg": "Тестово предимство B", "en": "Test advantage B", "de": "Testvorteil B"}
+            ],
+            "link": "#",
+            "buttonText": {
+                "bg": "↪️ КЪМ ПРОЕКТА ▶️",
+                "en": "↪️ GO TO PROJECT ▶️",
+                "de": "↪️ ZUM PROJEKT ▶️"
+            }
+        }
+    ];
+}
+
 function renderProjects() {
     const container = document.getElementById('projects-container');
-    const projectsSection = document.getElementById('projects');
     
     if (!container) {
         console.error('Не е намерен контейнер за проекти!');
@@ -210,7 +236,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Зареждане на проектите след малко забавяне
     setTimeout(() => {
         loadAllProjects();
-    }, 1000);
+    }, 500);
 });
 
 // Експорт на функции за достъп от други скриптове
