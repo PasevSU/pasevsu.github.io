@@ -12,7 +12,10 @@
     <script src="static/translations.js"></script>
     <script src="static/language-manager.js"></script>
     <script src="static/script.js"></script>
-    <!-- Включване на контактната форма като отделен файл -->
+    <!-- Нови файлове за документация -->
+    <script src="static/all-docs.js"></script>
+    <script src="static/load-docs.js"></script>
+    <!-- Контактна форма -->
     <script src="static/contact-form.js"></script>
 </head>
 <body>
@@ -41,7 +44,7 @@
                         <a data-translate="nav.about" href="#about" class="nav-link">За нас</a>
                     </li>
                     <li class="nav-item">
-                        <a data-translate="nav.documentation" href="#documentation" class="nav-link">Документация</a>
+                        <a data-translate="nav.documentation" href="#" class="nav-link docs-trigger">Документация</a>
                     </li>
                     <li class="nav-item">
                         <a data-translate="nav.generators" href="#generators" class="nav-link">Генератори</a>
@@ -119,17 +122,7 @@
             </div>
         </section>
 
-        <section id="documentation" class="documentation">
-            <h2 data-translate="documentation.title">Документация</h2>
-            <p data-translate="documentation.description">Документация за Home Assistant проекти</p>
-            <div class="doc-links">
-                <a data-translate="documentation.link1" href="static/doku/repositories.html" class="doc-link">Списък с add-on хранилища</a>
-                <a data-translate="documentation.link2" href="static/doku/automations.html" class="doc-link">Видове автоматизации</a>
-                <a data-translate="documentation.link3" href="https://github.com/PasevSU/homeassistant-automations" class="doc-link">HOME-ASSISTANT-AUTOMATIONS</a>
-            </div>
-        </section>
-
-        <section id="support" class="support">
+        <section id="generators" class="support">
             <h2 data-translate="support.title">Генератори</h2>
             <p data-translate="support.description">
                 При нередности с генераторите ми пишете 
@@ -152,6 +145,7 @@
                 </div>
             </div>
         </section>        
+        
         <section id="about" class="about">
             <h2 data-translate="about.title">За нас</h2>
             <p data-translate="about.description">Това хранилище съдържа моите персонални проекти за Home Assistant, автоматизации, конфигурации и интеграции. Повечето проекти имат поддръжка на английски и български и редовно добавям нови функции и подобрения.</p>
@@ -171,7 +165,7 @@
                     <li><a href="#home" data-translate="nav.home">Начало</a></li>
                     <li><a href="#projects" data-translate="nav.projects">Проекти</a></li>
                     <li><a href="#about" data-translate="nav.about">За нас</a></li>
-                    <li><a href="#documentation" data-translate="nav.documentation">Документация</a></li>
+                    <li><a href="#" class="docs-trigger" data-translate="nav.documentation">Документация</a></li>
                     <li><a href="#generators" data-translate="nav.generators">Генератори</a></li>
                     <li><a href="#" class="contact-trigger" data-translate="nav.contact">Контакт</a></li>
                 </ul>
@@ -189,6 +183,23 @@
         </div>
     </footer>
     
+    <!-- Документация модал -->
+    <div id="docs-modal" class="modal">
+        <div class="modal-content">
+            <span class="close close-docs">&times;</span>
+            <h3 data-translate="documentation.modalTitle">Документация</h3>
+            
+            <p class="docs-description" data-translate="documentation.docsDescription">
+                Кликнете върху всеки документ за да видите пълното му съдържание.
+            </p>
+            
+            <div id="docs-modal-content" class="docs-list">
+                <!-- Документите се зареждат тук динамично -->
+                <div class="loading-docs" data-translate="documentation.loading">Зареждане на документи...</div>
+            </div>
+        </div>
+    </div>
+
     <!-- Contact Form Modal -->
     <div id="contact-modal" class="modal">
         <div class="modal-content">
@@ -240,5 +251,63 @@
             <div id="form-message" class="form-message"></div>
         </div>
     </div>
+
+    <script>
+        // Добавете този код след съществуващите скриптове
+        document.addEventListener('DOMContentLoaded', function() {
+            // Селектори за документационния модал
+            const docsTriggers = document.querySelectorAll('.docs-trigger');
+            const docsModal = document.getElementById('docs-modal');
+            const closeDocsBtn = document.querySelector('.close-docs');
+            
+            // Отваряне на документационния модал
+            if (docsTriggers && docsModal) {
+                docsTriggers.forEach(trigger => {
+                    trigger.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        docsModal.style.display = 'block';
+                        document.body.style.overflow = 'hidden';
+                        
+                        // Зареждане на документите с текущия език
+                        setTimeout(() => {
+                            if (typeof loadDocsIntoModal === 'function') {
+                                loadDocsIntoModal();
+                            }
+                        }, 100);
+                    });
+                });
+            }
+            
+            // Затваряне на документационния модал
+            if (closeDocsBtn && docsModal) {
+                closeDocsBtn.addEventListener('click', function() {
+                    docsModal.style.display = 'none';
+                    document.body.style.overflow = 'auto';
+                });
+            }
+            
+            // Затваряне на модала при клик извън него
+            window.addEventListener('click', function(e) {
+                if (docsModal && e.target === docsModal) {
+                    docsModal.style.display = 'none';
+                    document.body.style.overflow = 'auto';
+                }
+            });
+            
+            // Затваряне с ESC
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape') {
+                    if (docsModal && docsModal.style.display === 'block') {
+                        docsModal.style.display = 'none';
+                        document.body.style.overflow = 'auto';
+                    }
+                    if (document.getElementById('contact-modal') && document.getElementById('contact-modal').style.display === 'block') {
+                        document.getElementById('contact-modal').style.display = 'none';
+                        document.body.style.overflow = 'auto';
+                    }
+                }
+            });
+        });
+    </script>
 </body>
 </html>

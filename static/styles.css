@@ -1333,3 +1333,148 @@ pre {
 .curl-instructions li {
     margin: 5px 0;
 }
+/* Документация модал стилове */
+#docs-modal .modal-content {
+    max-width: 800px;
+}
+
+.docs-list {
+    max-height: 70vh;
+    overflow-y: auto;
+    padding-right: 10px;
+}
+
+.doc-item {
+    margin-bottom: 1rem;
+    padding: 1rem;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: 2px solid transparent;
+}
+
+.doc-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+    border-color: var(--primary-color);
+}
+
+.doc-item h4 {
+    color: var(--primary-color);
+    margin-bottom: 0.5rem;
+}
+
+.doc-item p {
+    color: #666;
+    font-size: 0.9rem;
+    margin-bottom: 0.5rem;
+}
+
+.doc-content {
+    line-height: 1.6;
+}
+
+.doc-content h3 {
+    color: var(--primary-color);
+    margin: 1.5rem 0 0.5rem 0;
+    font-size: 1.2rem;
+}
+
+.doc-content h3:first-child {
+    margin-top: 0;
+}
+
+.doc-content ul {
+    margin: 0.5rem 0 1rem 1.5rem;
+}
+
+.doc-content li {
+    margin-bottom: 0.25rem;
+}
+
+.doc-content strong {
+    color: var(--primary-color);
+}
+/* Документация модал стилове */
+#docs-modal .modal-content {
+    max-width: 800px;
+    max-height: 80vh;
+    overflow-y: auto;
+}
+
+.docs-list {
+    margin-top: 1.5rem;
+}
+
+.doc-item {
+    margin-bottom: 1rem;
+}
+
+.doc-link-item {
+    display: block;
+    text-decoration: none;
+    color: inherit;
+    margin-bottom: 1.5rem;
+    padding: 1rem;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: 2px solid transparent;
+}
+
+.doc-link-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+    border-color: var(--primary-color);
+}
+
+.doc-link-item h4 {
+    color: var(--primary-color);
+    margin-bottom: 0.5rem;
+    font-size: 1.1rem;
+}
+
+.doc-link-item p {
+    color: #666;
+    font-size: 0.95rem;
+    margin: 0;
+    line-height: 1.5;
+}
+
+.doc-content {
+    line-height: 1.6;
+}
+
+.doc-content h3 {
+    color: var(--primary-color);
+    margin: 1.5rem 0 0.5rem 0;
+    font-size: 1.2rem;
+}
+
+.doc-content h3:first-child {
+    margin-top: 0;
+}
+
+.doc-content ul {
+    margin: 0.5rem 0 1rem 1.5rem;
+}
+
+.doc-content li {
+    margin-bottom: 0.25rem;
+}
+
+.doc-content strong {
+    color: var(--primary-color);
+}
+
+.loading-docs {
+    text-align: center;
+    padding: 3rem;
+    font-style: italic;
+    color: #666;
+    font-size: 1.1rem;
+}

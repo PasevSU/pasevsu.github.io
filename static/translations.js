@@ -1,4 +1,3 @@
-
 //---------------------------------------------------------------------------------------- 
 // В този файл се съхраняват всички преводи за различните езици, използвани в index.html
 //----------------------------------------------------------------------------------------
@@ -147,9 +146,13 @@ const translations = {
         // Documentation
         "documentation.title": "Documentation",
         "documentation.description": "Documentation for Home Assistant projects",
+        "documentation.modalTitle": "Documentation",
+        "documentation.docsDescription": "Click on any document to view its full content.",
+        "documentation.loading": "Loading documents...",
         "documentation.link1": "List of add-on repositories",
         "documentation.link2": "Types of automations",
         "documentation.link3": "Configuration methods",
+        "documentation.viewAll": "View all documents",
         
         // Support
         "support.title": "Generators",
@@ -344,9 +347,13 @@ const translations = {
         // Документация
         "documentation.title": "Документация",
         "documentation.description": "Документация за Home Assistant проекти",
+        "documentation.modalTitle": "Документация",
+        "documentation.docsDescription": "Кликнете върху всеки документ за да видите пълното му съдържание.",
+        "documentation.loading": "Зареждане на документи...",
         "documentation.link1": "Списък с add-on хранилища",
         "documentation.link2": "Видове автоматизации", 
         "documentation.link3": "Методи на конфигуриране",
+        "documentation.viewAll": "Виж всички документи",
         
         // Поддръжка
         "support.title": "Генератори",
@@ -541,9 +548,13 @@ const translations = {
         // Dokumentation
         "documentation.title": "Dokumentation",
         "documentation.description": "Dokumentation für Home Assistant Projekte",
+        "documentation.modalTitle": "Dokumentation",
+        "documentation.docsDescription": "Klicken Sie auf ein Dokument, um den vollständigen Inhalt anzuzeigen.",
+        "documentation.loading": "Dokumente werden geladen...",
         "documentation.link1": "Liste der Add-on-Repositorys",
         "documentation.link2": "Arten von Automatisierungen",
         "documentation.link3": "Konfigurationsmethoden",
+        "documentation.viewAll": "Alle Dokumente ansehen",
         
         // Support
         "support.title": "Generators",
@@ -559,7 +570,7 @@ const translations = {
         "generator.mobile": "Generator für Mobile-App-Benachrichtigungen",
         "generator.shell": "Generator für Command-Shell-Code",
         "generators.title": "Generatoren",
-        "generators.description": "Wenn Sie Probleme mit den Generatoren haben, kontaktieren Sie mich bitte über das Kontaktformular mit dem Betreff 'HASS Generatoren'.",
+        "generators.description": "Wenn Sie Probleme mit den Generatoren haben, kontaktieren Sie mich bitte über das Kontaktformular mit dem Betреф 'HASS Generatoren'.",
         
         // Kontakt
         "contact.title": "Kontakt",
