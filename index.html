@@ -1,1065 +1,367 @@
-
 <!DOCTYPE html>
-<html lang="en">
+<html lang="bg">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title data-translate="footer.title">Home Assistant Проекти</title>
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🏠</text></svg>">
+    <title>Админ панел - Home Assistant Проекти</title>
     <link rel="stylesheet" href="static/styles.css">
-<<<<<<< HEAD
-    <!-- Първо translations, после language manager, после load-projects -->
-    <script src="static/translations.js"></script>
-    <script src="static/language-manager.js"></script>
-    <script src="static/load-projects.js"></script>
-    <script src="static/script.js"></script>
     <style>
-        /* Допълнителни стилове за съобщения */
-        .loading-projects {
-            text-align: center;
-            padding: 2rem;
-            font-style: italic;
-            color: #666;
-            font-size: 1.1rem;
+        /* Admin Panel Specific Styles */
+        .admin-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
         }
-        
-        .error-message {
-            background-color: #ffe6e6;
-            border: 2px solid #ff6b6b;
-            border-radius: 8px;
-            padding: 1.5rem;
-            margin: 2rem 0;
-            color: #d32f2f;
-        }
-        
-        .error-message code {
-            background-color: #fff;
-            padding: 2px 4px;
-            border-radius: 4px;
-            font-family: monospace;
-        }
-        
-        .error-message ul {
-            margin: 10px 0;
-            padding-left: 20px;
-        }
-        
-        .error-message li {
-            margin: 5px 0;
-        }
-        
-        .project-error {
-            background-color: #fff3cd;
-            border: 1px solid #ffeaa7;
-            border-radius: 4px;
-            padding: 1rem;
-            margin: 1rem 0;
-            color: #856404;
-=======
-    <!-- Първо translations, после language manager -->
-    <script src="static/translations.js"></script>
-    <script src="static/language-manager.js"></script>
-    <script src="static/script.js"></script>
-    <style>
-        /* Подобрения за модалната форма */
-        .modal {
-            display: none;
-            position: fixed;
-            z-index: 1000;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.7);
-            overflow-y: auto;
+
+        .admin-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
             padding: 20px 0;
+            margin-bottom: 30px;
+            border-radius: 10px;
         }
 
-        .modal-content {
-            background-color: white;
-            margin: 2% auto;
-            padding: 2rem;
-            border-radius: 12px;
-            width: 90%;
-            max-width: 600px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-            position: relative;
-            animation: modalFadeIn 0.3s ease-out;
+        .admin-nav {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
         }
 
-        @keyframes modalFadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(-20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .close {
-            position: absolute;
-            right: 1.5rem;
-            top: 1rem;
-            font-size: 2rem;
-            font-weight: bold;
-            color: #666;
-            cursor: pointer;
-            transition: color 0.3s;
-            line-height: 1;
-        }
-
-        .close:hover {
-            color: var(--primary-color);
-        }
-
-        .modal h3 {
-            color: var(--primary-color);
-            margin-bottom: 1.5rem;
-            padding-right: 2rem;
-        }
-
-        .contact-description {
-            margin-bottom: 2rem;
-            color: #666;
-            line-height: 1.6;
-        }
-
-        .contact-info-modal {
-            margin-top: 2rem;
-            padding-top: 1.5rem;
-            border-top: 1px solid #eee;
-        }
-
-        .contact-info-modal h4 {
-            color: var(--primary-color);
-            margin-bottom: 1rem;
-            font-size: 1.1rem;
-        }
-
-        .contact-info-modal ul {
+        .admin-nav ul {
+            display: flex;
             list-style: none;
-            padding: 0;
+            gap: 10px;
+            flex-wrap: wrap;
+            align-items: center;
         }
 
-        .contact-info-modal li {
-            margin-bottom: 0.75rem;
+        .admin-nav a {
+            padding: 10px 20px;
+            background: #f8f9fa;
+            border-radius: 5px;
+            text-decoration: none;
+            color: #333;
+            transition: all 0.3s;
+        }
+
+        .admin-nav a.active {
+            background: #3498db;
+            color: white;
+        }
+
+        .admin-section {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            margin-bottom: 25px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            display: none;
+        }
+
+        .admin-section.active {
+            display: block;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .checkbox-group {
+            display: flex;
+            gap: 20px;
+            margin: 15px 0;
+        }
+
+        .checkbox-item {
             display: flex;
             align-items: center;
-            gap: 0.5rem;
+            gap: 5px;
         }
 
-        .contact-info-modal li i {
-            color: var(--primary-color);
-            width: 20px;
-            text-align: center;
+        .project-list, .links-list {
+            margin-top: 30px;
         }
 
-        .contact-info-modal a {
-            color: var(--primary-color);
-            text-decoration: none;
-            transition: color 0.3s;
-        }
-
-        .contact-info-modal a:hover {
-            color: var(--secondary-color);
-            text-decoration: underline;
-        }
-
-        .form-message {
-            padding: 1rem;
+        .project-item, .link-item {
+            background: #f8f9fa;
+            padding: 20px;
+            margin-bottom: 15px;
             border-radius: 8px;
-            margin: 1rem 0;
-            text-align: center;
-            font-weight: 500;
+            border-left: 4px solid #3498db;
+        }
+
+        .item-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .item-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn {
+            padding: 8px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            font-size: 14px;
+        }
+
+        .btn-primary {
+            background: #3498db;
+            color: white;
+        }
+
+        .btn-danger {
+            background: #e74c3c;
+            color: white;
+        }
+
+        .btn-success {
+            background: #2ecc71;
+            color: white;
+        }
+
+        .summary-grid-admin {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .summary-item-admin {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+        }
+
+        .message {
+            padding: 10px 15px;
+            margin: 10px 0;
+            border-radius: 5px;
             display: none;
         }
 
-        .form-message.success {
-            background-color: #d4edda;
+        .message.success {
+            background: #d4edda;
             color: #155724;
             border: 1px solid #c3e6cb;
         }
 
-        .form-message.error {
-            background-color: #f8d7da;
+        .message.error {
+            background: #f8d7da;
             color: #721c24;
             border: 1px solid #f5c6cb;
         }
 
-        .form-message.loading {
-            background-color: #fff3cd;
-            color: #856404;
-            border: 1px solid #ffeaa7;
-        }
-
-        /* Подобрения за формата */
-        .form-group {
-            margin-bottom: 1.5rem;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 0.5rem;
-            font-weight: 500;
-            color: #333;
-        }
-
-        .form-group input,
-        .form-group textarea {
-            width: 100%;
-            padding: 0.75rem 1rem;
-            border: 2px solid #e0e0e0;
-            border-radius: 8px;
-            font-size: 1rem;
-            transition: border-color 0.3s, box-shadow 0.3s;
-            font-family: inherit;
-        }
-
-        .form-group input:focus,
-        .form-group textarea:focus {
-            outline: none;
-            border-color: var(--primary-color);
-            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
-        }
-
-        .form-group textarea {
-            resize: vertical;
-            min-height: 120px;
-        }
-
-        /* Responsive design */
-        @media (max-width: 768px) {
-            .modal-content {
-                width: 95%;
-                padding: 1.5rem;
-                margin: 1rem auto;
-            }
-
-            .close {
-                right: 1rem;
-                top: 0.5rem;
-                font-size: 1.8rem;
-            }
-
-            .modal h3 {
-                padding-right: 2.5rem;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .modal-content {
-                padding: 1.25rem;
-            }
-
-            .form-group input,
-            .form-group textarea {
-                padding: 0.625rem 0.875rem;
-            }
->>>>>>> 4826362cd52ffb8b6600945478687084a21e142d
+        .form-actions {
+            margin: 20px 0;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
         }
     </style>
 </head>
 <body>
-    <!-- HEADER, NAV, MAIN CONTENT остават същите -->
-    <header>
-        
-        <div class="banner" aria-label="Banner">
-            <img src="static/img/banner-w-bg.png" alt="Банер" aria-label="Banner">
-        </div>
-    
-        <nav class="navbar">
-            <div class="nav-container">
-                <div class="nav-logo">
-                    <a href="#" class="logo-link" aria-label="Home Assistant" style="display:flex;align-items:center;gap:0.5rem;text-decoration:none;font-weight:600;">
-                        <span class="logo-icon" style="font-size:1.2em;line-height:1;">🏠</span>
-                        <span class="logo-text" style="font-size:clamp(12px,3.5vw,16px);line-height:1;white-space:nowrap;">HOME ASSISTANT</span>
-                    </a>
-                </div>
-
-                <ul class="nav-menu">
-                    <li class="nav-item">
-                        <a data-translate="nav.home" href="#home" class="nav-link">Начало</a>
-                    </li>
-                    <li class="nav-item">
-                        <a data-translate="nav.projects" href="#projects" class="nav-link">Проекти</a>
-                    </li>
-                    <li class="nav-item">
-                        <a data-translate="nav.about" href="#about" class="nav-link">За нас</a>
-                    </li>
-                    <li class="nav-item">
-                        <a data-translate="nav.documentation" href="#documentation" class="nav-link">Документация</a>
-                    </li>
-                    <li class="nav-item">
-                        <a data-translate="nav.generators" href="#generators" class="nav-link">Генератори</a>
-                    </li>
-                    <li class="nav-item">
-                        <a data-translate="nav.contact" href="#" class="nav-link contact-trigger">Контакт</a>
-                    </li>
-                </ul>
-
-                <!-- Language Switch Buttons -->
-                <div class="lang-switch" aria-label="Language switch">
-                    <button class="lang-btn" data-lang="bg" title="Български">BG</button>
-                    <button class="lang-btn" data-lang="en" title="English">EN</button>
-                    <button class="lang-btn" data-lang="de" title="Deutsch">DE</button>
-                </div>
-
-                <div class="hamburger">
-                    <span class="bar"></span>
-                    <span class="bar"></span>
-                    <span class="bar"></span>
-                </div>
-            </div>
-        </nav>
-    </header>
-
-    <main>
-        <!-- Всички секции остават същите (hero, summary, projects, documentation, support, about) -->
-        <section id="home" class="hero">
-            <div class="hero-content">
-                <h1 data-translate="hero.title">🏠 ПРОЕКТИ И РАЗРАБОТКИ ЗА HOME ASSISTANT</h1>
-                <div class="badges">
-                    <span class="badge" data-translate="hero.badge1">🔧 Умен дом</span>
-                    <span class="badge" data-translate="hero.badge2">🧠 Автоматизации</span>
-                    <span class="badge" data-translate="hero.badge3">🌐 IoT интеграции</span>
-                </div>
-                <p data-translate="hero.description">Добре дошли в моето Home Assistant хранилище! Тук ще намерите колекция от мои проекти, автоматизации, конфигурации и интеграции — всички разработени за опростяване на ежедневието, повишаване на комфорта и пестене на енергия в интелигентния дом.</p>
-            </div>
-        </section>
-
-        <section id="summary" class="summary">
-            <h2 data-translate="summary.title">💬 РЕЗЮМЕ</h2>
-            <div class="summary-grid">
-                <div class="summary-item">
-                    <h3 data-translate="summary.item1.title">Респонсив дизайн</h3>
-                    <p data-translate="summary.item1.text">Всички елементи и текст автоматично се променят спрямо размера на екрана, като се запазва четивността.</p>
-                </div>
-                <div class="summary-item">
-                    <h3 data-translate="summary.item2.title">Чисто оформление</h3>
-                    <p data-translate="summary.item2.text">Лесно за разбиране за възрастни и деца с минимална навигация.</p>
-                </div>
-                <div class="summary-item">
-                    <h3 data-translate="summary.item3.title">Оптимизация на ресурси</h3>
-                    <p data-translate="summary.item3.text">Намаляване на енергопотреблението в дома чрез автоматизация.</p>
-                </div>
-                <div class="summary-item">
-                    <h3 data-translate="summary.item4.title">Структурирано управление</h3>
-                    <p data-translate="summary.item4.text">Разделяне на дома на зони и групиране на сензори за по-лесни автоматизации.</p>
-                </div>
-                <div class="summary-item">
-                    <h3 data-translate="summary.item5.title">Сигурност</h3>
-                    <p data-translate="summary.item5.text">Използване на налични устройства за защита на дома при отсъствие.</p>
-                </div>
-                <div class="summary-item">
-                    <h3 data-translate="summary.item6.title">Работа офлайн</h3>
-                    <p data-translate="summary.item6.text">Всичко функционира и без интернет връзка.</p>
-                </div>
-            </div>
-        </section>
-
-        <section id="projects" class="projects">
-            <h2 data-translate="projects.title">🛠️ ПРОЕКТИ</h2>
-            
-<<<<<<< HEAD
-            <!-- Проектите се зареждат динамично тук от JSON файловете -->
-            <div id="projects-container">
-                <div class="loading-projects">Зареждане на проектите...</div>
-            </div>
-=======
-            <!-- Project 1 -->
-            <div class="project-card">
-                <div class="project-header">
-                    <h3 data-translate="projects.zigbee.title">🛜 Създаване и интегриране на Zigbee мрежа</h3>
-                    <div class="platform-badges">
-                        <span class="platform-badge ha" data-translate="platforms.homeassistant">HomeAssistant</span>
-                        <span class="platform-badge web inactive" data-translate="platforms.web">WEB</span>
-                        <span class="platform-badge android inactive" data-translate="platforms.android">ANDROID</span>
-                    </div>
-                </div>
-                <div class="project-content">
-                    <div class="project-image">
-                        <img data-translate-alt="projects.zigbee.imageAlt" src="static/img/Zigbee_Network.gif" alt="Zigbee мрежа" style="max-width:100%; height:auto; display:block;">
-                    </div>
-                    <div class="project-info">
-                        <h4 data-translate="projects.advantages">Предимства:</h4>
-                        <ul>
-                            <li data-translate="projects.zigbee.li1">Работи без интернет с Zigbee2MQTT</li>
-                            <li data-translate="projects.zigbee.li2">Не натоварва интернет мрежата</li>
-                            <li data-translate="projects.zigbee.li3">Лесна инсталация и преместване на устройства</li>
-                            <li data-translate="projects.zigbee.li4">Zigbee устройствата действат като ретранслатори</li>
-                            <li data-translate="projects.zigbee.li5">Достъпен Zigbee хардуер</li>
-                            <li data-translate="projects.zigbee.li6">Възможност за ъпгрейд при натоварване на мрежата</li>
-                        </ul>
-                        <a class="project-link" href="https://github.com/PasevSU/HASS-ZigbeeNetwork.git" data-translate="projects.goto">↪️ КЪМ ПРОЕКТА ▶️</a>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Project 2 -->
-            <div class="project-card">
-                <div class="project-header">
-                    <h3 data-translate="projects.shopping.title">🛒 Списък за пазаруване с изображения</h3>
-                    <div class="platform-badges">
-                        <span class="platform-badge ha" data-translate="platforms.homeassistant">HomeAssistant</span>
-                        <span class="platform-badge web inactive" data-translate="platforms.web">WEB</span>
-                        <span class="platform-badge android inactive" data-translate="platforms.android">ANDROID</span>
-                    </div>
-                </div>
-                <div class="project-content">
-                    <div class="project-image">
-                        <img data-translate-alt="projects.shopping.imageAlt" src="static/img/Projekt_shoplist.gif" alt="Списък за пазаруване" style="max-width:100%; height:auto; display:block;">
-                    </div>
-                    <div class="project-info">
-                        <h4 data-translate="projects.advantages">Предимства:</h4>
-                        <ul>
-                            <li data-translate="projects.shopping.li1">Бързо намиране на артикули по категории</li>
-                            <li data-translate="projects.shopping.li2">Визуална идентификация чрез изображения</li>
-                            <li data-translate="projects.shopping.li3">Членовете на домакинството получават известия за нови артикули</li>
-                            <li data-translate="projects.shopping.li4">Автоматично премахва отметнати артикули</li>
-                        </ul>
-                        <a class="project-link" href="https://github.com/PasevSU/HASS-shopping-list.git" data-translate="projects.goto">↪️ КЪМ ПРОЕКТА ▶️</a>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Project 3 -->
-            <div class="project-card">
-                <div class="project-header">
-                    <h3 data-translate="projects.wled.title">🎤🔉 WLED SoundReactive Интелигентно светлинно шоу</h3>
-                    <div class="platform-badges">
-                        <span class="platform-badge ha" data-translate="platforms.homeassistant">HomeAssistant</span>
-                        <span class="platform-badge web" data-translate="platforms.web">WEB</span>
-                        <span class="platform-badge android" data-translate="platforms.android">ANDROID</span>
-                    </div>
-                </div>
-                <div class="project-content">
-                    <div class="project-image">
-                        <img data-translate-alt="projects.wled.imageAlt" src="static/img/WLED SaundReactive.gif" alt="WLED SoundReactive анимация" style="max-width:100%; height:auto; display:block;">
-                    </div>
-                    <div class="project-info">
-                        <h4 data-translate="projects.advantages">Предимства:</h4>
-                        <ul>
-                            <li data-translate="projects.wled.li1">Реакция в реално време извън човешкото възприятие</li>
-                            <li data-translate="projects.wled.li2">Автоматично регулиране на чувствителността на микрофона</li>
-                            <li data-translate="projects.wled.li3">Ниска цена и енергийна ефективност</li>
-                            <li data-translate="projects.wled.li4">Пълен WLED мод с официални функции на фърмуера</li>
-                            <li data-translate="projects.wled.li5">Уеб интерфейс и мобилни приложения — съвместими с Home Assistant</li>
-                        </ul>
-                        <a class="project-link" href="https://github.com/PasevSU/WLED_SoundReactive_Light_Show.git" data-translate="projects.goto">↪️ КЪМ ПРОЕКТА ▶️</a>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Project 4 -->
-            <div class="project-card">
-                <div class="project-header">
-                    <h3 data-translate="projects.tasmota.title">🤖 TASMOTA – Интеграция и устройства</h3>
-                    <div class="platform-badges">
-                        <span class="platform-badge ha" data-translate="platforms.homeassistant">HomeAssistant</span>
-                        <span class="platform-badge web" data-translate="platforms.web">WEB</span>
-                        <span class="platform-badge android" data-translate="platforms.android">ANDROID</span>
-                    </div>
-                </div>
-                <div class="project-content">
-                    <div class="project-image">
-                        <img data-translate-alt="projects.tasmota.imageAlt" src="static/img/Tasmota-banner.png" alt="Tasmota устройства" style="max-width:100%; height:auto; display:block;">
-                    </div>
-                    <div class="project-info">
-                        <h4 data-translate="projects.advantages">Предимства:</h4>
-                        <ul>
-                            <li data-translate="projects.tasmota.li1">Пълен контрол върху устройствата</li>
-                            <li data-translate="projects.tasmota.li2">Независимо от интернет връзка</li>
-                            <li data-translate="projects.tasmota.li3">Моментален контрол чрез TASMOTA, Home Assistant и Alexa</li>
-                            <li data-translate="projects.tasmota.li4">Не натоварва интернет мрежата</li>
-                        </ul>
-                        <a class="project-link" href="https://github.com/PasevSU/HASS-TASMOTA.git" data-translate="projects.goto">↪️ КЪМ ПРОЕКТА ▶️</a>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Project 5 -->
-            <div class="project-card">
-                <div class="project-header">
-                    <h3 data-translate="projects.hass2zigbee.title">🏠 HASS с две Zigbee мрежи</h3>
-                    <div class="platform-badges">
-                        <span class="platform-badge ha" data-translate="platforms.homeassistant">HomeAssistant</span>
-                        <span class="platform-badge web inactive" data-translate="platforms.web">WEB</span>
-                        <span class="platform-badge android inactive" data-translate="platforms.android">ANDROID</span>
-                    </div>
-                </div>
-                <div class="project-content">
-                    <div class="project-image">
-                        <img data-translate-alt="projects.hass2zigbee.imageAlt" src="static/img/benner_2zigbee.png" alt="Две Zigbee мрежи" style="max-width:100%; height:auto; display:block;">
-                    </div>
-                    <div class="project-info">
-                        <h4 data-translate="projects.advantages">Предимства:</h4>
-                        <ul>
-                            <li data-translate="projects.hass2zigbee.li1">Поддържа повече устройства</li>
-                            <li data-translate="projects.hass2zigbee.li2">Разделяне на товар/функции</li>
-                            <li data-translate="projects.hass2zigbee.li3">Подобрено тестване за съвместимост</li>
-                            <li data-translate="projects.hass2zigbee.li4">Гъвкава миграция и експериментиране</li>
-                        </ul>
-                        <a class="project-link" href="https://github.com/PasevSU/HASS-2-ZigbeeNetworks.git" data-translate="projects.goto">↪️ КЪМ ПРОЕКТА ▶️</a>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Project 6 -->
-            <div class="project-card">
-                <div class="project-header">
-                    <h3 data-translate="projects.voice.title">🎙️ Гласово управление на HASS устройства (Alexa / Google Home)</h3>
-                    <div class="platform-badges">
-                        <span class="platform-badge ha" data-translate="platforms.homeassistant">HomeAssistant</span>
-                        <span class="platform-badge web inactive" data-translate="platforms.web">WEB</span>
-                        <span class="platform-badge android" data-translate="platforms.android">ANDROID</span>
-                        <span class="platform-badge alexa">ALEXA</span>
-                        <span class="platform-badge google">GOOGLE</span>
-                    </div>
-                </div>
-                <div class="project-content">
-                    <div class="project-image">
-                        <img data-translate-alt="projects.voice.imageAlt" src="static/img/MATTERHUB_banner.png" alt="Гласово управление интеграция" style="max-width:100%; height:auto; display:block;">
-                    </div>
-                    <div class="project-info">
-                        <h4 data-translate="projects.advantages">Предимства:</h4>
-                        <ul>
-                            <li data-translate="projects.voice.li1">Управление на автоматизации и скриптове с глас</li>
-                            <li data-translate="projects.voice.li2">Управление на устройства и мониторинг чрез глас</li>
-                            <li data-translate="projects.voice.li3">Лесно добавяне и премахване на устройства</li>
-                        </ul>
-                        <a class="project-link" href="https://github.com/PasevSU/HASS-Voice-Control.git" data-translate="projects.goto">↪️ КЪМ ПРОЕКТА ▶️</a>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Project 7 -->
-            <div class="project-card">
-                <div class="project-header">
-                    <h3 data-translate="projects.fingerbot.title">🖲️ Управление на Zigbee Fingerbot чрез NFC и Home Assistant</h3>
-                    <div class="platform-badges">
-                        <span class="platform-badge ha" data-translate="platforms.homeassistant">HomeAssistant</span>
-                        <span class="platform-badge android" data-translate="platforms.android">ANDROID</span>
-                    </div>
-                </div>
-                <div class="project-content">
-                    <div class="project-image">
-                        <img data-translate-alt="projects.fingerbot.imageAlt" src="static/img/banner_HASS-Fingerbot-NFC-Door.png" alt="Fingerbot NFC врата" style="max-width:100%; height:auto; display:block;">
-                    </div>
-                    <div class="project-info">
-                        <h4 data-translate="projects.advantages">Предимства:</h4>
-                        <ul>
-                            <li data-translate="projects.fingerbot.li1">Безконтактен достъп</li>
-                            <li data-translate="projects.fingerbot.li2">Интеграция с Home Assistant</li>
-                            <li data-translate="projects.fingerbot.li3">Локален и офлайн контрол</li>
-                            <li data-translate="projects.fingerbot.li4">Съвместим с всяко NFC устройство</li>
-                        </ul>
-                        <a class="project-link" href="https://github.com/PasevSU/HASS-Fingerbot-NFC.git" data-translate="projects.goto">↪️ КЪМ ПРОЕКТА ▶️</a>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Project 8 -->
-            <div class="project-card">
-                <div class="project-header">
-                    <h3 data-translate="projects.eco.title">🌿 Eco режим за термостати в Home Assistant</h3>
-                    <div class="platform-badges">
-                        <span class="platform-badge ha" data-translate="platforms.homeassistant">HomeAssistant</span>
-                    </div>
-                </div>
-                <div class="project-content">
-                    <div class="project-image">
-                        <img data-translate-alt="projects.eco.imageAlt" src="static/img/eco_mod.png" alt="Еко режим термостат" style="max-width:100%; height:auto; display:block;">
-                    </div>
-                    <div class="project-info">
-                        <h4 data-translate="projects.advantages">Предимства:</h4>
-                        <ul>
-                            <li data-translate="projects.eco.li1">Спестяване на енергия</li>
-                            <li data-translate="projects.eco.li2">Комфорт без компромис</li>
-                            <li data-translate="projects.eco.li3">Лесна интеграция и персонализация</li>
-                        </ul>
-                        <a class="project-link" href="https://github.com/PasevSU/HASS-Eco-Mode.git" data-translate="projects.goto">↪️ КЪМ ПРОЕКТА ▶️</a>
-                    </div>
-                </div>
-            </div>
-            
-
-            <!-- Project 9 -->
-            <div class="project-card">
-                <div class="project-header">
-                    <h3 data-translate="projects.away.title">🔋 HASS-AWAY-MODE / AWAY MODE</h3>
-                    <div class="platform-badges">
-                        <span class="platform-badge ha" data-translate="platforms.homeassistant">HomeAssistant</span>
-                    </div>
-                </div>
-                <div class="project-content">
-                    <div class="project-image">
-                        <img data-translate-alt="projects.away.imageAlt" src="static/img/banner_away_mod.png" alt="Банер Away Mode" style="max-width:100%; height:auto; display:block;">
-                    </div>
-                    <div class="project-info">
-                        <h4 data-translate="projects.advantages">Предимства:</h4>
-                        <ul>
-                            <li data-translate="projects.away.li1">Автоматизирано управление на away режима</li>
-                            <li data-translate="projects.away.li2">Интеграция с Home Assistant</li>
-                            <li data-translate="projects.away.li3">Гъвкави сценарии с input booleans</li>
-                        </ul>
-                        <a class="project-link" href="https://github.com/PasevSU/HASS-Away-Mode.git" data-translate="projects.goto">↪️ КЪМ ПРОЕКТА ▶️</a>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Project 10 -->
-            <div class="project-card">
-                <div class="project-header">
-                    <h3 data-translate="projects.timer.title">⏱️ Home Assistant - Гъвкава таймер автоматизация</h3>
-                    <div class="platform-badges">
-                        <span class="platform-badge ha" data-translate="platforms.homeassistant">HomeAssistant</span>
-                    </div>
-                </div>
-                <div class="project-content">
-                    <div class="project-image">
-                        <img data-translate-alt="projects.timer.imageAlt" src="static/img/banner_flexible_taimer.png" alt="Банер гъвкав таймер" style="max-width:100%; height:auto; display:block;">
-                    </div>
-                    <div class="project-info">
-                        <h4 data-translate="projects.advantages">Предимства:</h4>
-                        <ul>
-                            <li data-translate="projects.timer.li1">Настройка на интервал чрез UI (часове, минути, секунди)</li>
-                            <li data-translate="projects.timer.li2">Изпълнява действия след изтичане на интервала</li>
-                            <li data-translate="projects.timer.li3">Предотвратява преждевременно задействане</li>
-                        </ul>
-                        <a class="project-link" href="https://github.com/PasevSU/HASS-Flexible-Timer.git" data-translate="projects.goto">↪️ КЪМ ПРОЕКТА ▶️</a>
-                    </div>
-                </div>
-            </div>
-            
->>>>>>> 4826362cd52ffb8b6600945478687084a21e142d
-        </section>
-
-        <section id="documentation" class="documentation">
-            <h2 data-translate="documentation.title">Документация</h2>
-            <p data-translate="documentation.description">Документация за Home Assistant проекти</p>
-            <div class="doc-links">
-                <a data-translate="documentation.link1" href="static/doku/repositories.html" class="doc-link">Списък с add-on хранилища</a>
-                <a data-translate="documentation.link2" href="static/doku/automations.html" class="doc-link">Видове автоматизации</a>
-                <a data-translate="documentation.link3" href="https://github.com/PasevSU/homeassistant-automations" class="doc-link">HOME-ASSISTANT-AUTOMATIONS</a>
-            </div>
-        </section>
-
-        <section id="support" class="support">
-            <h2 data-translate="support.title">Генератори</h2>
-            <p data-translate="support.description">
-                При нередности с генераторите ми пишете 
-                <span class="contact-trigger" style="color: var(--primary-color); cursor: pointer; text-decoration: underline;">
-                    📧 на контактната форма
-                </span> 
-                с тема "HASS Генератори"
-            </p>
-            <div class="generators-list">
-                <div class="gen-grid" role="group" aria-label="Генератори">
-                    <div class="gen-column">
-                        <a class="gen-button" href="https://pasevsu.github.io/ntfy_GEN_v1.0e.html" data-translate="generator.ntfy" target="_blank" rel="noopener">Генератор за ntfy известия</a>
-                    </div>
-                    <div class="gen-column">
-                        <a class="gen-button" href="https://pasevsu.github.io/mobile_app_ntfy_GEN_v1.0e.html" data-translate="generator.mobile" target="_blank" rel="noopener">Генератор на известия до mobile app</a>
-                    </div>
-                    <div class="gen-column">
-                        <a class="gen-button" href="https://pasevsu.github.io/command_shell_GEN_v1.0е.html" data-translate="generator.shell" target="_blank" rel="noopener">Генератор на command shell кодове</a>
-                    </div>
-                </div>
-            </div>
-        </section>        
-        <section id="about" class="about">
-            <h2 data-translate="about.title">За нас</h2>
-            <p data-translate="about.description">Това хранилище съдържа моите персонални проекти за Home Assistant, автоматизации, конфигурации и интеграции. Повечето проекти имат поддръжка на английски и български и редовно добавям нови функции и подобрения.</p>
-        </section>
-        
-    </main>
-
-    <footer>
-        <div class="footer-content">
-            <div class="footer-section">
-                <h3 data-translate="footer.title">Home Assistant Проекти</h3>
-                <p data-translate="footer.description">Опростяване на ежедневието, повишаване на комфорта и пестене на енергия в интелигентния дом.</p>
-            </div>
-            <div class="footer-section">
-                <h3 data-translate="footer.links">Връзки</h3>
-                <ul>
-                    <li><a href="#home" data-translate="nav.home">Начало</a></li>
-                    <li><a href="#projects" data-translate="nav.projects">Проекти</a></li>
-                    <li><a href="#about" data-translate="nav.about">За нас</a></li>
-                    <li><a href="#documentation" data-translate="nav.documentation">Документация</a></li>
-                    <li><a href="#generators" data-translate="nav.generators">Генератори</a></li>
-                    <li><a href="#" class="contact-trigger" data-translate="nav.contact">Контакт</a></li>
-                </ul>
-            </div>
-            <div class="footer-section">
-                <h3 data-translate="footer.connect">Свържи се</h3>
-                <div class="social-links">
-                    <a href="https://github.com/PasevSU" class="social-link">GitHub</a>
-                    <a href="https://www.paypal.com/donate/?hosted_button_id=AAWFZVF2XCP5A" class="social-link" data-translate="footer.donate">Дарение</a>
-                </div>
-            </div>
-        </div>
-        <div class="footer-bottom">
-            <p data-translate="footer.copyright">© 2023 Home Assistant Проекти. Всички права запазени.</p>
-        </div>
-    </footer>
-    <!-- Contact Form Modal -->
-    <div id="contact-modal" class="modal">
-        <div class="modal-content">
-            <span class="close">&times;</span>
-            <h3 data-translate="contact.title">Контактна форма</h3>
-            
-            <p class="contact-description" data-translate="contact.description">
-                Изпратете ни съобщение и ще ви отговорим възможно най-бързо.
-            </p>
-            
-            <!-- Променена форма с autocomplete атрибути -->
-            <form id="contact-form">
-                <div class="form-group">
-                    <label for="name" data-translate="contact.form.name">Име</label>
-                    <input type="text" id="name" name="name" required 
-                           placeholder="Въведете вашето име"
-                           data-translate-placeholder="contact.form.namePlaceholder"
-                           autocomplete="name">
-                </div>
-                
-                <div class="form-group">
-                    <label for="email" data-translate="contact.form.email">Имейл</label>
-                    <input type="email" id="email" name="email" required 
-                           placeholder="Въведете вашия имейл"
-                           data-translate-placeholder="contact.form.emailPlaceholder"
-                           autocomplete="email">
-                </div>
-                
-                <div class="form-group">
-                    <label for="subject" data-translate="contact.form.subject">Тема</label>
-                    <input type="text" id="subject" name="subject" required 
-                           placeholder="Тема на съобщението"
-                           data-translate-placeholder="contact.form.subjectPlaceholder"
-                           autocomplete="off">
-                </div>
-                
-                <div class="form-group">
-                    <label for="message" data-translate="contact.form.message">Съобщение</label>
-                    <textarea id="message" name="message" rows="6" required 
-                              placeholder="Напишете вашето съобщение тук..."
-                              data-translate-placeholder="contact.form.messagePlaceholder"
-                              autocomplete="off"></textarea>
-                </div>
-                
-                <button type="submit" class="cta-button" data-translate="contact.form.submit">
-                    Изпрати съобщение
-                </button>
-            </form>
-            
-            <div id="form-message" class="form-message"></div>
-<<<<<<< HEAD
-=======
-            
-  
-            </div>
->>>>>>> 4826362cd52ffb8b6600945478687084a21e142d
+    <div class="admin-header">
+        <div class="admin-container">
+            <h1>🏠 Админ Панел - Home Assistant Проекти</h1>
+            <p>Управление на съдържанието на уебсайта</p>
         </div>
     </div>
-    <script>
-    // CONTACT FORM THAT SENDS DIRECTLY TO NTFY.SH
-    document.addEventListener('DOMContentLoaded', function() {
-        const modal = document.getElementById('contact-modal');
-        const closeBtn = document.querySelector('.close');
-        const contactTriggers = document.querySelectorAll('.contact-trigger');
-        const contactForm = document.getElementById('contact-form');
-        const formMessage = document.getElementById('form-message');
-        
-        // Rate limiting
-        let lastSubmission = 0;
-        const MIN_SUBMISSION_INTERVAL = 5000; // 5 seconds between submissions
-        
-        // Open modal
-        contactTriggers.forEach(function(trigger) {
-            trigger.addEventListener('click', function(e) {
-                e.preventDefault();
-                if (modal) modal.style.display = 'block';
-                document.body.style.overflow = 'hidden';
-            });
-        });
-        
-        // Close modal
-        if (closeBtn) {
-            closeBtn.addEventListener('click', function() {
-                if (modal) modal.style.display = 'none';
-                document.body.style.overflow = 'auto';
-                if (formMessage) {
-                    formMessage.style.display = 'none';
-                    formMessage.innerHTML = '';
-                }
-            });
-        }
-        
-        // Close modal when clicking outside
-        window.addEventListener('click', function(e) {
-            if (modal && e.target === modal) {
-                modal.style.display = 'none';
-                document.body.style.overflow = 'auto';
-                if (formMessage) {
-                    formMessage.style.display = 'none';
-                    formMessage.innerHTML = '';
-                }
-            }
-        });
-        
-        // Close modal with ESC key
-        document.addEventListener('keydown', function(e) {
-            if (e.key === 'Escape' && modal && modal.style.display === 'block') {
-                modal.style.display = 'none';
-                document.body.style.overflow = 'auto';
-                if (formMessage) {
-                    formMessage.style.display = 'none';
-                    formMessage.innerHTML = '';
-                }
-            }
-        });
-<<<<<<< HEAD
-        
-=======
->>>>>>> 4826362cd52ffb8b6600945478687084a21e142d
-        // Handle form submission - DIRECT SEND TO NTFY.SH
-        if (contactForm) {
-            contactForm.addEventListener('submit', async function(e) {
-                e.preventDefault();
+
+    <div class="admin-container">
+        <nav class="admin-nav">
+            <ul>
+                <li><a href="#" class="nav-admin active" data-section="projects">📁 Проекти</a></li>
+                <li><a href="#" class="nav-admin" data-section="documentation">📚 Документация</a></li>
+                <li><a href="#" class="nav-admin" data-section="generators">🛠️ Генератори</a></li>
+                <li><a href="#" class="nav-admin" data-section="about">ℹ️ За нас</a></li>
+                <li><a href="#" class="nav-admin" data-section="summary">📊 Обобщение</a></li>
+                <li><a href="#" class="nav-admin" data-section="badges">🎯 Бейджове</a></li>
+                <!-- НОВ ДОБАВЕН БУТОН -->
+                <li><button id="export-changes" class="btn btn-success">💾 Експортирай промените</button></li>
+            </ul>
+        </nav>
+
+        <!-- Projects Section -->
+        <section id="projects" class="admin-section active">
+            <h2>Управление на Проекти</h2>
+            
+            <form id="project-form" class="form-grid">
+                <div>
+                    <div class="form-group">
+                        <label for="project-title">Заглавие на проекта</label>
+                        <input type="text" id="project-title" class="form-control" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="project-id">ID на проекта (автоматично)</label>
+                        <input type="text" id="project-id" class="form-control" readonly>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="project-image">URL на изображение/гиф/видео</label>
+                        <input type="text" id="project-image" class="form-control">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="project-image-alt">Alt текст за изображението</label>
+                        <input type="text" id="project-image-alt" class="form-control">
+                    </div>
+                </div>
                 
-                // Rate limiting check
-                const now = Date.now();
-                if (now - lastSubmission < MIN_SUBMISSION_INTERVAL) {
-                    showMessage('Моля, изчакайте преди да изпратите отново.', 'error');
-                    return;
-                }
-                
-                // Get form values
-                const name = document.getElementById('name').value.trim();
-                const email = document.getElementById('email').value.trim();
-                const subject = document.getElementById('subject').value.trim();
-                const message = document.getElementById('message').value.trim();
-                
-                // Validation
-                if (!name || !email || !subject || !message) {
-                    showMessage('Моля, попълнете всички полета.', 'error');
-                    return;
-                }
-                
-                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-                if (!emailRegex.test(email)) {
-                    showMessage('Моля, въведете валиден имейл адрес.', 'error');
-                    return;
-                }
-                
-                // Show loading state
-                const submitBtn = contactForm.querySelector('button[type="submit"]');
-                if (!submitBtn) return;
-                
-                const originalText = submitBtn.textContent;
-                submitBtn.textContent = 'Изпращане...';
-                submitBtn.disabled = true;
-                
-                showMessage('Изпращане на съобщението...', 'loading');
-                
-                try {
-                    // Encode non-ASCII characters in headers
-                    const encodeHeader = (str) => {
-                        // Encode to base64 for headers with non-ASCII characters
-                        if (/[^\x00-\x7F]/.test(str)) {
-                            return `=?UTF-8?B?${btoa(unescape(encodeURIComponent(str)))}?=`;
-                        }
-                        return str;
-                    };
+                <div>
+                    <div class="form-group">
+                        <label>Платформи</label>
+                        <div class="checkbox-group">
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="platform-ha" value="ha">
+                                <label for="platform-ha">Home Assistant</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="platform-web" value="web">
+                                <label for="platform-web">WEB</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="platform-android" value="android">
+                                <label for="platform-android">ANDROID</label>
+                            </div>
+                        </div>
+                    </div>
                     
-                    // Prepare headers with encoded non-ASCII characters
-                    const safeTitle = encodeHeader(`Ново съобщение от: ${name}`);
-                    const safeBody = `Имейл: ${email}\nТема: ${subject}\n\nСъобщение:\n${message}`;
+                    <div class="form-group">
+                        <label for="project-advantages">Предимства (по едно на ред)</label>
+                        <textarea id="project-advantages" class="form-control" rows="6"></textarea>
+                    </div>
                     
-                    // Direct send to ntfy.sh
-                    const response = await fetch('https://ntfy.sh/pasevsu_messages', {
-                        method: 'POST',
-                        mode: 'cors',
-                        body: safeBody,
-                        headers: {
-                            'Title': safeTitle,
-                            'Priority': 'default',
-                            'Tags': 'email,contact',
-                            'Click': `mailto:${email}`,
-                            'Content-Type': 'text/plain; charset=utf-8'
-                        }
-                    });
-                    
-                    if (response.ok) {
-                        showMessage('✅ Съобщението е изпратено успешно!', 'success');
-                        lastSubmission = Date.now();
-                        
-                        // Изчистване на формата
-                        contactForm.reset();
-                        
-                        // Затваряне на модала след 2 секунди
-                        setTimeout(() => {
-                            if (modal) {
-                                modal.style.display = 'none';
-                                document.body.style.overflow = 'auto';
-                            }
-                            if (formMessage) {
-                                formMessage.style.display = 'none';
-                                formMessage.innerHTML = '';
-                            }
-                        }, 2000);
-                    } else {
-                        throw new Error(`HTTP грешка! Статус: ${response.status}`);
-                    }
-                    
-                } catch (error) {
-                    console.error('Грешка при изпращане:', error);
-                    lastSubmission = Date.now();
-                    
-                    // Fallback: показване на curl командата
-                    showMessage('⚠️ Директното изпращане не успя. Копирайте командата за ръчно изпълнение:', 'error');
-                    
-                    // Create the body for curl command (escape newlines for bash)
-                    const escapedMessage = message.replace(/"/g, '\\"');
-                    const escapedName = name.replace(/"/g, '\\"');
-                    const body = `Име: ${escapedName}\\nИмейл: ${email}\\nТема: ${subject}\\n\\nСъобщение:\\n${escapedMessage}`;
-                    
-                    // Create the curl command exactly as you want it
-                    const curlCommand = `curl -d "${body}" -H "Title: Съобщение от: ${escapedName}" -H "Priority: default" -H "Tags: test,email" -H "Click: mailto:${email}" https://ntfy.sh/pasevsu_messages`;
-                    
-                    console.log('CURL команда за ръчно изпълнение:');
-                    console.log(curlCommand);
-                    
-                    // Show the curl command to the user
-                    showCurlCommand(curlCommand);
-                    
-                } finally {
-                    // Reset button
-                    submitBtn.textContent = originalText;
-                    submitBtn.disabled = false;
-                }
-            });
-        }        
-        // Helper function to show curl command
-        function showCurlCommand(curlCommand) {
-            if (!formMessage) return;
+                    <div class="form-group">
+                        <label for="project-link">URL към проекта</label>
+                        <input type="text" id="project-link" class="form-control">
+                    </div>
+                </div>
+            </form>
             
-            // Create container for the command
-            const commandContainer = document.createElement('div');
-            commandContainer.style.marginTop = '15px';
-            commandContainer.style.textAlign = 'left';
+            <div class="form-actions">
+                <button type="button" id="add-project" class="btn btn-primary">➕ Добави Проект</button>
+                <button type="button" id="update-project" class="btn btn-success" style="display: none;">💾 Обнови Проект</button>
+                <button type="button" id="cancel-edit" class="btn" style="display: none;">❌ Откажи</button>
+            </div>
+
+            <div class="project-list" id="projects-list">
+                <!-- Projects will be loaded here -->
+            </div>
+        </section>
+
+        <!-- Documentation Section -->
+        <section id="documentation" class="admin-section">
+            <h2>Управление на Документация</h2>
             
-            // Create pre element for the command
-            const commandPre = document.createElement('pre');
-            commandPre.style.backgroundColor = '#2d2d2d';
-            commandPre.style.color = '#f8f8f2';
-            commandPre.style.padding = '15px';
-            commandPre.style.borderRadius = '5px';
-            commandPre.style.overflowX = 'auto';
-            commandPre.style.fontFamily = 'monospace';
-            commandPre.style.fontSize = '14px';
-            commandPre.style.whiteSpace = 'pre-wrap';
-            commandPre.style.wordBreak = 'break-all';
-            commandPre.textContent = curlCommand;
+            <div class="form-group">
+                <label for="doc-text">Текст над препратките</label>
+                <textarea id="doc-text" class="form-control" rows="3"></textarea>
+                <button type="button" id="save-doc-text" class="btn btn-primary">💾 Запази Текст</button>
+            </div>
             
-            // Create copy button
-            const copyBtn = document.createElement('button');
-            copyBtn.textContent = '📋 Копирай командата';
-            copyBtn.style.marginTop = '10px';
-            copyBtn.style.padding = '10px 20px';
-            copyBtn.style.backgroundColor = '#3498db';
-            copyBtn.style.color = 'white';
-            copyBtn.style.border = 'none';
-            copyBtn.style.borderRadius = '5px';
-            copyBtn.style.cursor = 'pointer';
-            copyBtn.style.fontWeight = 'bold';
-            copyBtn.style.width = '100%';
+            <h3>Добавяне на нова препратка</h3>
+            <form id="add-doc-link" class="form-grid">
+                <div class="form-group">
+                    <label for="doc-link-name">Име на препратката</label>
+                    <input type="text" id="doc-link-name" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label for="doc-link-url">URL адрес</label>
+                    <input type="text" id="doc-link-url" class="form-control" required>
+                </div>
+            </form>
+            <button type="button" id="add-doc-link-btn" class="btn btn-primary">➕ Добави Препратка</button>
+
+            <div class="links-list" id="doc-links-list">
+                <!-- Documentation links will be loaded here -->
+            </div>
+        </section>
+
+        <!-- Generators Section -->
+        <section id="generators" class="admin-section">
+            <h2>Управление на Генератори</h2>
             
-            copyBtn.addEventListener('click', function() {
-                navigator.clipboard.writeText(curlCommand)
-                    .then(function() {
-                        const originalBtnText = copyBtn.textContent;
-                        copyBtn.textContent = '✅ Командата е копирана!';
-                        copyBtn.style.backgroundColor = '#27ae60';
-                        
-                        setTimeout(function() {
-                            copyBtn.textContent = originalBtnText;
-                            copyBtn.style.backgroundColor = '#3498db';
-                        }, 2000);
-                    })
-                    .catch(function(err) {
-                        console.error('Грешка при копиране:', err);
-                        // Fallback for older browsers
-                        const textArea = document.createElement('textarea');
-                        textArea.value = curlCommand;
-                        textArea.style.position = 'fixed';
-                        textArea.style.opacity = '0';
-                        document.body.appendChild(textArea);
-                        textArea.select();
-                        
-                        try {
-                            const successful = document.execCommand('copy');
-                            if (successful) {
-                                copyBtn.textContent = '✅ Командата е копирана!';
-                                copyBtn.style.backgroundColor = '#27ae60';
-                                setTimeout(function() {
-                                    copyBtn.textContent = '📋 Копирай командата';
-                                    copyBtn.style.backgroundColor = '#3498db';
-                                }, 2000);
-                            }
-                        } catch (err) {
-                            console.error('Fallback копиране не успя:', err);
-                        }
-                        
-                        document.body.removeChild(textArea);
-                    });
-            });
+            <div class="form-group">
+                <label for="gen-text">Текст над препратките</label>
+                <textarea id="gen-text" class="form-control" rows="3"></textarea>
+                <button type="button" id="save-gen-text" class="btn btn-primary">💾 Запази Текст</button>
+            </div>
             
-            // Create instructions
-            const instructions = document.createElement('div');
-            instructions.style.marginTop = '15px';
-            instructions.style.padding = '10px';
-            instructions.style.backgroundColor = '#fff3cd';
-            instructions.style.border = '1px solid #ffeaa7';
-            instructions.style.borderRadius = '5px';
-            instructions.style.color = '#856404';
-            instructions.style.fontSize = '14px';
+            <h3>Добавяне на нова препратка</h3>
+            <form id="add-gen-link" class="form-grid">
+                <div class="form-group">
+                    <label for="gen-link-name">Име на препратката</label>
+                    <input type="text" id="gen-link-name" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label for="gen-link-url">URL адрес</label>
+                    <input type="text" id="gen-link-url" class="form-control" required>
+                </div>
+            </form>
+            <button type="button" id="add-gen-link-btn" class="btn btn-primary">➕ Добави Препратка</button>
+
+            <div class="links-list" id="gen-links-list">
+                <!-- Generator links will be loaded here -->
+            </div>
+        </section>
+
+        <!-- About Section -->
+        <section id="about" class="admin-section">
+            <h2>Управление на секция "За нас"</h2>
             
-            instructions.innerHTML = `
-                <strong>Инструкции:</strong>
-                <ol style="margin: 5px 0 0 0; padding-left: 20px;">
-                    <li>Копирайте командата отгоре</li>
-                    <li>Отворете терминал/команден ред</li>
-                    <li>Поставете и изпълнете командата</li>
-                    <li>Проверете ntfy канала за съобщението</li>
-                </ol>
-            `;
+            <div class="form-group">
+                <label for="about-text">Текст</label>
+                <textarea id="about-text" class="form-control" rows="8"></textarea>
+                <button type="button" id="save-about-text" class="btn btn-primary">💾 Запази Текст</button>
+            </div>
+        </section>
+
+        <!-- Summary Section -->
+        <section id="summary" class="admin-section">
+            <h2>Управление на секция "Обобщение"</h2>
+            <p>Можете да редактирате текстовете в 6-те квадрата:</p>
             
-            // Append everything to the message container
-            formMessage.appendChild(commandContainer);
-            commandContainer.appendChild(commandPre);
-            commandContainer.appendChild(copyBtn);
-            commandContainer.appendChild(instructions);
-        }
-        
-        // Helper function to show messages
-        function showMessage(text, type) {
-            if (!formMessage) return;
+            <div class="summary-grid-admin" id="summary-items">
+                <!-- Summary items will be loaded here -->
+            </div>
+        </section>
+
+        <!-- Badges Section -->
+        <section id="badges" class="admin-section">
+            <h2>Управление на Бейджове</h2>
             
-            formMessage.innerHTML = '';
-            formMessage.textContent = text;
-            formMessage.className = 'form-message ' + type;
-            formMessage.style.display = 'block';
+            <div class="form-group">
+                <label for="badge-text">Текст на бейджовете (разделени със запетая)</label>
+                <textarea id="badge-text" class="form-control" rows="3"></textarea>
+            </div>
             
-            try {
-                formMessage.scrollIntoView({behavior: 'smooth', block: 'nearest'});
-            } catch (e) {
-                formMessage.scrollIntoView();
-            }
-        }
-    });
-    </script>
+            <div class="form-group">
+                <label for="badge-image">URL на изображение/гиф/видео за бейджовете</label>
+                <input type="text" id="badge-image" class="form-control">
+            </div>
+            
+            <button type="button" id="save-badges" class="btn btn-primary">💾 Запази Бейджове</button>
+        </section>
+    </div>
+
+    <div id="message" class="message"></div>
+
+    <script src="static/admin-panel.js"></script>
 </body>
 </html>
