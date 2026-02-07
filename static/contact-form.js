@@ -1,17 +1,35 @@
-// static/contact-form.js
-// CONTACT FORM THAT SENDS DIRECTLY TO NTFY.SH
+// ===================================================================================
+// ФАЙЛ ЗА УПРАВЛЕНИЕ НА КОНТАКТНАТА ФОРМА
+// ===================================================================================
+/**
+ * CONTACT FORM THAT SENDS DIRECTLY TO NTFY.SH
+ * Този файл управлява контактната форма и изпращането на съобщения чрез ntfy.sh
+ * Основни функционалности:
+ * 1. Управление на модалния прозорец за контактна форма
+ * 2. Валидация на формата
+ * 3. Изпращане на съобщения директно към ntfy.sh
+ * 4. Rate limiting за предотвратяване на спам
+ * 5. Fallback механизъм с curl команда при грешка
+ * ===================================================================================
+ * 000.09.0 ИНИЦИАЛИЗАЦИЯ НА КОНТАКТНАТА ФОРМА
+ * ===================================================================================
+ */
+
 document.addEventListener('DOMContentLoaded', function() {
+    // 000.09.1 ДЕКЛАРАЦИИ НА ПРОМЕНЛИВИ
     const modal = document.getElementById('contact-modal');
     const closeBtn = document.querySelector('.close');
     const contactTriggers = document.querySelectorAll('.contact-trigger');
     const contactForm = document.getElementById('contact-form');
     const formMessage = document.getElementById('form-message');
     
-    // Rate limiting
+    // 000.09.2 RATE LIMITING НАСТРОЙКИ
     let lastSubmission = 0;
-    const MIN_SUBMISSION_INTERVAL = 5000; // 5 seconds between submissions
+    const MIN_SUBMISSION_INTERVAL = 5000; // 5 секунди между изпращанията
     
-    // Open modal
+    // ===================================================================================
+    // 000.09.3 ОТВАРЯНЕ НА МОДАЛНИЯ ПРОЗОРЕЦ
+    // ===================================================================================
     contactTriggers.forEach(function(trigger) {
         trigger.addEventListener('click', function(e) {
             e.preventDefault();
@@ -20,7 +38,11 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
     
-    // Close modal
+    // ===================================================================================
+    // 000.09.4 ЗАТВАРЯНЕ НА МОДАЛНИЯ ПРОЗОРЕЦ
+    // ===================================================================================
+    
+    // 000.09.4.1 Затваряне при клик на X бутона
     if (closeBtn) {
         closeBtn.addEventListener('click', function() {
             if (modal) modal.style.display = 'none';
@@ -32,7 +54,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
     
-    // Close modal when clicking outside
+    // 000.09.4.2 Затваряне при клик извън модала
     window.addEventListener('click', function(e) {
         if (modal && e.target === modal) {
             modal.style.display = 'none';
@@ -44,7 +66,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
     
-    // Close modal with ESC key
+    // 000.09.4.3 Затваряне с ESC клавиш
     document.addEventListener('keydown', function(e) {
         if (e.key === 'Escape' && modal && modal.style.display === 'block') {
             modal.style.display = 'none';
@@ -56,25 +78,27 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
     
-    // Handle form submission - DIRECT SEND TO NTFY.SH
+    // ===================================================================================
+    // 000.09.5 ОБРАБОТКА НА ИЗПРАЩАНЕТО НА ФОРМАТА - DIRECT SEND TO NTFY.SH
+    // ===================================================================================
     if (contactForm) {
         contactForm.addEventListener('submit', async function(e) {
             e.preventDefault();
             
-            // Rate limiting check
+            // 000.09.5.1 Rate limiting проверка
             const now = Date.now();
             if (now - lastSubmission < MIN_SUBMISSION_INTERVAL) {
                 showMessage('Моля, изчакайте преди да изпратите отново.', 'error');
                 return;
             }
             
-            // Get form values
+            // 000.09.5.2 Вземане на стойности от формата
             const name = document.getElementById('name').value.trim();
             const email = document.getElementById('email').value.trim();
             const subject = document.getElementById('subject').value.trim();
             const message = document.getElementById('message').value.trim();
             
-            // Validation
+            // 000.09.5.3 Валидация на формата
             if (!name || !email || !subject || !message) {
                 showMessage('Моля, попълнете всички полета.', 'error');
                 return;
@@ -86,7 +110,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 return;
             }
             
-            // Show loading state
+            // 000.09.5.4 Показване на състояние на зареждане
             const submitBtn = contactForm.querySelector('button[type="submit"]');
             if (!submitBtn) return;
             
@@ -97,20 +121,20 @@ document.addEventListener('DOMContentLoaded', function() {
             showMessage('Изпращане на съобщението...', 'loading');
             
             try {
-                // Encode non-ASCII characters in headers
+                // 000.09.5.5 Кодиране на non-ASCII символи в headers
                 const encodeHeader = (str) => {
-                    // Encode to base64 for headers with non-ASCII characters
+                    // Кодиране до base64 за headers с non-ASCII символи
                     if (/[^\x00-\x7F]/.test(str)) {
                         return `=?UTF-8?B?${btoa(unescape(encodeURIComponent(str)))}?=`;
                     }
                     return str;
                 };
                 
-                // Prepare headers with encoded non-ASCII characters
+                // 000.09.5.6 Подготовка на headers с кодирани non-ASCII символи
                 const safeTitle = encodeHeader(`Ново съобщение от: ${name}`);
                 const safeBody = `Имейл: ${email}\nТема: ${subject}\n\nСъобщение:\n${message}`;
                 
-                // Direct send to ntfy.sh
+                // 000.09.5.7 Direct send to ntfy.sh
                 const response = await fetch('https://ntfy.sh/pasevsu_messages', {
                     method: 'POST',
                     mode: 'cors',
@@ -128,10 +152,10 @@ document.addEventListener('DOMContentLoaded', function() {
                     showMessage('✅ Съобщението е изпратено успешно!', 'success');
                     lastSubmission = Date.now();
                     
-                    // Изчистване на формата
+                    // 000.09.5.8 Изчистване на формата
                     contactForm.reset();
                     
-                    // Затваряне на модала след 2 секунди
+                    // 000.09.5.9 Затваряне на модала след 2 секунди
                     setTimeout(() => {
                         if (modal) {
                             modal.style.display = 'none';
@@ -150,41 +174,43 @@ document.addEventListener('DOMContentLoaded', function() {
                 console.error('Грешка при изпращане:', error);
                 lastSubmission = Date.now();
                 
-                // Fallback: показване на curl командата
+                // 000.09.5.10 Fallback: показване на curl командата
                 showMessage('⚠️ Директното изпращане не успя. Копирайте командата за ръчно изпълнение:', 'error');
                 
-                // Create the body for curl command (escape newlines for bash)
+                // 000.09.5.11 Създаване на body за curl команда (escape newlines for bash)
                 const escapedMessage = message.replace(/"/g, '\\"');
                 const escapedName = name.replace(/"/g, '\\"');
                 const body = `Име: ${escapedName}\\nИмейл: ${email}\\nТема: ${subject}\\n\\nСъобщение:\\n${escapedMessage}`;
                 
-                // Create the curl command exactly as you want it
+                // 000.09.5.12 Създаване на curl командата
                 const curlCommand = `curl -d "${body}" -H "Title: Съобщение от: ${escapedName}" -H "Priority: default" -H "Tags: test,email" -H "Click: mailto:${email}" https://ntfy.sh/pasevsu_messages`;
                 
                 console.log('CURL команда за ръчно изпълнение:');
                 console.log(curlCommand);
                 
-                // Show the curl command to the user
+                // 000.09.5.13 Показване на curl командата на потребителя
                 showCurlCommand(curlCommand);
                 
             } finally {
-                // Reset button
+                // 000.09.5.14 Нулиране на състоянието на бутона
                 submitBtn.textContent = originalText;
                 submitBtn.disabled = false;
             }
         });
     }        
     
-    // Helper function to show curl command
+    // ===================================================================================
+    // 000.09.6 ПОМОЩНА ФУНКЦИЯ ЗА ПОКАЗВАНЕ НА CURL КОМАНДАТА
+    // ===================================================================================
     function showCurlCommand(curlCommand) {
         if (!formMessage) return;
         
-        // Create container for the command
+        // 000.09.6.1 Създаване на контейнер за командата
         const commandContainer = document.createElement('div');
         commandContainer.style.marginTop = '15px';
         commandContainer.style.textAlign = 'left';
         
-        // Create pre element for the command
+        // 000.09.6.2 Създаване на pre елемент за командата
         const commandPre = document.createElement('pre');
         commandPre.style.backgroundColor = '#2d2d2d';
         commandPre.style.color = '#f8f8f2';
@@ -197,7 +223,7 @@ document.addEventListener('DOMContentLoaded', function() {
         commandPre.style.wordBreak = 'break-all';
         commandPre.textContent = curlCommand;
         
-        // Create copy button
+        // 000.09.6.3 Създаване на бутон за копиране
         const copyBtn = document.createElement('button');
         copyBtn.textContent = '📋 Копирай командата';
         copyBtn.style.marginTop = '10px';
@@ -210,6 +236,7 @@ document.addEventListener('DOMContentLoaded', function() {
         copyBtn.style.fontWeight = 'bold';
         copyBtn.style.width = '100%';
         
+        // 000.09.6.4 Слушател за копиране на командата
         copyBtn.addEventListener('click', function() {
             navigator.clipboard.writeText(curlCommand)
                 .then(function() {
@@ -224,7 +251,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 })
                 .catch(function(err) {
                     console.error('Грешка при копиране:', err);
-                    // Fallback for older browsers
+                    // 000.09.6.5 Fallback за стари браузъри
                     const textArea = document.createElement('textarea');
                     textArea.value = curlCommand;
                     textArea.style.position = 'fixed';
@@ -250,7 +277,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 });
         });
         
-        // Create instructions
+        // 000.09.6.6 Създаване на инструкции
         const instructions = document.createElement('div');
         instructions.style.marginTop = '15px';
         instructions.style.padding = '10px';
@@ -270,14 +297,16 @@ document.addEventListener('DOMContentLoaded', function() {
             </ol>
         `;
         
-        // Append everything to the message container
+        // 000.09.6.7 Добавяне на всичко към контейнера за съобщения
         formMessage.appendChild(commandContainer);
         commandContainer.appendChild(commandPre);
         commandContainer.appendChild(copyBtn);
         commandContainer.appendChild(instructions);
     }
     
-    // Helper function to show messages
+    // ===================================================================================
+    // 000.09.7 ПОМОЩНА ФУНКЦИЯ ЗА ПОКАЗВАНЕ НА СЪОБЩЕНИЯ
+    // ===================================================================================
     function showMessage(text, type) {
         if (!formMessage) return;
         

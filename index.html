@@ -6,19 +6,25 @@
     <title data-translate="footer.title">Home Assistant Проекти</title>
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🏠</text></svg>">
     <link rel="stylesheet" href="static/styles.css">
+    
+    <!-- СКРИПТОВЕ ЗА ДАННИ И ФУНКЦИОНАЛНОСТ -->
     <!-- Първо данните за проектите, после останалите скриптове -->
     <script src="static/all-projects.js"></script>
+    <script src="static/all-docs.js"></script>
+    
+    <!-- Файлове за зареждане и управление на съдържание -->
     <script src="static/load-projects.js"></script>
+    <script src="static/load-docs.js"></script>
+    
+    <!-- Файлове за преводи и езици -->
     <script src="static/translations.js"></script>
     <script src="static/language-manager.js"></script>
-    <script src="static/script.js"></script>
-    <!-- Нови файлове за документация -->
-    <script src="static/all-docs.js"></script>
-    <script src="static/load-docs.js"></script>
-    <!-- Контактна форма -->
+    
+    <!-- Файлове за функционалност -->
     <script src="static/contact-form.js"></script>
 </head>
 <body>
+    <!-- ЗАГЛАВНА ЧАСТ - БАНЕР И НАВИГАЦИЯ -->
     <header>
         <div class="banner" aria-label="Banner">
             <img src="static/img/banner-w-bg.png" alt="Банер" aria-label="Banner">
@@ -26,6 +32,7 @@
     
         <nav class="navbar">
             <div class="nav-container">
+                <!-- Лого и заглавие -->
                 <div class="nav-logo">
                     <a href="#" class="logo-link" aria-label="Home Assistant" style="display:flex;align-items:center;gap:0.5rem;text-decoration:none;font-weight:600;">
                         <span class="logo-icon" style="font-size:1.2em;line-height:1;">🏠</span>
@@ -33,6 +40,7 @@
                     </a>
                 </div>
 
+                <!-- Навигационни линкове -->
                 <ul class="nav-menu">
                     <li class="nav-item">
                         <a data-translate="nav.home" href="#home" class="nav-link">Начало</a>
@@ -44,7 +52,7 @@
                         <a data-translate="nav.about" href="#about" class="nav-link">За нас</a>
                     </li>
                     <li class="nav-item">
-                        <a data-translate="nav.documentation" href="#" class="nav-link docs-trigger">Документация</a>
+                        <a data-translate="nav.documentation" href="#documents" class="nav-link">Документи</a>
                     </li>
                     <li class="nav-item">
                         <a data-translate="nav.generators" href="#generators" class="nav-link">Генератори</a>
@@ -54,13 +62,14 @@
                     </li>
                 </ul>
 
-                <!-- Language Switch Buttons -->
+                <!-- Езиков превключател (BG/EN/DE) -->
                 <div class="lang-switch" aria-label="Language switch">
                     <button class="lang-btn" data-lang="bg" title="Български">BG</button>
                     <button class="lang-btn" data-lang="en" title="English">EN</button>
                     <button class="lang-btn" data-lang="de" title="Deutsch">DE</button>
                 </div>
 
+                <!-- Хамбургер иконка за мобилна навигация -->
                 <div class="hamburger">
                     <span class="bar"></span>
                     <span class="bar"></span>
@@ -70,7 +79,9 @@
         </nav>
     </header>
 
+    <!-- ОСНОВНО СЪДЪРЖАНИЕ НА СТРАНИЦАТА -->
     <main>
+        <!-- Hero секция - Въведение и основна информация -->
         <section id="home" class="hero">
             <div class="hero-content">
                 <h1 data-translate="hero.title">🏠 ПРОЕКТИ И РАЗРАБОТКИ ЗА HOME ASSISTANT</h1>
@@ -83,6 +94,7 @@
             </div>
         </section>
 
+        <!-- Резюме секция - 6 предимства в грид структура -->
         <section id="summary" class="summary">
             <h2 data-translate="summary.title">💬 РЕЗЮМЕ</h2>
             <div class="summary-grid">
@@ -113,15 +125,17 @@
             </div>
         </section>
 
+        <!-- Проекти секция - Динамично зареждане от JSON файлове -->
         <section id="projects" class="projects">
             <h2 data-translate="projects.title">🛠️ ПРОЕКТИ</h2>
             
-            <!-- Проектите се зареждат динамично тук от JSON файловете -->
+            <!-- Контейнер за динамично зареждане на проектите -->
             <div id="projects-container">
                 <div class="loading-projects">Зареждане на проектите...</div>
             </div>
         </section>
 
+        <!-- Генератори секция - Връзки към външни генератори инструменти -->
         <section id="generators" class="support">
             <h2 data-translate="support.title">Генератори</h2>
             <p data-translate="support.description">
@@ -146,13 +160,28 @@
             </div>
         </section>        
         
+        <!-- За нас секция - Информация за автора и проекта -->
         <section id="about" class="about">
             <h2 data-translate="about.title">За нас</h2>
             <p data-translate="about.description">Това хранилище съдържа моите персонални проекти за Home Assistant, автоматизации, конфигурации и интеграции. Повечето проекти имат поддръжка на английски и български и редовно добавям нови функции и подобрения.</p>
         </section>
         
+        <!-- Документи секция - Показва списък с документи -->
+        <section id="documents" class="documentation" style="display: none;">
+            <h2 data-translate="documentation.title">Документи</h2>
+            
+            <p class="docs-description" data-translate="documentation.docsDescription">
+                Кликнете върху всеки документ за да отворите пълния документ в модален прозорец.
+            </p>
+            
+            <!-- Контейнер за динамично зареждане на документите -->
+            <div id="docs-section-content" class="docs-list">
+                <div class="loading-docs" data-translate="documentation.loading">Зареждане на документи...</div>
+            </div>
+        </section>
     </main>
 
+    <!-- ФУТЕР - Допълнителна информация и връзки -->
     <footer>
         <div class="footer-content">
             <div class="footer-section">
@@ -165,7 +194,7 @@
                     <li><a href="#home" data-translate="nav.home">Начало</a></li>
                     <li><a href="#projects" data-translate="nav.projects">Проекти</a></li>
                     <li><a href="#about" data-translate="nav.about">За нас</a></li>
-                    <li><a href="#" class="docs-trigger" data-translate="nav.documentation">Документация</a></li>
+                    <li><a href="#documents" data-translate="nav.documentation">Документи</a></li>
                     <li><a href="#generators" data-translate="nav.generators">Генератори</a></li>
                     <li><a href="#" class="contact-trigger" data-translate="nav.contact">Контакт</a></li>
                 </ul>
@@ -182,34 +211,18 @@
             <p data-translate="footer.copyright">© 2023 Home Assistant Проекти. Всички права запазени.</p>
         </div>
     </footer>
-    
-    <!-- Документация модал -->
-    <div id="docs-modal" class="modal">
-        <div class="modal-content">
-            <span class="close close-docs">&times;</span>
-            <h3 data-translate="documentation.modalTitle">Документация</h3>
-            
-            <p class="docs-description" data-translate="documentation.docsDescription">
-                Кликнете върху всеки документ за да видите пълното му съдържание.
-            </p>
-            
-            <div id="docs-modal-content" class="docs-list">
-                <!-- Документите се зареждат тук динамично -->
-                <div class="loading-docs" data-translate="documentation.loading">Зареждане на документи...</div>
-            </div>
-        </div>
-    </div>
 
-    <!-- Contact Form Modal -->
+    <!-- Контактна форма модал - Форма за изпращане на съобщения -->
     <div id="contact-modal" class="modal">
         <div class="modal-content">
-            <span class="close">&times;</span>
+            <span class="close close-contact">&times;</span>
             <h3 data-translate="contact.title">Контактна форма</h3>
             
             <p class="contact-description" data-translate="contact.description">
                 Изпратете ни съобщение и ще ви отговорим възможно най-бързо.
             </p>
             
+            <!-- Контактна форма с 4 полета -->
             <form id="contact-form">
                 <div class="form-group">
                     <label for="name" data-translate="contact.form.name">Име</label>
@@ -248,63 +261,674 @@
                 </button>
             </form>
             
+            <!-- Контейнер за съобщения за обратна връзка -->
             <div id="form-message" class="form-message"></div>
         </div>
     </div>
 
+    <!-- ИНЛАЙН JAVASCRIPT ЗА УПРАВЛЕНИЕ НА СЕКЦИИТЕ -->
     <script>
-        // Добавете този код след съществуващите скриптове
         document.addEventListener('DOMContentLoaded', function() {
-            // Селектори за документационния модал
-            const docsTriggers = document.querySelectorAll('.docs-trigger');
-            const docsModal = document.getElementById('docs-modal');
-            const closeDocsBtn = document.querySelector('.close-docs');
+            // СЕЛЕКТОРИ ЗА СЕКЦИИТЕ
+            const sections = {
+                home: document.getElementById('home'),
+                summary: document.getElementById('summary'),
+                projects: document.getElementById('projects'),
+                generators: document.getElementById('generators'),
+                about: document.getElementById('about'),
+                documents: document.getElementById('documents')
+            };
             
-            // Отваряне на документационния модал
-            if (docsTriggers && docsModal) {
-                docsTriggers.forEach(trigger => {
-                    trigger.addEventListener('click', function(e) {
-                        e.preventDefault();
-                        docsModal.style.display = 'block';
-                        document.body.style.overflow = 'hidden';
-                        
-                        // Зареждане на документите с текущия език
-                        setTimeout(() => {
-                            if (typeof loadDocsIntoModal === 'function') {
-                                loadDocsIntoModal();
-                            }
-                        }, 100);
-                    });
+            // ФУНКЦИЯ ЗА УПРАВЛЕНИЕ НА ВИДИМОСТТА НА СЕКЦИИТЕ
+            function showSection(sectionToShow) {
+                // Скрыва всички секции
+                Object.values(sections).forEach(section => {
+                    if (section) section.style.display = 'none';
                 });
-            }
-            
-            // Затваряне на документационния модал
-            if (closeDocsBtn && docsModal) {
-                closeDocsBtn.addEventListener('click', function() {
-                    docsModal.style.display = 'none';
-                    document.body.style.overflow = 'auto';
-                });
-            }
-            
-            // Затваряне на модала при клик извън него
-            window.addEventListener('click', function(e) {
-                if (docsModal && e.target === docsModal) {
-                    docsModal.style.display = 'none';
-                    document.body.style.overflow = 'auto';
+                
+                // Показва избраната секция/секции според навигацията
+                switch(sectionToShow) {
+                    case 'home':
+                        if (sections.home) sections.home.style.display = 'block';
+                        if (sections.summary) sections.summary.style.display = 'block';
+                        break;
+                    case 'projects':
+                        if (sections.projects) sections.projects.style.display = 'block';
+                        break;
+                    case 'generators':
+                        if (sections.generators) sections.generators.style.display = 'block';
+                        break;
+                    case 'about':
+                        if (sections.about) sections.about.style.display = 'block';
+                        break;
+                    case 'documents':
+                        if (sections.documents) {
+                            sections.documents.style.display = 'block';
+                            // Зареждане на документите
+                            loadDocsIntoSection();
+                        }
+                        break;
                 }
+            }
+            
+            // ФУНКЦИЯ ЗА ЗАРЕЖДАНЕ НА ДОКУМЕНТИ В СЕКЦИЯТА
+            function loadDocsIntoSection() {
+                const docsContainer = document.getElementById('docs-section-content');
+                if (!docsContainer) return;
+                
+                // Изчистване на контейнера
+                docsContainer.innerHTML = '';
+                
+                // Проверка дали данните за документацията са заредени
+                if (!window.allDocs) {
+                    console.error('allDocs не е зареден.');
+                    docsContainer.innerHTML = '<div class="error-message">Грешка при зареждане на документите.</div>';
+                    return;
+                }
+                
+                // Зареждане на документите
+                loadDocsList(docsContainer);
+            }
+            
+            // ПОМОЩНА ФУНКЦИЯ ЗА ЗАРЕЖДАНЕ НА ЛИСТА С ДОКУМЕНТИ
+            function loadDocsList(container) {
+                const currentLang = localStorage.getItem('preferred-language') || 'bg';
+                const langData = translations[currentLang];
+                
+                // Проверка за данни
+                if (!window.allDocs || !window.allDocs.documents) {
+                    container.innerHTML = '<div class="error-message">Няма заредени документи.</div>';
+                    return;
+                }
+                
+                // Създаване на списък с документи
+                window.allDocs.documents.forEach(doc => {
+                    const docItem = createDocItem(doc, currentLang, langData);
+                    container.appendChild(docItem);
+                });
+            }
+            
+            // ПОМОЩНА ФУНКЦИЯ ЗА СЪЗДАВАНЕ НА ЕЛЕМЕНТ ЗА ДОКУМЕНТ
+            function createDocItem(doc, lang, langData) {
+                const docDiv = document.createElement('div');
+                docDiv.className = 'doc-item';
+                
+                // Ключове за преводи (мапиране на ID към ключове за превод)
+                const docKeys = {
+                    'repositories': 'doc.repositories',
+                    'automations': 'doc.automations',
+                    'config-methods': 'doc.config-methods'
+                };
+                
+                const docKey = docKeys[doc.id] || doc.id;
+                
+                // Взимане на преводи за секциите
+                const title = langData ? (langData[`${docKey}.title`] || doc.title) : doc.title;
+                const description = langData ? (langData[`${docKey}.description`] || doc.description) : doc.description;
+                
+                // Създаване на хиперлинк за документа
+                const docLink = document.createElement('a');
+                docLink.href = '#';
+                docLink.className = 'doc-link-item';
+                docLink.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    // Отваряне на HTML файла в модал
+                    loadHtmlInModal(doc.link, title);
+                });
+                
+                // Стилове за картата на документа
+                docLink.style.cssText = `
+                    display: block;
+                    text-decoration: none;
+                    color: inherit;
+                    margin-bottom: 1.5rem;
+                    padding: 1rem;
+                    background: white;
+                    border-radius: 8px;
+                    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+                    cursor: pointer;
+                    transition: all 0.3s ease;
+                    border: 2px solid transparent;
+                `;
+                
+                // Анимация при ховър
+                docLink.addEventListener('mouseenter', function() {
+                    this.style.transform = 'translateY(-2px)';
+                    this.style.boxShadow = '0 4px 8px rgba(0,0,0,0.15)';
+                    this.style.borderColor = 'var(--primary-color)';
+                });
+                
+                docLink.addEventListener('mouseleave', function() {
+                    this.style.transform = 'translateY(0)';
+                    this.style.boxShadow = '0 2px 4px rgba(0,0,0,0.1)';
+                    this.style.borderColor = 'transparent';
+                });
+                
+                // Създаване на съдържанието на картата
+                docLink.innerHTML = `
+                    <h4 style="color: var(--primary-color); margin-bottom: 0.5rem; font-size: 1.1rem;">
+                        ${title}
+                    </h4>
+                    <p style="color: #666; font-size: 0.95rem; margin: 0; line-height: 1.5;">
+                        ${description}
+                    </p>
+                    <div style="margin-top: 0.75rem; font-size: 0.85rem; color: var(--primary-color);">
+                        📄 Кликнете за пълния документ
+                    </div>
+                `;
+                
+                docDiv.appendChild(docLink);
+                return docDiv;
+            }
+            
+            // ФУНКЦИЯ ЗА ЗАРЕЖДАНЕ НА HTML ФАЙЛ В МОДАЛ
+            function loadHtmlInModal(htmlFile, title) {
+                // Създаване на модала
+                const modal = document.createElement('div');
+                modal.className = 'modal';
+                modal.id = 'doc-html-modal';
+                modal.style.cssText = `
+                    display: block;
+                    position: fixed;
+                    z-index: 10000;
+                    left: 0;
+                    top: 0;
+                    width: 100%;
+                    height: 100%;
+                    background-color: rgba(0,0,0,0.8);
+                    overflow: hidden;
+                `;
+                
+                // Съдържание на модала с по-добри стилове
+                modal.innerHTML = `
+                    <div class="modal-content" style="
+                        background-color: white;
+                        margin: 2% auto;
+                        padding: 2rem;
+                        border-radius: 12px;
+                        width: 95%;
+                        max-width: 1200px;
+                        min-height: 80vh;
+                        max-height: 90vh;
+                        position: relative;
+                        box-shadow: 0 15px 40px rgba(0,0,0,0.4);
+                        display: flex;
+                        flex-direction: column;
+                    ">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; border-bottom: 2px solid var(--primary-color); padding-bottom: 1rem;">
+                            <h3 style="color: var(--primary-color); margin: 0; font-size: 1.5rem; font-weight: 600;">
+                                📄 ${title}
+                            </h3>
+                            <span class="close-doc" style="
+                                font-size: 2rem;
+                                font-weight: bold;
+                                color: #666;
+                                cursor: pointer;
+                                line-height: 1;
+                                padding: 0 0.5rem;
+                                transition: color 0.3s;
+                            ">&times;</span>
+                        </div>
+                        
+                        <div class="doc-html-content" style="
+                            flex: 1;
+                            overflow-y: auto;
+                            padding: 0 1rem 0 0;
+                            line-height: 1.6;
+                            font-size: 16px;
+                        ">
+                            <div class="loading-content" style="text-align: center; padding: 3rem;">
+                                <div style="font-size: 1.2rem; color: #666; margin-bottom: 1rem;">⏳ Зареждане на документа...</div>
+                                <div style="width: 100px; height: 4px; background: #eee; border-radius: 2px; margin: 0 auto; overflow: hidden;">
+                                    <div style="width: 60%; height: 100%; background: var(--primary-color); animation: loading 1.5s infinite;"></div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div style="margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid #eee; display: flex; justify-content: space-between; align-items: center;">
+                            <a href="${htmlFile}" target="_blank" style="
+                                display: inline-flex;
+                                align-items: center;
+                                gap: 0.5rem;
+                                background: #f0f0f0;
+                                color: #333;
+                                padding: 0.5rem 1rem;
+                                border-radius: 4px;
+                                text-decoration: none;
+                                font-weight: 500;
+                                transition: all 0.3s;
+                            " onmouseover="this.style.backgroundColor='#e0e0e0'" onmouseout="this.style.backgroundColor='#f0f0f0'">
+                                <span>🔗</span> Отвори в нов прозорец
+                            </a>
+                            
+                            <div style="font-size: 0.9rem; color: #888;">
+                                <span id="doc-file-size">Зареждане...</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                
+                document.body.appendChild(modal);
+                document.body.style.overflow = 'hidden';
+                
+                // Добавяне на CSS анимация за зареждане
+                const style = document.createElement('style');
+                style.textContent = `
+                    @keyframes loading {
+                        0% { transform: translateX(-100%); }
+                        100% { transform: translateX(250%); }
+                    }
+                    
+                    #doc-html-modal .close-doc:hover {
+                        color: var(--primary-color);
+                    }
+                    
+                    #doc-html-modal .doc-html-content::-webkit-scrollbar {
+                        width: 8px;
+                    }
+                    
+                    #doc-html-modal .doc-html-content::-webkit-scrollbar-track {
+                        background: #f1f1f1;
+                        border-radius: 4px;
+                    }
+                    
+                    #doc-html-modal .doc-html-content::-webkit-scrollbar-thumb {
+                        background: var(--primary-color);
+                        border-radius: 4px;
+                    }
+                    
+                    #doc-html-modal .doc-html-content::-webkit-scrollbar-thumb:hover {
+                        background: #555;
+                    }
+                `;
+                modal.appendChild(style);
+                
+                // Зареждане на HTML съдържанието
+                const contentContainer = modal.querySelector('.doc-html-content');
+                loadHtmlContent(htmlFile, contentContainer, modal);
+                
+                // Слушатели за затваряне
+                const closeBtn = modal.querySelector('.close-doc');
+                closeBtn.addEventListener('click', function() {
+                    document.body.removeChild(modal);
+                    document.body.style.overflow = 'auto';
+                });
+                
+                modal.addEventListener('click', function(e) {
+                    if (e.target === modal) {
+                        document.body.removeChild(modal);
+                        document.body.style.overflow = 'auto';
+                    }
+                });
+                
+                document.addEventListener('keydown', function(e) {
+                    if (e.key === 'Escape' && document.getElementById('doc-html-modal')) {
+                        document.body.removeChild(modal);
+                        document.body.style.overflow = 'auto';
+                    }
+                });
+            }            
+            // ФУНКЦИЯ ЗА ЗАРЕЖДАНЕ НА HTML СЪДЪРЖАНИЕ
+            function loadHtmlInModal(htmlFile, title) {
+                // Създаване на модала
+                const modal = document.createElement('div');
+                modal.className = 'modal';
+                modal.id = 'doc-html-modal';
+                modal.style.cssText = `
+                    display: block;
+                    position: fixed;
+                    z-index: 10000;
+                    left: 0;
+                    top: 0;
+                    width: 100%;
+                    height: 100%;
+                    background-color: rgba(0,0,0,0.8);
+                    overflow: auto;
+                `;
+                
+                // Съдържание на модала - МИНИМАЛНИ СТИЛОВЕ
+                modal.innerHTML = `
+                    <div class="modal-content" style="
+                        background-color: white;
+                        margin: 20px auto;
+                        padding: 20px;
+                        width: 90%;
+                        max-width: 1200px;
+                        position: relative;
+                    ">
+                        <div style="position: relative;">
+                            <h3 style="margin: 0 0 20px 0; color: #333;">${title}</h3>
+                            <span class="close-doc" style="
+                                position: absolute;
+                                right: 0;
+                                top: 0;
+                                font-size: 30px;
+                                font-weight: bold;
+                                color: #666;
+                                cursor: pointer;
+                                line-height: 1;
+                            ">&times;</span>
+                        </div>
+                        
+                        <div class="doc-html-content" style="
+                            overflow: visible;
+                        ">
+                            <div class="loading-content" style="text-align: center; padding: 40px;">
+                                Зареждане на документа...
+                            </div>
+                        </div>
+                        
+                        <div style="margin-top: 20px; padding-top: 10px; border-top: 1px solid #eee; text-align: center;">
+                            <a href="${htmlFile}" target="_blank" style="
+                                display: inline-block;
+                                background: #4CAF50;
+                                color: white;
+                                padding: 10px 20px;
+                                border-radius: 4px;
+                                text-decoration: none;
+                            ">
+                                Отвори в нов прозорец
+                            </a>
+                        </div>
+                    </div>
+                `;
+                
+                document.body.appendChild(modal);
+                document.body.style.overflow = 'hidden';
+                
+                // Зареждане на HTML съдържанието - БЕЗ CSS СТИЛОВЕ
+                const contentContainer = modal.querySelector('.doc-html-content');
+                loadHtmlContent(htmlFile, contentContainer, modal);
+                
+                // Слушатели за затваряне
+                const closeBtn = modal.querySelector('.close-doc');
+                closeBtn.addEventListener('click', function() {
+                    document.body.removeChild(modal);
+                    document.body.style.overflow = 'auto';
+                });
+                
+                modal.addEventListener('click', function(e) {
+                    if (e.target === modal) {
+                        document.body.removeChild(modal);
+                        document.body.style.overflow = 'auto';
+                    }
+                });
+                
+                document.addEventListener('keydown', function(e) {
+                    if (e.key === 'Escape' && document.getElementById('doc-html-modal')) {
+                        document.body.removeChild(modal);
+                        document.body.style.overflow = 'auto';
+                    }
+                });
+            }
+
+            function loadHtmlContent(url, container, modal) {
+                const isFileProtocol = window.location.protocol === 'file:';
+                
+                if (isFileProtocol) {
+                    // Използване на XMLHttpRequest за file:// протокол
+                    const xhr = new XMLHttpRequest();
+                    xhr.open('GET', url, true);
+                    xhr.onreadystatechange = function() {
+                        if (xhr.readyState === 4) {
+                            if (xhr.status === 0 || xhr.status === 200) {
+                                // Успешно зареждане за file:// протокол
+                                const html = xhr.responseText;
+                                processHtmlContent(html, container, modal, url);
+                            } else {
+                                handleLoadError(url, container, modal, new Error(`HTTP грешка! Статус: ${xhr.status}`));
+                            }
+                        }
+                    };
+                    xhr.onerror = function() {
+                        handleLoadError(url, container, modal, new Error('Мрежова грешка при зареждане на файла'));
+                    };
+                    xhr.send();
+                } else {
+                    // Оригинален fetch код за http:// протокол
+                    fetch(url)
+                        .then(response => {
+                            if (!response.ok) {
+                                throw new Error(`HTTP грешка! Статус: ${response.status} - ${response.statusText}`);
+                            }
+                            
+                            const contentType = response.headers.get('content-type');
+                            if (!contentType || !contentType.includes('text/html')) {
+                                throw new Error('Файлът не е HTML документ');
+                            }
+                            
+                            return response.text();
+                        })
+                        .then(html => {
+                            processHtmlContent(html, container, modal, url);
+                        })
+                        .catch(error => {
+                            handleLoadError(url, container, modal, error);
+                        });
+                }
+            }
+
+            function processHtmlContent(html, container, modal, url) {
+                try {
+                    // Парсване на HTML и извличане на съдържанието
+                    const parser = new DOMParser();
+                    const doc = parser.parseFromString(html, 'text/html');
+                    
+                    // Проверка за XML грешки
+                    const parserError = doc.querySelector('parsererror');
+                    if (parserError) {
+                        throw new Error('Грешка при парсване на HTML файла');
+                    }
+                    
+                    // Взимаме само съдържанието на body
+                    let content;
+                    if (doc.body) {
+                        content = doc.body.innerHTML;
+                    } else {
+                        content = html;
+                    }
+                    
+                    // Поставяме съдържанието без никакви стилове
+                    container.innerHTML = content;
+                    
+                    // Премахваме всички CSS стилове и скриптове от съдържанието
+                    const elementsToRemove = container.querySelectorAll('style, link[rel="stylesheet"], script');
+                    elementsToRemove.forEach(el => el.remove());
+                    
+                    // Разрешаваме на документа да изглежда както е оригинално
+                    // БЕЗ ДОБАВЯНЕ НА ДОПЪЛНИТЕЛНИ СТИЛОВЕ
+                    
+                } catch (error) {
+                    handleLoadError(url, container, modal, error);
+                }
+            }
+
+            function handleLoadError(url, container, modal, error) {
+                console.error('Грешка при зареждане на HTML файла:', error);
+                
+                container.innerHTML = `
+                    <div style="
+                        background-color: #ffe6e6;
+                        border: 2px solid #ff6b6b;
+                        border-radius: 8px;
+                        padding: 20px;
+                        color: #d32f2f;
+                        text-align: center;
+                    ">
+                        <h4 style="margin-top: 0;">❌ Грешка при зареждане на документа</h4>
+                        <p><strong>Файл:</strong> ${url}</p>
+                        <p><strong>Грешка:</strong> ${error.message}</p>
+                        
+                        <div style="margin-top: 20px;">
+                            <a href="${url}" target="_blank" style="
+                                display: inline-block;
+                                background: #4CAF50;
+                                color: white;
+                                padding: 10px 20px;
+                                border-radius: 4px;
+                                text-decoration: none;
+                                margin-right: 10px;
+                            ">
+                                📄 Отвори директно в нов прозорец
+                            </a>
+                            
+                            <button onclick="location.reload()" style="
+                                display: inline-block;
+                                background: #f0f0f0;
+                                color: #333;
+                                padding: 10px 20px;
+                                border-radius: 4px;
+                                border: 1px solid #ddd;
+                                cursor: pointer;
+                            ">
+                                🔄 Опитай отново
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }            
+            // ФУНКЦИЯ ЗА ПОЧИСТВАНЕ НА HTML СЪДЪРЖАНИЕ
+            function cleanHtmlContent(html) {
+                // Създаване на временен контейнер
+                const tempDiv = document.createElement('div');
+                tempDiv.innerHTML = html;
+                
+                // Премахване на ненужни елементи (скриптове, стилове и т.н.)
+                const elementsToRemove = tempDiv.querySelectorAll(
+                    'script, style, link, meta, title, base, iframe, frame, frameset, noframes'
+                );
+                elementsToRemove.forEach(el => el.remove());
+                
+                // Връщане на почистеното съдържание
+                return tempDiv.innerHTML;
+            }
+            
+            // ФУНКЦИЯ ЗА ДОБАВЯНЕ НА СТИЛОВЕ ЗА ДОКУМЕНТА
+            function addDocStyles(container) {
+                // Добавяне на базови стилове за документите
+                const docStyles = `
+                    <style>
+                        .doc-content h1, .doc-content h2, .doc-content h3, .doc-content h4 {
+                            color: var(--primary-color);
+                            margin-top: 1.5rem;
+                            margin-bottom: 0.75rem;
+                        }
+                        
+                        .doc-content h1 {
+                            font-size: 1.5rem;
+                            border-bottom: 2px solid var(--primary-color);
+                            padding-bottom: 0.5rem;
+                        }
+                        
+                        .doc-content h2 {
+                            font-size: 1.3rem;
+                        }
+                        
+                        .doc-content h3 {
+                            font-size: 1.1rem;
+                        }
+                        
+                        .doc-content p {
+                            margin-bottom: 1rem;
+                            line-height: 1.6;
+                        }
+                        
+                        .doc-content ul, .doc-content ol {
+                            margin-left: 1.5rem;
+                            margin-bottom: 1rem;
+                        }
+                        
+                        .doc-content li {
+                            margin-bottom: 0.5rem;
+                        }
+                        
+                        .doc-content strong {
+                            color: var(--primary-color);
+                        }
+                        
+                        .doc-content code {
+                            background-color: #f5f5f5;
+                            padding: 0.2rem 0.4rem;
+                            border-radius: 3px;
+                            font-family: monospace;
+                        }
+                        
+                        .doc-content pre {
+                            background-color: #2d2d2d;
+                            color: #f8f8f2;
+                            padding: 1rem;
+                            border-radius: 5px;
+                            overflow-x: auto;
+                            margin: 1rem 0;
+                        }
+                        
+                        .doc-content blockquote {
+                            border-left: 4px solid var(--primary-color);
+                            padding-left: 1rem;
+                            margin: 1rem 0;
+                            color: #666;
+                            font-style: italic;
+                        }
+                        
+                        .doc-content table {
+                            width: 100%;
+                            border-collapse: collapse;
+                            margin: 1rem 0;
+                        }
+                        
+                        .doc-content th, .doc-content td {
+                            border: 1px solid #ddd;
+                            padding: 0.5rem;
+                            text-align: left;
+                        }
+                        
+                        .doc-content th {
+                            background-color: var(--primary-color);
+                            color: white;
+                        }
+                        
+                        .doc-content tr:nth-child(even) {
+                            background-color: #f9f9f9;
+                        }
+                    </style>
+                `;
+                
+                // Добавяне на стиловете в контейнера
+                container.insertAdjacentHTML('afterbegin', docStyles);
+            }
+            
+            // ИНИЦИАЛИЗИРАНЕ - ПОКАЗВА НАЧАЛОТО ПРИ ЗАРЕЖДАНЕ
+            showSection('home');
+            
+            // ДОБАВЯНЕ НА СЪБИТИЯ ЗА НАВИГАЦИОННИТЕ ЛИНКОВЕ
+            const navLinks = document.querySelectorAll('.nav-link[href^="#"]');
+            navLinks.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const href = this.getAttribute('href');
+                    
+                    // Премахване на # от href
+                    const sectionId = href.substring(1);
+                    
+                    if (sections[sectionId]) {
+                        showSection(sectionId);
+                    }
+                    
+                    // Затваряне на хамбургер менюто на мобилни устройства
+                    const hamburger = document.querySelector('.hamburger');
+                    const navMenu = document.querySelector('.nav-menu');
+                    if (hamburger && navMenu) {
+                        hamburger.classList.remove('active');
+                        navMenu.classList.remove('active');
+                    }
+                });
             });
             
-            // Затваряне с ESC
-            document.addEventListener('keydown', function(e) {
-                if (e.key === 'Escape') {
-                    if (docsModal && docsModal.style.display === 'block') {
-                        docsModal.style.display = 'none';
-                        document.body.style.overflow = 'auto';
-                    }
-                    if (document.getElementById('contact-modal') && document.getElementById('contact-modal').style.display === 'block') {
-                        document.getElementById('contact-modal').style.display = 'none';
-                        document.body.style.overflow = 'auto';
-                    }
+            // СЛУШАТЕЛ ЗА СМЯНА НА ЕЗИКА ЗА ПРЕЗАРЕЖДАНЕ НА ДОКУМЕНТИТЕ
+            document.addEventListener('languageChanged', function() {
+                const docsSection = document.getElementById('documents');
+                if (docsSection && docsSection.style.display === 'block') {
+                    loadDocsIntoSection();
                 }
             });
         });
