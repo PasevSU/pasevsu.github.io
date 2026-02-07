@@ -1,15 +1,3 @@
-<!-- =================================================================================== -->
-<!-- ГЛАВЕН HTML ФАЙЛ НА HOME ASSISTANT ПРОЕКТИ УЕБСАЙТ                                 -->
-<!-- Този файл съдържа основната структура на уебсайта, включително:                    -->
-<!-- - HTML структура и разбивка на секции                                              -->
-<!-- - Навигация със секции: Начало, Проекти, За нас, Документация, Генератори, Контакт -->
-<!-- - Езиков превключател за BG/EN/DE                                                  -->
-<!-- - Модали за документация и контактна форма                                         -->
-<!-- - Секции: Hero, Резюме, Проекти, Генератори, За нас                                -->
-<!-- - Футер с връзки и социални мрежи                                                 -->
-<!-- - Включване на всички JavaScript файлове за функционалност                        -->
-<!-- =================================================================================== -->
-<!-- 000.01.0 ОСНОВНА СТРУКТУРА НА HTML ДОКУМЕНТА                                      -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -19,37 +7,29 @@
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🏠</text></svg>">
     <link rel="stylesheet" href="static/styles.css">
     
-    <!-- =================================================================================== -->
-    <!-- 000.01.1 СКРИПТОВЕ ЗА ДАННИ И ФУНКЦИОНАЛНОСТ                                        -->
-    <!-- Първо данните за проектите, после останалите скриптове                             -->
-    <!-- =================================================================================== -->
-    <!-- 000.01.1.1 Файлове с данни (JSON структури)                                        -->
-    <script src="static/all-projects.js"></script>    <!-- Съдържа всички проекти в JSON формат -->
-    <script src="static/all-docs.js"></script>        <!-- Съдържа всички документи в JSON формат -->
+    <!-- СКРИПТОВЕ ЗА ДАННИ И ФУНКЦИОНАЛНОСТ -->
+    <!-- Първо данните за проектите, после останалите скриптове -->
+    <script src="static/all-projects.js"></script>
+    <script src="static/all-docs.js"></script>
     
-    <!-- 000.01.1.2 Файлове за зареждане и управление на съдържание                        -->
-    <script src="static/load-projects.js"></script>   <!-- Зарежда и показва проектите от JSON -->
-    <script src="static/load-docs.js"></script>       <!-- Зарежда и показва документите от JSON -->
+    <!-- Файлове за зареждане и управление на съдържание -->
+    <script src="static/load-projects.js"></script>
+    <script src="static/load-docs.js"></script>
     
-    <!-- 000.01.1.3 Файлове за преводи и езици                                             -->
-    <script src="static/translations.js"></script>    <!-- Съдържа всички преводи за трите езика -->
-    <script src="static/language-manager.js"></script> <!-- Управление на езиковите настройки -->
+    <!-- Файлове за преводи и езици -->
+    <script src="static/translations.js"></script>
+    <script src="static/language-manager.js"></script>
     
-    <!-- 000.01.1.4 Файлове за функционалност                                              -->
-    <script src="static/script.js"></script>          <!-- Основна функционалност и навигация -->
-    <script src="static/contact-form.js"></script>    <!-- Управление на контактната форма -->
+    <!-- Файлове за функционалност -->
+    <script src="static/contact-form.js"></script>
 </head>
 <body>
-    <!-- =================================================================================== -->
-    <!-- 000.01.2 ЗАГЛАВНА ЧАСТ - БАНЕР И НАВИГАЦИЯ                                          -->
-    <!-- =================================================================================== -->
+    <!-- ЗАГЛАВНА ЧАСТ - БАНЕР И НАВИГАЦИЯ -->
     <header>
-        <!-- 000.01.2.1 Банер с лого                                                         -->
         <div class="banner" aria-label="Banner">
             <img src="static/img/banner-w-bg.png" alt="Банер" aria-label="Banner">
         </div>
     
-        <!-- 000.01.2.2 Основна навигация с хамбургер меню за мобилни устройства            -->
         <nav class="navbar">
             <div class="nav-container">
                 <!-- Лого и заглавие -->
@@ -60,7 +40,7 @@
                     </a>
                 </div>
 
-                <!-- 000.01.2.3 Навигационни линкове                                         -->
+                <!-- Навигационни линкове -->
                 <ul class="nav-menu">
                     <li class="nav-item">
                         <a data-translate="nav.home" href="#home" class="nav-link">Начало</a>
@@ -72,7 +52,7 @@
                         <a data-translate="nav.about" href="#about" class="nav-link">За нас</a>
                     </li>
                     <li class="nav-item">
-                        <a data-translate="nav.documentation" href="#" class="nav-link docs-trigger">Документация</a>
+                        <a data-translate="nav.documentation" href="#documents" class="nav-link">Документи</a>
                     </li>
                     <li class="nav-item">
                         <a data-translate="nav.generators" href="#generators" class="nav-link">Генератори</a>
@@ -82,14 +62,14 @@
                     </li>
                 </ul>
 
-                <!-- 000.01.2.4 Езиков превключател (BG/EN/DE)                               -->
+                <!-- Езиков превключател (BG/EN/DE) -->
                 <div class="lang-switch" aria-label="Language switch">
                     <button class="lang-btn" data-lang="bg" title="Български">BG</button>
                     <button class="lang-btn" data-lang="en" title="English">EN</button>
                     <button class="lang-btn" data-lang="de" title="Deutsch">DE</button>
                 </div>
 
-                <!-- 000.01.2.5 Хамбургер иконка за мобилна навигация                       -->
+                <!-- Хамбургер иконка за мобилна навигация -->
                 <div class="hamburger">
                     <span class="bar"></span>
                     <span class="bar"></span>
@@ -99,11 +79,9 @@
         </nav>
     </header>
 
-    <!-- =================================================================================== -->
-    <!-- 000.01.3 ОСНОВНО СЪДЪРЖАНИЕ НА СТРАНИЦАТА                                          -->
-    <!-- =================================================================================== -->
+    <!-- ОСНОВНО СЪДЪРЖАНИЕ НА СТРАНИЦАТА -->
     <main>
-        <!-- 000.01.3.1 Hero секция - Въведение и основна информация                        -->
+        <!-- Hero секция - Въведение и основна информация -->
         <section id="home" class="hero">
             <div class="hero-content">
                 <h1 data-translate="hero.title">🏠 ПРОЕКТИ И РАЗРАБОТКИ ЗА HOME ASSISTANT</h1>
@@ -116,7 +94,7 @@
             </div>
         </section>
 
-        <!-- 000.01.3.2 Резюме секция - 6 предимства в грид структура                       -->
+        <!-- Резюме секция - 6 предимства в грид структура -->
         <section id="summary" class="summary">
             <h2 data-translate="summary.title">💬 РЕЗЮМЕ</h2>
             <div class="summary-grid">
@@ -147,17 +125,17 @@
             </div>
         </section>
 
-        <!-- 000.01.3.3 Проекти секция - Динамично зареждане от JSON файлове                -->
+        <!-- Проекти секция - Динамично зареждане от JSON файлове -->
         <section id="projects" class="projects">
             <h2 data-translate="projects.title">🛠️ ПРОЕКТИ</h2>
             
-            <!-- 000.01.3.3.1 Контейнер за динамично зареждане на проектите                 -->
+            <!-- Контейнер за динамично зареждане на проектите -->
             <div id="projects-container">
                 <div class="loading-projects">Зареждане на проектите...</div>
             </div>
         </section>
 
-        <!-- 000.01.3.4 Генератори секция - Връзки към външни генератори инструменти       -->
+        <!-- Генератори секция - Връзки към външни генератори инструменти -->
         <section id="generators" class="support">
             <h2 data-translate="support.title">Генератори</h2>
             <p data-translate="support.description">
@@ -182,17 +160,28 @@
             </div>
         </section>        
         
-        <!-- 000.01.3.5 За нас секция - Информация за автора и проекта                     -->
+        <!-- За нас секция - Информация за автора и проекта -->
         <section id="about" class="about">
             <h2 data-translate="about.title">За нас</h2>
             <p data-translate="about.description">Това хранилище съдържа моите персонални проекти за Home Assistant, автоматизации, конфигурации и интеграции. Повечето проекти имат поддръжка на английски и български и редовно добавям нови функции и подобрения.</p>
         </section>
         
+        <!-- Документи секция - Показва списък с документи -->
+        <section id="documents" class="documentation" style="display: none;">
+            <h2 data-translate="documentation.title">Документи</h2>
+            
+            <p class="docs-description" data-translate="documentation.docsDescription">
+                Кликнете върху всеки документ за да отворите пълния документ в нов прозорец.
+            </p>
+            
+            <!-- Контейнер за динамично зареждане на документите -->
+            <div id="docs-section-content" class="docs-list">
+                <div class="loading-docs" data-translate="documentation.loading">Зареждане на документи...</div>
+            </div>
+        </section>
     </main>
 
-    <!-- =================================================================================== -->
-    <!-- 000.01.4 ФУТЕР - Допълнителна информация и връзки                                 -->
-    <!-- =================================================================================== -->
+    <!-- ФУТЕР - Допълнителна информация и връзки -->
     <footer>
         <div class="footer-content">
             <div class="footer-section">
@@ -205,7 +194,7 @@
                     <li><a href="#home" data-translate="nav.home">Начало</a></li>
                     <li><a href="#projects" data-translate="nav.projects">Проекти</a></li>
                     <li><a href="#about" data-translate="nav.about">За нас</a></li>
-                    <li><a href="#" class="docs-trigger" data-translate="nav.documentation">Документация</a></li>
+                    <li><a href="#documents" data-translate="nav.documentation">Документи</a></li>
                     <li><a href="#generators" data-translate="nav.generators">Генератори</a></li>
                     <li><a href="#" class="contact-trigger" data-translate="nav.contact">Контакт</a></li>
                 </ul>
@@ -222,39 +211,18 @@
             <p data-translate="footer.copyright">© 2023 Home Assistant Проекти. Всички права запазени.</p>
         </div>
     </footer>
-    
-    <!-- =================================================================================== -->
-    <!-- 000.01.5 МОДАЛНИ ПРОЗОРЕЦИ - Документация и контактна форма                       -->
-    <!-- =================================================================================== -->
-    
-    <!-- 000.01.5.1 Документация модал - Показва списък с документи                        -->
-    <div id="docs-modal" class="modal">
-        <div class="modal-content">
-            <span class="close close-docs">&times;</span>
-            <h3 data-translate="documentation.modalTitle">Документация</h3>
-            
-            <p class="docs-description" data-translate="documentation.docsDescription">
-                Кликнете върху всеки документ за да видите пълното му съдържание.
-            </p>
-            
-            <!-- 000.01.5.1.1 Контейнер за динамично зареждане на документите              -->
-            <div id="docs-modal-content" class="docs-list">
-                <div class="loading-docs" data-translate="documentation.loading">Зареждане на документи...</div>
-            </div>
-        </div>
-    </div>
 
-    <!-- 000.01.5.2 Контактна форма модал - Форма за изпращане на съобщения               -->
+    <!-- Контактна форма модал - Форма за изпращане на съобщения -->
     <div id="contact-modal" class="modal">
         <div class="modal-content">
-            <span class="close">&times;</span>
+            <span class="close close-contact">&times;</span>
             <h3 data-translate="contact.title">Контактна форма</h3>
             
             <p class="contact-description" data-translate="contact.description">
                 Изпратете ни съобщение и ще ви отговорим възможно най-бързо.
             </p>
             
-            <!-- 000.01.5.2.1 Контактна форма с 4 полета                                   -->
+            <!-- Контактна форма с 4 полета -->
             <form id="contact-form">
                 <div class="form-group">
                     <label for="name" data-translate="contact.form.name">Име</label>
@@ -293,68 +261,304 @@
                 </button>
             </form>
             
-            <!-- 000.01.5.2.2 Контейнер за съобщения за обратна връзка                     -->
+            <!-- Контейнер за съобщения за обратна връзка -->
             <div id="form-message" class="form-message"></div>
         </div>
     </div>
 
-    <!-- =================================================================================== -->
-    <!-- 000.01.6 ИНЛАЙН JAVASCRIPT ЗА УПРАВЛЕНИЕ НА МОДАЛИТЕ                              -->
-    <!-- Този код управлява отварянето и затварянето на документационния модал             -->
-    <!-- =================================================================================== -->
+    <!-- ИНЛАЙН JAVASCRIPT ЗА УПРАВЛЕНИЕ НА СЕКЦИИТЕ -->
     <script>
-        // 000.01.6.1 ИНИЦИАЛИЗАЦИЯ ПРИ ЗАРЕЖДАНЕ НА DOM
         document.addEventListener('DOMContentLoaded', function() {
-            // 000.01.6.2 СЕЛЕКТОРИ ЗА ДОКУМЕНТАЦИОННИЯ МОДАЛ
-            const docsTriggers = document.querySelectorAll('.docs-trigger');
-            const docsModal = document.getElementById('docs-modal');
-            const closeDocsBtn = document.querySelector('.close-docs');
+            // СЕЛЕКТОРИ ЗА СЕКЦИИТЕ
+            const sections = {
+                home: document.getElementById('home'),
+                summary: document.getElementById('summary'),
+                projects: document.getElementById('projects'),
+                generators: document.getElementById('generators'),
+                about: document.getElementById('about'),
+                documents: document.getElementById('documents')
+            };
             
-            // 000.01.6.3 ОТВАРЯНЕ НА ДОКУМЕНТАЦИОННИЯ МОДАЛ
-            if (docsTriggers && docsModal) {
-                docsTriggers.forEach(trigger => {
-                    trigger.addEventListener('click', function(e) {
-                        e.preventDefault();
-                        docsModal.style.display = 'block';
-                        document.body.style.overflow = 'hidden';
-                        
-                        // 000.01.6.3.1 Зареждане на документите с текущия език
-                        setTimeout(() => {
-                            if (typeof loadDocsIntoModal === 'function') {
-                                loadDocsIntoModal();
-                            }
-                        }, 100);
-                    });
+            // ФУНКЦИЯ ЗА УПРАВЛЕНИЕ НА ВИДИМОСТТА НА СЕКЦИИТЕ
+            function showSection(sectionToShow) {
+                // Скрыва всички секции
+                Object.values(sections).forEach(section => {
+                    if (section) section.style.display = 'none';
                 });
-            }
-            
-            // 000.01.6.4 ЗАТВАРЯНЕ НА ДОКУМЕНТАЦИОННИЯ МОДАЛ
-            if (closeDocsBtn && docsModal) {
-                closeDocsBtn.addEventListener('click', function() {
-                    docsModal.style.display = 'none';
-                    document.body.style.overflow = 'auto';
-                });
-            }
-            
-            // 000.01.6.5 ЗАТВАРЯНЕ НА МОДАЛА ПРИ КЛИК ИЗВЪН НЕГО
-            window.addEventListener('click', function(e) {
-                if (docsModal && e.target === docsModal) {
-                    docsModal.style.display = 'none';
-                    document.body.style.overflow = 'auto';
+                
+                // Показва избраната секция/секции според навигацията
+                switch(sectionToShow) {
+                    case 'home':
+                        if (sections.home) sections.home.style.display = 'block';
+                        if (sections.summary) sections.summary.style.display = 'block';
+                        break;
+                    case 'projects':
+                        if (sections.projects) sections.projects.style.display = 'block';
+                        break;
+                    case 'generators':
+                        if (sections.generators) sections.generators.style.display = 'block';
+                        break;
+                    case 'about':
+                        if (sections.about) sections.about.style.display = 'block';
+                        break;
+                    case 'documents':
+                        if (sections.documents) {
+                            sections.documents.style.display = 'block';
+                            // Зареждане на документите
+                            loadDocsIntoSection();
+                        }
+                        break;
                 }
+            }
+            
+            // ФУНКЦИЯ ЗА ЗАРЕЖДАНЕ НА ДОКУМЕНТИ В СЕКЦИЯТА
+            function loadDocsIntoSection() {
+                const docsContainer = document.getElementById('docs-section-content');
+                if (!docsContainer) return;
+                
+                // Изчистване на контейнера
+                docsContainer.innerHTML = '';
+                
+                // Проверка дали данните за документацията са заредени
+                if (!window.allDocs) {
+                    console.error('allDocs не е зареден.');
+                    docsContainer.innerHTML = '<div class="error-message">Грешка при зареждане на документите.</div>';
+                    return;
+                }
+                
+                // Зареждане на документите
+                loadDocsList(docsContainer);
+            }
+            
+            // ПОМОЩНА ФУНКЦИЯ ЗА ЗАРЕЖДАНЕ НА ЛИСТА С ДОКУМЕНТИ
+            function loadDocsList(container) {
+                const currentLang = localStorage.getItem('preferred-language') || 'bg';
+                const langData = translations[currentLang];
+                
+                // Проверка за данни
+                if (!window.allDocs || !window.allDocs.documents) {
+                    container.innerHTML = '<div class="error-message">Няма заредени документи.</div>';
+                    return;
+                }
+                
+                // Създаване на списък с документи
+                window.allDocs.documents.forEach(doc => {
+                    const docItem = createDocItem(doc, currentLang, langData);
+                    container.appendChild(docItem);
+                });
+            }
+            
+            // ПОМОЩНА ФУНКЦИЯ ЗА СЪЗДАВАНЕ НА ЕЛЕМЕНТ ЗА ДОКУМЕНТ
+            function createDocItem(doc, lang, langData) {
+                const docDiv = document.createElement('div');
+                docDiv.className = 'doc-item';
+                
+                // Ключове за преводи (мапиране на ID към ключове за превод)
+                const docKeys = {
+                    'repositories': 'doc.repositories',
+                    'automations': 'doc.automations',
+                    'config-methods': 'doc.config-methods'
+                };
+                
+                const docKey = docKeys[doc.id] || doc.id;
+                
+                // Взимане на преводи за секциите
+                const title = langData ? (langData[`${docKey}.title`] || doc.title) : doc.title;
+                const description = langData ? (langData[`${docKey}.description`] || doc.description) : doc.description;
+                const content = doc.content;
+                
+                // Създаване на хиперлинк за документа
+                const docLink = document.createElement('a');
+                docLink.href = '#';
+                docLink.className = 'doc-link-item';
+                docLink.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    openDocModal(doc, lang, content);
+                });
+                
+                // Стилове за картата на документа
+                docLink.style.cssText = `
+                    display: block;
+                    text-decoration: none;
+                    color: inherit;
+                    margin-bottom: 1.5rem;
+                    padding: 1rem;
+                    background: white;
+                    border-radius: 8px;
+                    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+                    cursor: pointer;
+                    transition: all 0.3s ease;
+                    border: 2px solid transparent;
+                `;
+                
+                // Анимация при ховър
+                docLink.addEventListener('mouseenter', function() {
+                    this.style.transform = 'translateY(-2px)';
+                    this.style.boxShadow = '0 4px 8px rgba(0,0,0,0.15)';
+                    this.style.borderColor = 'var(--primary-color)';
+                });
+                
+                docLink.addEventListener('mouseleave', function() {
+                    this.style.transform = 'translateY(0)';
+                    this.style.boxShadow = '0 2px 4px rgba(0,0,0,0.1)';
+                    this.style.borderColor = 'transparent';
+                });
+                
+                // Създаване на съдържанието на картата
+                docLink.innerHTML = `
+                    <h4 style="color: var(--primary-color); margin-bottom: 0.5rem; font-size: 1.1rem;">
+                        ${title}
+                    </h4>
+                    <p style="color: #666; font-size: 0.95rem; margin: 0; line-height: 1.5;">
+                        ${description}
+                    </p>
+                    <div style="margin-top: 0.75rem; font-size: 0.85rem; color: var(--primary-color);">
+                        📄 Кликнете за пълния документ
+                    </div>
+                `;
+                
+                docDiv.appendChild(docLink);
+                return docDiv;
+            }
+            
+            // ФУНКЦИЯ ЗА ОТВАРЯНЕ НА МОДАЛ СЪС СЪДЪРЖАНИЕТО НА ДОКУМЕНТ
+            function openDocModal(doc, lang, content) {
+                const docKeys = {
+                    'repositories': 'doc.repositories',
+                    'automations': 'doc.automations',
+                    'config-methods': 'doc.config-methods'
+                };
+                
+                const docKey = docKeys[doc.id] || doc.id;
+                const langData = translations[lang];
+                
+                const title = langData ? (langData[`${docKey}.title`] || doc.title) : doc.title;
+                const docContent = content || doc.content;
+                
+                const modal = document.createElement('div');
+                modal.className = 'modal';
+                modal.id = 'doc-view-modal';
+                modal.style.cssText = `
+                    display: block;
+                    position: fixed;
+                    z-index: 10000;
+                    left: 0;
+                    top: 0;
+                    width: 100%;
+                    height: 100%;
+                    background-color: rgba(0,0,0,0.7);
+                    overflow-y: auto;
+                `;
+                
+                modal.innerHTML = `
+                    <div class="modal-content" style="
+                        background-color: white;
+                        margin: 5% auto;
+                        padding: 2rem;
+                        border-radius: 12px;
+                        width: 90%;
+                        max-width: 1000px;
+                        position: relative;
+                        box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+                    ">
+                        <span class="close-doc" style="
+                            position: absolute;
+                            right: 1.5rem;
+                            top: 1rem;
+                            font-size: 2rem;
+                            font-weight: bold;
+                            color: #666;
+                            cursor: pointer;
+                            line-height: 1;
+                        ">&times;</span>
+                        
+                        <h3 style="color: var(--primary-color); margin-bottom: 1.5rem; padding-right: 2rem;">
+                            ${title}
+                        </h3>
+                        
+                        <div class="doc-content" style="
+                            max-height: auto;
+                            overflow-y: auto;
+                            padding-right: 10px;
+                            line-height: 1.6;
+                        ">
+                            ${docContent}
+                        </div>
+                        
+                        ${doc.link ? `
+                        <div style="margin-top: 2rem; padding-top: 1rem; border-top: 1px solid #eee;">
+                            <a href="${doc.link}" target="_blank" style="
+                                display: inline-block;
+                                background: var(--primary-color);
+                                color: white;
+                                padding: 0.75rem 1.5rem;
+                                border-radius: 4px;
+                                text-decoration: none;
+                                font-weight: 600;
+                            ">
+                                📄 ${langData ? (langData['doc.fullDocumentation'] || 'Отвори пълната документация') : 'Отвори пълната документация'}
+                            </a>
+                        </div>
+                        ` : ''}
+                    </div>
+                `;
+                
+                document.body.appendChild(modal);
+                document.body.style.overflow = 'hidden';
+                
+                const closeBtn = modal.querySelector('.close-doc');
+                closeBtn.addEventListener('click', function() {
+                    document.body.removeChild(modal);
+                    document.body.style.overflow = 'auto';
+                });
+                
+                modal.addEventListener('click', function(e) {
+                    if (e.target === modal) {
+                        document.body.removeChild(modal);
+                        document.body.style.overflow = 'auto';
+                    }
+                });
+                
+                document.addEventListener('keydown', function(e) {
+                    if (e.key === 'Escape' && document.getElementById('doc-view-modal')) {
+                        document.body.removeChild(modal);
+                        document.body.style.overflow = 'auto';
+                    }
+                });
+            }
+            
+            // ИНИЦИАЛИЗИРАНЕ - ПОКАЗВА НАЧАЛОТО ПРИ ЗАРЕЖДАНЕ
+            showSection('home');
+            
+            // ДОБАВЯНЕ НА СЪБИТИЯ ЗА НАВИГАЦИОННИТЕ ЛИНКОВЕ
+            const navLinks = document.querySelectorAll('.nav-link[href^="#"]');
+            navLinks.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const href = this.getAttribute('href');
+                    
+                    // Премахване на # от href
+                    const sectionId = href.substring(1);
+                    
+                    if (sections[sectionId]) {
+                        showSection(sectionId);
+                    }
+                    
+                    // Затваряне на хамбургер менюто на мобилни устройства
+                    const hamburger = document.querySelector('.hamburger');
+                    const navMenu = document.querySelector('.nav-menu');
+                    if (hamburger && navMenu) {
+                        hamburger.classList.remove('active');
+                        navMenu.classList.remove('active');
+                    }
+                });
             });
             
-            // 000.01.6.6 ЗАТВАРЯНЕ С ESC КЛАВИШ
-            document.addEventListener('keydown', function(e) {
-                if (e.key === 'Escape') {
-                    if (docsModal && docsModal.style.display === 'block') {
-                        docsModal.style.display = 'none';
-                        document.body.style.overflow = 'auto';
-                    }
-                    if (document.getElementById('contact-modal') && document.getElementById('contact-modal').style.display === 'block') {
-                        document.getElementById('contact-modal').style.display = 'none';
-                        document.body.style.overflow = 'auto';
-                    }
+            // СЛУШАТЕЛ ЗА СМЯНА НА ЕЗИКА ЗА ПРЕЗАРЕЖДАНЕ НА ДОКУМЕНТИТЕ
+            document.addEventListener('languageChanged', function() {
+                const docsSection = document.getElementById('documents');
+                if (docsSection && docsSection.style.display === 'block') {
+                    loadDocsIntoSection();
                 }
             });
         });
