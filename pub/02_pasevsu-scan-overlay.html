@@ -1,0 +1,726 @@
+<!DOCTYPE html>
+<html lang="bg">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Scan Overlay — изскачащ панел със замъгляване и прибиране в ъгъла</title>
+<!--
+  02_pasevsu-scan-overlay.html — самостоятелен (zero-dependency) HTML.
+
+  Какво прави:
+    1. Изскача от долу, докато замъглява САМО фонът зад себе си
+       (backdrop-filter върху overlay слоя, никога върху картата).
+    2. Отброява секунди с истински таймер (Date.now() + deadline).
+    3. След отброяването се прибира в долния десен ъгъл (fixed),
+       свива се до компактен widget и остава там.
+
+  Как се използва:
+    - Качваш файла в GitHub и го отваряш през GitHub Pages (или през <iframe>).
+    - Raw URL (raw.githubusercontent.com) връща text/plain, затова за директен
+      преглед използвай Pages адрес, gistpreview или iframe src.
+    - Параметри по избор:  ?seconds=45   ?edge=24   ?scale=0.75
+    - Без параметри: 30 секунди, 16px от ръба, мащаб 0.8 при прибиране.
+-->
+<style>
+  :root {
+    --bg: #071324;
+    --card-bg: #0d1e38;
+    --accent: #2563eb;
+    --border: #1e3a8a;
+    --text: #e2e8f0;
+    --muted: #94a3b8;
+    --warn: #f59e0b;
+    --ok: #10b981;
+    --ease: cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  * { box-sizing: border-box; }
+
+  html, body {
+    margin: 0;
+    padding: 0;
+    min-height: 100%;
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    font-size: 15px;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ─────────── демонстрационна страница (за да се вижда замъгляването) ─────────── */
+
+  .demo {
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 48px 24px 96px;
+  }
+
+  .demo h1 {
+    font-size: 26px;
+    line-height: 1.25;
+    margin: 0 0 8px;
+    letter-spacing: -0.2px;
+  }
+
+  .demo .lede {
+    color: #cbd5e1;
+    margin: 0 0 32px;
+  }
+
+  .demo h2 {
+    font-size: 16px;
+    text-transform: uppercase;
+    letter-spacing: 1.2px;
+    color: #93c5fd;
+    margin: 32px 0 12px;
+  }
+
+  .demo p { color: #cbd5e1; margin: 0 0 14px; }
+
+  .demo .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 12px;
+    margin: 24px 0;
+  }
+
+  .demo .tile {
+    background: #0b1a30;
+    border: 1px solid #17325c;
+    border-radius: 10px;
+    padding: 14px 16px;
+    font-size: 13px;
+    color: #a9bad2;
+  }
+
+  .demo .tile b {
+    display: block;
+    color: #e2e8f0;
+    font-size: 14px;
+    margin-bottom: 4px;
+  }
+
+  .demo .replay {
+    appearance: none;
+    border: 1px solid var(--border);
+    background: #12294b;
+    color: #bfdbfe;
+    font: inherit;
+    font-size: 13px;
+    padding: 9px 18px;
+    border-radius: 999px;
+    cursor: pointer;
+    transition: background-color 0.2s ease, border-color 0.2s ease;
+  }
+
+  .demo .replay:hover {
+    background: #17335c;
+    border-color: #2b4f8f;
+  }
+
+  /* ─────────── overlay: замъглява САМО фонът ─────────── */
+
+  .overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 2147483000;
+    display: grid;
+    place-items: center;
+    padding: 16px;
+    background: rgba(7, 19, 36, 0.55);
+    -webkit-backdrop-filter: blur(14px) saturate(120%);
+    backdrop-filter: blur(14px) saturate(120%);
+    transition: background-color 0.45s ease, opacity 0.35s ease;
+  }
+
+  /* Без backdrop-filter → плътна завеса, за да не остане текстът четим зад картата. */
+  @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+    .overlay { background: rgba(7, 19, 36, 0.92); }
+  }
+
+  /* Прибрано в ъгъла: фонът се изчиства, страницата става пак достъпна. */
+  .overlay.is-docked {
+    background: transparent;
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+    pointer-events: none;
+  }
+
+  .overlay.is-docked .notice-card { pointer-events: auto; }
+
+  .overlay.is-hidden {
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  /* ─────────── носач на трансформацията (прибиране в ъгъла) ─────────── */
+
+  .dock {
+    --tx: 0px;
+    --ty: 0px;
+    --s: 1;
+    transform: translate3d(var(--tx), var(--ty), 0) scale(var(--s));
+    /* Котвата е долният десен ъгъл: свиването не отмества картата от ъгъла. */
+    transform-origin: 100% 100%;
+    transition: transform 0.62s var(--ease);
+    will-change: transform;
+  }
+
+  /* ─────────── картата ─────────── */
+
+  .notice-card {
+    position: relative;
+    width: min(380px, calc(100vw - 32px));
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 26px 26px 22px;
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.6);
+    overflow: hidden;
+    animation: cardIn 0.55s var(--ease) both;
+    text-align: left;
+  }
+
+  .notice-card::before {
+    content: "";
+    position: absolute;
+    inset: 0 0 auto 0;
+    height: 4px;
+    background: linear-gradient(90deg, #1d4ed8, #3b82f6, #60a5fa);
+  }
+
+  @keyframes cardIn {
+    from {
+      opacity: 0;
+      transform: translateY(44px) scale(0.95);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+  }
+
+  .badge-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: 16px;
+  }
+
+  .badge {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+    color: #bfdbfe;
+    background: rgba(37, 99, 235, 0.18);
+    border: 1px solid #24487e;
+    border-radius: 999px;
+    padding: 3px 9px;
+  }
+
+  .badge.protected {
+    color: #a7f3d0;
+    background: rgba(16, 185, 129, 0.14);
+    border-color: #106b52;
+  }
+
+  .icon-shield {
+    width: 44px;
+    height: 44px;
+    display: grid;
+    place-items: center;
+    font-size: 22px;
+    border-radius: 12px;
+    background: rgba(37, 99, 235, 0.16);
+    border: 1px solid #24487e;
+    margin-bottom: 14px;
+  }
+
+  .notice-card h1 {
+    font-size: 17px;
+    line-height: 1.35;
+    margin: 0 0 8px;
+    color: #f1f5f9;
+  }
+
+  .desc {
+    font-size: 13px;
+    color: var(--muted);
+    margin: 0 0 18px;
+  }
+
+  .countdown-box {
+    background: rgba(2, 9, 20, 0.55);
+    border: 1px solid #16325c;
+    border-radius: 10px;
+    padding: 14px 16px;
+  }
+
+  .countdown-text {
+    font-size: 12px;
+    color: #b6c4d6;
+    margin-bottom: 6px;
+  }
+
+  .countdown-timer {
+    display: flex;
+    align-items: baseline;
+    gap: 6px;
+    margin-bottom: 10px;
+  }
+
+  #countdown {
+    font-size: 18px;
+    font-weight: 800;
+    color: #60a5fa;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .countdown-unit {
+    font-size: 12px;
+    color: var(--muted);
+  }
+
+  .progress-container {
+    height: 6px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.1);
+    overflow: hidden;
+    margin-bottom: 10px;
+  }
+
+  .progress-bar {
+    height: 100%;
+    width: 100%;
+    border-radius: 999px;
+    background: linear-gradient(90deg, #2563eb, #60a5fa);
+    transition: width 1s linear;
+  }
+
+  .countdown-hint {
+    font-size: 11px;
+    color: #8fa3bb;
+    margin: 0;
+  }
+
+  .btn-skip {
+    appearance: none;
+    background: none;
+    border: 0;
+    color: #60a5fa;
+    font: inherit;
+    font-size: 12px;
+    text-decoration: underline;
+    margin-top: 4px;
+    padding: 2px 8px;
+    cursor: pointer;
+    transition: color 0.2s ease;
+  }
+
+  .btn-skip:hover { color: #93c5fd; }
+
+  .security-meta {
+    list-style: none;
+    margin: 16px 0 0;
+    padding: 0;
+    font-size: 11px;
+    color: #8fa3bb;
+    display: grid;
+    gap: 4px;
+  }
+
+  .security-meta li::before {
+    content: "✓";
+    color: var(--ok);
+    margin-right: 6px;
+  }
+
+  .meta-footer {
+    margin: 14px 0 0;
+    font-size: 10px;
+    letter-spacing: 0.6px;
+    text-transform: uppercase;
+    color: #6b8099;
+  }
+
+  /* ─────────── прибрано състояние: компактен widget в ъгъла ─────────── */
+
+  .overlay.is-compact .badge-row,
+  .overlay.is-compact .desc,
+  .overlay.is-compact .security-meta,
+  .overlay.is-compact .meta-footer {
+    display: none;
+  }
+
+  .overlay.is-compact .notice-card {
+    padding: 16px 18px 14px;
+  }
+
+  .overlay.is-compact .icon-shield {
+    width: 32px;
+    height: 32px;
+    font-size: 16px;
+    border-radius: 9px;
+    margin-bottom: 10px;
+  }
+
+  .overlay.is-compact .notice-card h1 {
+    font-size: 14px;
+    margin-bottom: 8px;
+  }
+
+  .overlay.is-compact .countdown-box {
+    padding: 10px 12px;
+  }
+
+  .overlay.is-compact .countdown-unit,
+  .overlay.is-compact .countdown-hint,
+  .overlay.is-compact .progress-container {
+    display: none;
+  }
+
+  #dockState {
+    font-size: 12px;
+    font-weight: 700;
+    color: #6ee7b7;
+  }
+
+  #dockState[hidden] { display: none; }
+
+  #btnClose {
+    position: absolute;
+    top: 8px;
+    right: 10px;
+    appearance: none;
+    background: none;
+    border: 0;
+    color: #8fa3bb;
+    font: inherit;
+    font-size: 16px;
+    line-height: 1;
+    padding: 4px 6px;
+    cursor: pointer;
+    opacity: 0;
+    pointer-events: none;
+    transition: color 0.2s ease, opacity 0.2s ease;
+  }
+
+  .overlay.is-compact #btnClose {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  #btnClose:hover { color: #e2e8f0; }
+
+  .notice-card:focus { outline: none; }
+
+  .notice-card:focus-visible {
+    outline: 2px solid #60a5fa;
+    outline-offset: 3px;
+  }
+
+  @media (max-width: 420px) {
+    .notice-card { padding: 22px 18px 18px; }
+    .demo { padding: 32px 18px 80px; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .notice-card { animation: none; }
+    .dock { transition: none; }
+    .overlay { transition: none; }
+    .progress-bar { transition: none; }
+  }
+</style>
+</head>
+<body>
+
+<main class="demo">
+  <h1>Демонстрационна страница</h1>
+  <p class="lede">
+    Това е обикновено съдържание. Панелът по-долу изскача и замъглява само него —
+    самата карта остава с ясен текст, защото замъгляването е върху overlay слоя,
+    а не върху съдържанието.
+  </p>
+
+  <h2>Какво да наблюдаваш</h2>
+  <div class="grid">
+    <div class="tile"><b>1. Изскачане</b>Картата влиза отдолу с леко увеличение.</div>
+    <div class="tile"><b>2. Замъгляване</b>Фонът зад нея се размива; текстът в картата е ясен.</div>
+    <div class="tile"><b>3. Отброяване</b>Секундите намаляват плавно, лентата се свива.</div>
+    <div class="tile"><b>4. Прибиране</b>След нулата картата застава в долния десен ъгъл.</div>
+  </div>
+
+  <h2>Употреба</h2>
+  <p>
+    Файлът е самостоятелен — без зависимости, без билд стъпка. Може да се отвори
+    директно, да се вгради с <code>&lt;iframe&gt;</code> или да се качи в GitHub и
+    да се зареди през GitHub Pages.
+  </p>
+  <p>
+    Параметри: <code>?seconds=45</code>, <code>?edge=24</code>, <code>?scale=0.75</code>.
+  </p>
+
+  <p>
+    <button type="button" class="replay" id="replay">Покажи панела отново</button>
+  </p>
+</main>
+
+<div class="overlay" id="overlay">
+  <div class="dock" id="dock">
+    <section class="notice-card" id="card" role="dialog" aria-modal="true" aria-labelledby="cardTitle" tabindex="-1">
+      <button type="button" id="btnClose" aria-label="Затвори">✕</button>
+
+      <div class="badge-row">
+        <span class="badge">Сигурен режим</span>
+        <span class="badge protected">Защитено</span>
+      </div>
+
+      <div class="icon-shield" aria-hidden="true">🛡️</div>
+
+      <h1 id="cardTitle">Подготвяме защитения документ</h1>
+
+      <p class="desc">
+        Изчакай кратко — панелът се прибира сам в ъгъла и остава там като индикатор
+        за състоянието.
+      </p>
+
+      <div class="countdown-box">
+        <div class="countdown-text">Прибиране след</div>
+        <div class="countdown-timer" aria-live="polite">
+          <span id="countdown">30</span>
+          <span class="countdown-unit">сек.</span>
+          <span id="dockState" hidden>✓ Готово</span>
+        </div>
+        <div class="progress-container">
+          <div class="progress-bar" id="countdownProgress"></div>
+        </div>
+        <p class="countdown-hint" id="countdownHint">Оставащи секунди до скриване на това съобщение: 30</p>
+        <button type="button" class="btn-skip" id="btnSkipWait">Прибери веднага</button>
+      </div>
+
+      <ul class="security-meta">
+        <li>Проверен произход на ресурсите</li>
+        <li>Локална обработка — без изпращане към сървър</li>
+        <li>Няма проследяващи скриптове</li>
+      </ul>
+
+      <p class="meta-footer">Самостоятелен overlay · v1</p>
+    </section>
+  </div>
+</div>
+
+<noscript>
+  <div style="padding:16px;color:#f59e0b">
+    JavaScript е изключен — панелът не може да отброява и да се прибере автоматично.
+  </div>
+</noscript>
+
+<script>
+(function () {
+  'use strict';
+
+  var seconds = 30;
+  var totalSeconds = seconds;
+
+  var EDGE = 16;
+  var DOCK_SCALE = 0.8;
+
+  var overlay = document.getElementById('overlay');
+  var dock = document.getElementById('dock');
+  var card = document.getElementById('card');
+  var digits = document.getElementById('countdown');
+  var barEl = document.getElementById('countdownProgress');
+  var hintEl = document.getElementById('countdownHint');
+  var skipBtn = document.getElementById('btnSkipWait');
+  var closeBtn = document.getElementById('btnClose');
+  var stateEl = document.getElementById('dockState');
+  var replayBtn = document.getElementById('replay');
+
+  var deadline = 0;
+  var tick = null;
+  var docked = false;
+  var compacted = false;
+
+  function num(value, fallback, min, max) {
+    var n = Number(value);
+    if (!isFinite(n) || n <= 0) return fallback;
+    return Math.min(max, Math.max(min, n));
+  }
+
+  function readParams() {
+    var q;
+    try {
+      q = new URLSearchParams(window.location.search);
+    } catch (e) {
+      return;
+    }
+    var s = q.get('seconds');
+    if (s !== null) {
+      seconds = Math.round(num(s, seconds, 1, 3600));
+      totalSeconds = seconds;
+    }
+    var e = q.get('edge');
+    if (e !== null) EDGE = Math.round(num(e, EDGE, 0, 200));
+    var sc = q.get('scale');
+    if (sc !== null) DOCK_SCALE = num(sc, DOCK_SCALE, 0.3, 1);
+  }
+
+  function paint() {
+    var left = Math.max(0, seconds);
+    if (digits) digits.textContent = String(left);
+    if (barEl) barEl.style.width = (totalSeconds > 0 ? left / totalSeconds : 0) * 100 + '%';
+    if (hintEl) hintEl.textContent = 'Оставащи секунди до скриване на това съобщение: ' + left;
+  }
+
+  function stopCountdown(message) {
+    if (tick) {
+      clearInterval(tick);
+      tick = null;
+    }
+    seconds = 0;
+    if (digits) digits.textContent = '0';
+    if (barEl) barEl.style.width = '0%';
+    if (message && hintEl) hintEl.textContent = message;
+  }
+
+  function applyTransform(tx, ty, s) {
+    dock.style.setProperty('--tx', tx + 'px');
+    dock.style.setProperty('--ty', ty + 'px');
+    dock.style.setProperty('--s', String(s));
+  }
+
+  /*
+   * Overlay центрира .dock, затова при покой десният ръб е на innerWidth/2 + w/2.
+   * Котвата е долен-десен ъгъл (transform-origin: 100% 100%), т.е. мащабът не
+   * мести ъгъла — само translate трябва да е верен.
+   */
+  function reposition() {
+    if (!docked) return;
+    var w = dock.offsetWidth;
+    var h = dock.offsetHeight;
+    var tx = window.innerWidth / 2 - EDGE - w / 2;
+    var ty = window.innerHeight / 2 - EDGE - h / 2;
+    applyTransform(tx, ty, DOCK_SCALE);
+  }
+
+  function dockToCorner() {
+    if (docked) return;
+    docked = true;
+    compacted = false;
+    overlay.classList.add('is-docked');
+    if (card) card.removeAttribute('role');
+    if (stateEl) stateEl.hidden = false;
+    reposition();
+  }
+
+  function undock() {
+    if (!docked) return;
+    docked = false;
+    compacted = false;
+    overlay.classList.remove('is-compact');
+    overlay.classList.remove('is-docked');
+    applyTransform(0, 0, 1);
+    if (card) card.setAttribute('role', 'dialog');
+    if (stateEl) stateEl.hidden = true;
+  }
+
+  function start() {
+    stopCountdown(null);
+    seconds = totalSeconds;
+    paint();
+    deadline = Date.now() + totalSeconds * 1000;
+    tick = setInterval(function () {
+      seconds = Math.max(0, Math.ceil((deadline - Date.now()) / 1000));
+      paint();
+      if (seconds <= 0) {
+        stopCountdown('Готово — съобщението се прибира в ъгъла.');
+        dockToCorner();
+      }
+    }, 250);
+  }
+
+  if (dock) {
+    dock.addEventListener('transitionend', function (e) {
+      if (e.propertyName !== 'transform' || !docked || compacted) return;
+      compacted = true;
+      overlay.classList.add('is-compact');
+      // Компактната карта е по-ниска → преизчисляваме, за да остане в ъгъла.
+      reposition();
+    });
+  }
+
+  if (skipBtn) {
+    skipBtn.addEventListener('click', function (e) {
+      e.preventDefault();
+      stopCountdown('Прибрано по твое желание.');
+      dockToCorner();
+    });
+  }
+
+  if (closeBtn) {
+    closeBtn.addEventListener('click', function (e) {
+      e.preventDefault();
+      e.stopPropagation();
+      overlay.classList.add('is-hidden');
+    });
+  }
+
+  if (card) {
+    // Клик върху прибраната карта я връща обратно в центъра.
+    card.addEventListener('click', function () {
+      if (!docked) return;
+      overlay.classList.remove('is-hidden');
+      undock();
+    });
+  }
+
+  if (replayBtn) {
+    replayBtn.addEventListener('click', function () {
+      overlay.classList.remove('is-hidden');
+      undock();
+      start();
+    });
+  }
+
+  window.addEventListener('resize', reposition);
+
+  readParams();
+  paint();
+  start();
+
+  if (card && card.focus) {
+    try {
+      card.focus({ preventScroll: true });
+    } catch (err) {
+      /* стар браузър — без preventScroll */
+    }
+  }
+
+  // Помощ за вграждане: позволява на външната страница да управлява панела.
+  window.ScanOverlay = {
+    dock: function () {
+      stopCountdown('Прибрано от външен контрол.');
+      dockToCorner();
+    },
+    undock: undock,
+    restart: function () {
+      overlay.classList.remove('is-hidden');
+      undock();
+      start();
+    },
+    hide: function () {
+      overlay.classList.add('is-hidden');
+    },
+    state: function () {
+      return { docked: docked, compacted: compacted, seconds: seconds };
+    },
+  };
+})();
+</script>
+</body>
+</html>
