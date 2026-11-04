@@ -1,0 +1,738 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="x-apple-disable-message-reformatting">
+<meta name="format-detection" content="telephone=no,address=no,email=no,date=no">
+<meta name="color-scheme" content="light only">
+<meta name="supported-color-schemes" content="light only">
+<title>PasevSU • Cybersecurity &amp; Legal Compliance</title>
+
+<!-- =====================================================================
+     СТИЛОВЕ
+     ---------------------------------------------------------------------
+     Този регион се генерира автоматично от tools/build-doc.js и НЕ се
+     редактира на ръка. Единствен източник на стилове:
+         00_pasevsu-email.css
+     Обновяване:  npm run build:doc
+
+     Защо две копия:
+       • <link>  — пълният стил се зарежда от GitHub Pages, когато
+                   документът се отвори в браузър (един източник, кеш).
+       • <style> — същото съдържание, вградено, защото .eml файлът трябва
+                   да е самостоятелен: wrapInGatekeeper() извлича само
+                   <style> блокове и ги пренася в #secure-document на 01,
+                   а пощенските клиенти не зареждат външен CSS.
+     ===================================================================== -->
+<!-- STYLES:BEGIN -->
+<link rel="stylesheet" href="https://pasevsu.github.io/pub/00_pasevsu-email.css" />
+<style>
+/* =====================================================================
+   PasevSU • Enterprise e-mail stylesheet  (00_pasevsu-email.css)
+   ---------------------------------------------------------------------
+   Единствен източник на стилове за документа 00 (тялото на писмото).
+
+   Публикуван адрес (GitHub Pages, Content-Type: text/css):
+     https://pasevsu.github.io/pub/00_pasevsu-email.css
+
+   Принципи:
+     • Гъвкава геометрия — проценти за ширина/отстъпи, em за шрифт.
+       Никакви фиксирани пиксели в основния поток.
+     • Без flex/grid в критичния layout — Outlook (Word engine) ги игнорира.
+       Подредбата е inline-block + text-align, което работи навсякъде.
+     • Без CSS custom properties (--var) във вграденото копие — Gmail и
+       Outlook ги изхвърлят. Стойностите са изписани директно.
+     • Без backdrop-filter / filter в критичния път — само като
+       прогресивно подобрение зад @supports.
+     • Всяко правило има базов вариант без media query, за да оцелее
+       при клиент, който изрязва @media.
+     • Този файл се вгражда дословно в стиловия блок на документа 00
+       от tools/build-doc.js, а wrapInGatekeeper() го пренася в .eml.
+       Затова не съдържа външни @import и не разчита на custom properties.
+   ===================================================================== */
+
+/* ---------------------------------------------------------------------
+   1. Критичен reset — само това, което влияе на рендирането в клиент
+   --------------------------------------------------------------------- */
+html,
+body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  min-width: 100%;
+}
+
+body {
+  background-color: #dde3eb;
+  color: #1e293b;
+  font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  font-size: 100%; /* 16px база; всичко останало е в em */
+  line-height: 1.5;
+  -webkit-text-size-adjust: 100%;
+  -ms-text-size-adjust: 100%;
+  -webkit-font-smoothing: antialiased;
+}
+
+table {
+  border-collapse: collapse;
+  border-spacing: 0;
+  mso-table-lspace: 0pt;
+  mso-table-rspace: 0pt;
+}
+
+td,
+th {
+  padding: 0;
+  vertical-align: top;
+}
+
+p {
+  margin: 0 0 0.75em 0;
+  padding: 0;
+  border: 0;
+}
+
+img {
+  border: 0;
+  outline: none;
+  text-decoration: none;
+  -ms-interpolation-mode: bicubic;
+  max-width: 100%;
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+a {
+  color: #0052a0;
+  text-decoration: none;
+}
+
+a[x-apple-data-detectors] {
+  color: inherit !important;
+  text-decoration: none !important;
+  font-size: inherit !important;
+  font-family: inherit !important;
+  font-weight: inherit !important;
+  line-height: inherit !important;
+}
+
+/* ---------------------------------------------------------------------
+   2. Външна обвивка — 100 % ширина + max-width, центрирано
+   Word engine игнорира max-width, затова Outlook получава фиксирана
+   таблица през условен коментар за MSO в документа 00.
+   --------------------------------------------------------------------- */
+.email-shell {
+  width: 100%;
+  background-color: #dde3eb;
+  border-collapse: collapse;
+}
+
+.email-cell {
+  padding: 2.5% 0;
+  text-align: center;
+  vertical-align: top;
+}
+
+.email-responsive {
+  width: 96%;
+  max-width: 1100px;
+  min-width: 280px;
+  margin: 0 auto;
+  background-color: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 0.25em 0.75em rgba(0, 40, 80, 0.15);
+  overflow: hidden;
+  text-align: left;
+}
+
+/* ---------------------------------------------------------------------
+   3. Банер
+   --------------------------------------------------------------------- */
+.dsgvo-banner {
+  width: 100%;
+  padding: 3.4% 3.8%;
+  color: #ffffff;
+  background-color: #0a3d62;
+  background-image: linear-gradient(145deg, #0a3d62, #1e4f7a, #0052a0);
+  text-align: left;
+}
+
+/* ---------------------------------------------------------------------
+   4. Лого ред — inline-block вместо flex+gap
+   --------------------------------------------------------------------- */
+.logo-container {
+  margin: 0 0 2%;
+  padding: 0;
+  line-height: 1.2;
+  text-align: left;
+  white-space: normal;
+}
+
+.dsgvo-logo {
+  display: inline-block;
+  vertical-align: middle;
+  font-size: 2.7em;
+  line-height: 1;
+  margin: 0 2% 0.2em 0;
+}
+
+.logo-placeholder {
+  display: inline-block;
+  vertical-align: middle;
+  font-weight: 800;
+  font-size: 1.35em;
+  letter-spacing: 0.03em;
+  background-color: rgba(255, 255, 255, 0.15);
+  padding: 0.35em 1em;
+  border-radius: 2.5em;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  margin: 0 2% 0.2em 0;
+}
+
+.cert-badge {
+  display: inline-block;
+  vertical-align: middle;
+  font-size: 0.75em;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  padding: 0.36em 1em;
+  border-radius: 2em;
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  background-color: rgba(0, 0, 0, 0.2);
+  opacity: 0.95;
+}
+
+/* ---------------------------------------------------------------------
+   5. Правен текст в банера
+   --------------------------------------------------------------------- */
+.legal-text {
+  font-size: 0.82em;
+  font-weight: 400;
+  line-height: 1.55;
+  color: #ffffff;
+  text-align: left;
+}
+
+.legal-text p {
+  margin: 0.9em 0;
+  color: #ffffff;
+}
+
+.legal-text p:first-child {
+  margin-top: 0;
+}
+
+.legal-heading {
+  font-weight: 700;
+  font-size: 1.15em;
+  letter-spacing: 0.02em;
+  line-height: 1.4;
+}
+
+.legal-text p:last-child {
+  margin-bottom: 0;
+}
+
+.legal-text strong {
+  font-weight: 700;
+  color: #ffffff;
+}
+
+.legal-text a {
+  color: #93c5fd;
+  text-decoration: underline;
+}
+
+/* ---------------------------------------------------------------------
+   6. Тяло на съобщението
+   --------------------------------------------------------------------- */
+.content {
+  padding: 3.4% 3.8%;
+  background-color: #ffffff;
+  font-size: 1em;
+  line-height: 1.6;
+  border-top: 3px solid #000000;
+}
+
+.content p {
+  margin: 0 0 0.75em 0;
+  padding: 0;
+  border: 0;
+}
+
+.content p:last-child {
+  margin-bottom: 0;
+}
+
+/* Обръщение — средно тегло, без да е удебелено. */
+.salutation {
+  font-weight: 500;
+}
+
+/* Рендиране на текст без съдържание (шаблонно съобщение) —
+   пълен контраст, за да остава четим на всички екрани. */
+.protected-content {
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  pointer-events: none;
+}
+
+.protected-content.placeholder-style,
+.protected-content.placeholder-style p {
+  color: #334155;
+  font-style: italic;
+}
+
+/* ---------------------------------------------------------------------
+   7. Контакти
+   --------------------------------------------------------------------- */
+.contact-info {
+  margin-top: 1.9em;
+  padding-top: 1.25em;
+  border-top: 1px solid #cbd5e1;
+  font-size: 0.94em;
+  color: #334155;
+  line-height: 1.45;
+}
+
+.contact-info p {
+  margin: 0;
+  line-height: 1.45;
+}
+
+.contact-info p:first-of-type {
+  margin-bottom: 0.5em;
+}
+
+.contact-info a {
+  color: #0052a0;
+  text-decoration: none;
+}
+
+/* ---------------------------------------------------------------------
+   8. Футър
+   --------------------------------------------------------------------- */
+.footer {
+  background-color: #e6f0fa;
+  padding: 1.6% 3.8%;
+  border-top: 3px solid #000000;
+  font-size: 0.7em;
+  color: #1e3a5f;
+  line-height: 1.5;
+  text-align: left;
+}
+
+.footer .warning-title {
+  font-weight: 700;
+  color: #003d7c;
+  font-size: 1.1em;
+  margin: 0 0 0.7em;
+  letter-spacing: 0.02em;
+}
+
+.footer p {
+  margin: 0.5em 0;
+  color: #1e3a5f;
+  font-size: 1em;
+}
+
+/* ---------------------------------------------------------------------
+   9. Прогресивни подобрения — само където клиентът ги разбира
+   --------------------------------------------------------------------- */
+@supports ((-webkit-backdrop-filter: blur(4px)) or (backdrop-filter: blur(4px))) {
+  .logo-placeholder {
+    -webkit-backdrop-filter: blur(4px);
+    backdrop-filter: blur(4px);
+  }
+}
+
+/* Плавна, но не натрапчива типография на широк екран. */
+@supports (font-size: clamp(1px, 1vw, 2px)) {
+  .content {
+    font-size: clamp(0.95em, 0.55vw + 0.78em, 1.12em);
+  }
+
+  .legal-text {
+    font-size: clamp(0.78em, 0.35vw + 0.68em, 0.92em);
+  }
+}
+
+/* ---------------------------------------------------------------------
+   10. Адаптивни нива — низходящо
+   --------------------------------------------------------------------- */
+@media (max-width: 1024px) {
+  .email-responsive {
+    width: 97%;
+  }
+
+  .dsgvo-banner,
+  .content {
+    padding: 3% 3.4%;
+  }
+}
+
+@media (max-width: 768px) {
+  .email-cell {
+    padding: 1.8% 0;
+  }
+
+  .email-responsive {
+    width: 98%;
+    border-radius: 10px;
+  }
+
+  .dsgvo-banner {
+    padding: 3.2% 3.2%;
+  }
+
+  .content {
+    padding: 3.2% 3.2%;
+  }
+
+  .footer {
+    padding: 2% 3.2%;
+  }
+
+  .legal-text {
+    font-size: 0.85em;
+  }
+
+  .dsgvo-logo {
+    font-size: 2.2em;
+  }
+
+  .logo-placeholder {
+    font-size: 1.15em;
+  }
+
+  .contact-info {
+    font-size: 0.92em;
+  }
+
+  .footer {
+    font-size: 0.74em;
+  }
+}
+
+/* Тук процентите стават твърде малки за пръст — минаваме на px. */
+@media (max-width: 600px) {
+  .email-cell {
+    padding: 0;
+  }
+
+  .email-responsive {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    border-radius: 0;
+    box-shadow: none;
+  }
+
+  .dsgvo-banner {
+    padding: 20px 18px;
+  }
+
+  .content {
+    padding: 20px 18px;
+    font-size: 15px;
+  }
+
+  .footer {
+    padding: 16px 18px;
+    font-size: 12px;
+  }
+
+  .footer .warning-title {
+    font-size: 13px;
+  }
+
+  .footer p {
+    font-size: 12px;
+  }
+
+  .legal-text {
+    font-size: 13px;
+  }
+
+  .dsgvo-logo {
+    font-size: 34px;
+    margin-right: 10px;
+  }
+
+  .logo-placeholder {
+    font-size: 16px;
+    padding: 6px 14px;
+  }
+
+  .cert-badge {
+    font-size: 11px;
+  }
+
+  .contact-info {
+    font-size: 14px;
+    margin-top: 24px;
+    padding-top: 16px;
+  }
+
+  .content {
+    border-top-width: 3px;
+  }
+}
+
+@media (max-width: 480px) {
+  .dsgvo-banner {
+    padding: 18px 14px;
+  }
+
+  .content {
+    padding: 18px 14px;
+    font-size: 15px;
+  }
+
+  .footer {
+    padding: 14px;
+  }
+
+  .legal-text {
+    font-size: 12.5px;
+  }
+
+  .logo-placeholder {
+    font-size: 14px;
+    letter-spacing: 0.02em;
+  }
+
+  .cert-badge {
+    display: block;
+    margin-top: 8px;
+    width: auto;
+  }
+
+  .contact-info {
+    font-size: 13.5px;
+  }
+}
+
+/* ---------------------------------------------------------------------
+   11. Достъпност
+   --------------------------------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+@media (forced-colors: active) {
+  .email-responsive,
+  .dsgvo-banner,
+  .footer {
+    border: 1px solid CanvasText;
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  /* Само леко притъмняване — без инверсия, за да остане четим
+     и в клиенти, които прилагат собствена тъмна тема. */
+  .email-responsive .content {
+    color: #1e293b;
+    background-color: #ffffff;
+  }
+}
+
+/* ---------------------------------------------------------------------
+   12. Печат (A4) — фиксирани цветове, без сенки
+   --------------------------------------------------------------------- */
+@media print {
+  @page {
+    size: A4;
+    margin: 1.5cm;
+  }
+
+  html,
+  body {
+    background-color: #ffffff;
+    padding: 0;
+    margin: 0;
+  }
+
+  .email-shell,
+  .email-cell {
+    padding: 0;
+    background-color: #ffffff;
+  }
+
+  .email-responsive {
+    width: 100%;
+    max-width: none;
+    min-width: 0;
+    margin: 0;
+    padding: 0;
+    box-shadow: none;
+    border-radius: 0;
+    background-color: #ffffff;
+  }
+
+  /* ФИКС: Принудително отпечатване на фонови цветове и градиенти */
+  .dsgvo-banner {
+    background: #0a3d62 !important;
+    background: linear-gradient(145deg, #0a3d62, #1e4f7a, #0052a0) !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+    color-adjust: exact !important;
+  }
+
+  .footer {
+    background-color: #e6f0fa !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+    color-adjust: exact !important;
+  }
+
+  /* Гарантира, че текстът в банер остава бял при печат */
+  .dsgvo-banner,
+  .dsgvo-banner *,
+  .legal-text,
+  .legal-text p,
+  .legal-text strong,
+  .logo-placeholder {
+    color: white !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  /* Гарантира, че фона на логото остава полупрозрачен */
+  .logo-placeholder {
+    background: rgba(255, 255, 255, 0.15) !important;
+    border: 1px solid rgba(255, 255, 255, 0.25) !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  .content {
+    font-size: 12pt;
+    line-height: 1.4;
+    padding: 0.5cm 0.7cm;
+  }
+
+  .contact-info {
+    font-size: 10pt;
+  }
+
+  .footer {
+    font-size: 8pt;
+  }
+
+  .footer .warning-title {
+    font-size: 9pt;
+  }
+
+  .footer p {
+    font-size: 8pt;
+  }
+
+  .email-responsive,
+  .dsgvo-banner,
+  .footer {
+    border-radius: 0;
+    box-shadow: none;
+  }
+}
+</style>
+<!-- STYLES:END -->
+</head>
+
+<body>
+<!--[if mso]>
+<table role="presentation" width="1100" cellpadding="0" cellspacing="0" border="0" align="center"><tr><td>
+<![endif]-->
+<table role="presentation" class="email-shell" width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr>
+    <td class="email-cell" align="center" valign="top">
+
+      <div class="email-responsive">
+
+        <div class="dsgvo-banner">
+          <div class="logo-container">
+            <span class="dsgvo-logo" role="img" aria-label="PasevSU">🛡️</span>
+            <span class="logo-placeholder">PASEVSU • CYBERSECURITY &amp; COMPLIANCE</span>
+            <span class="cert-badge">E2E CRYPTOGRAPHIC INTEGRITY</span>
+          </div>
+
+          <div class="legal-text">
+            <p class="legal-heading">
+              🔒 PASEVSU CYBERSECURITY DIRECTIVE &amp; VERIFIKATION DER INTEGRITÄT
+            </p>
+            <p>
+              🌐 <strong>ORGANISATION:</strong> PasevSU Cybersicherheit &amp; Information Security Directorate<br />
+              🔗 <strong>SICHERHEITSPORTAL:</strong>
+              <a href="https://pasev.asuscomm.com" target="_blank" rel="noopener">https://pasev.asuscomm.com</a>
+              &nbsp;|&nbsp; 💻 <strong>GITHUB &amp; PUBLIC KEYS:</strong>
+              <a href="https://pasevsu.github.io" target="_blank" rel="noopener">https://pasevsu.github.io</a>
+            </p>
+            <p>
+              📜 <strong>KRYPTOGRAFISCHE &amp; RECHTLICHE GRUNDLAGEN:</strong><br />
+              Diese E-Mail einschließlich aller Anhänge wurde durch kryptografische Protokolle der Organisation
+              <strong>PasevSU</strong> (S/MIME X.509 und OpenPGP RFC 3156 / RFC 4880) digital signiert und gegen unbefugte Manipulation gesichert.
+              Die übermittelten Daten sind ausschließlich für den benannten Empfänger bestimmt. Die rechtliche Geltung und der Schutz stützen sich
+              neben den Cybersicherheitsstandards auf Art. 5, Art. 6, Art. 32 DSGVO (EU) 2016/679, die eIDAS-Verordnung (EU) Nr. 910/2014
+              sowie die Vorschriften des StGB (§§ 202a, 202b, 202c StGB).
+            </p>
+            <p>
+              🔐 <strong>VERTRAULICHKEIT &amp; BESONDERER DATENSCHUTZ:</strong><br />
+              Diese Nachricht und ihre Anhänge enthalten vertrauliche Informationen sowie geschützte personenbezogene Daten,
+              einschließlich solcher von Minderjährigen. Die Übermittlung erfolgt im Rahmen berechtigter Interessen und der Wahrnehmung
+              öffentlicher Aufgaben (Art. 6 Abs. 1 lit. c/e DSGVO i. V. m. § 2 SGB VIII und Art. 8 EMRK).
+              Besondere Datenkategorien (Art. 9 DSGVO) sind nach § 62 SGB VIII geschützt.
+            </p>
+            <p>
+              ✒️ <strong>RECHTSFOLGEN BEI VERSTOSS:</strong><br />
+              Jegliche unbefugte Veröffentlichung, Weitergabe, Dekryptierung oder Manipulation zieht unweigerlich zivil- und strafrechtliche
+              Konsequenzen nach sich (u. a. Schadensersatz gem. Art. 82 DSGVO i. V. m. EuGH C-655/23, C-590/22 sowie Strafanzeigen bei den zuständigen Behörden).
+            </p>
+          </div>
+        </div>
+
+        <div class="content">
+          <p class="salutation">Sehr geehrte Damen und Herren,</p>
+          <p>.......</p>
+
+          <div class="contact-info">
+            <p><strong>Denislav Pasev</strong> | <strong>PasevSU Cybersecurity</strong><br />Kristiana Belnikolova</p>
+            <p>Organisation: <strong>PasevSU</strong> — Information Security &amp; Cryptographic Directorate</p>
+            <p>E-Mail: <a href="mailto:pasevdenislav@gmail.com">pasevdenislav@gmail.com</a></p>
+            <p>Sicherheitsportal: <a href="https://pasev.asuscomm.com" target="_blank" rel="noopener">https://pasev.asuscomm.com</a></p>
+            <p>GitHub Repository / Keys: <a href="https://pasevsu.github.io" target="_blank" rel="noopener">https://pasevsu.github.io</a></p>
+            <p>Telefon: +49 (0)157 50800967</p>
+            <p>Adresse: Münsterstraße 177, 44145 Dortmund, Deutschland</p>
+          </div>
+        </div>
+
+        <div class="footer">
+          <div class="warning-title">⚠️ PASEVSU CYBERSECURITY — HAFTUNGSAUSSCHLUSS, FORENSIK &amp; RECHTLICHE FOLGEN</div>
+          <p>
+            Mit dem Empfang und Öffnen dieser E-Mail bestätigen Sie, dass Sie der rechtmäßige und benannte Empfänger sind.
+            Alle Übertragungsmerkmale, Zeitstempel, Prüfsummen (SHA-256) und Signatur-Hashes sind forensisch protokolliert.
+            Eine Weitergabe an Dritte ohne ausdrückliche schriftliche Autorisierung von PasevSU ist unzulässig.
+            Im Falle eines Verstoßes werden sämtliche zivil-, straf- und aufsichtsrechtliche Schritte eingeleitet
+            (inklusive Schadensersatzklagen und Beschwerden gem. Art. 82/83 DSGVO sowie Strafanträgen).
+            Diese Bestimmungen gelten universell für alle übermittelten Daten.
+          </p>
+        </div>
+
+      </div>
+
+    </td>
+  </tr>
+</table>
+<!--[if mso]>
+</td></tr></table>
+<![endif]-->
+</body>
+</html>
