@@ -289,6 +289,9 @@
         'use strict';
 
         var TARGET = '00_dsgvo-universal-faktisch.html';
+        /* Токенът идентифицира конкретното писмо, за което е издадена обвивката.
+           Празен значи „без токен“ — самостоятелно копие работи както преди. */
+        var TOKEN = '';
         var seconds = 30;
         var totalSeconds = seconds;
         var timerEl = document.getElementById('countdown');
@@ -337,6 +340,32 @@
           if (noticeEl) noticeEl.style.display = 'none';
         }
 
+        /* 01 заявва 00 С ТОКЕН — идентификатор на конкретното писмо. Токенът
+           от адреса на самата обвивка (?t=…) има предимство пред вградения,
+           за да може едно копие да се издава за различни получатели. */
+        function targetUrl() {
+          var own = '';
+          var search = (window.location && window.location.search) || '';
+          var m = /[?&]t=([^&#]*)/.exec(search);
+          if (m) {
+            try {
+              own = decodeURIComponent(m[1]);
+            } catch (e) {
+              own = m[1];
+            }
+          }
+          var value = own || TOKEN;
+          if (!value) return TARGET;
+          return TARGET + (TARGET.indexOf('?') < 0 ? '?' : '&') + 't=' + encodeURIComponent(value);
+        }
+
+        /* Сглобява зареденото 00 в #secure-document и пуска брояча напред. */
+        function injectDoc(styles, body) {
+          if (docEl) docEl.innerHTML = styles + '\n' + body;
+          if (hasDocument()) reveal();
+          else showUnavailable();
+        }
+
         /* Няма вграден документ (например отворен самостоятелно 01 файл):
            зареждаме го на място, без препращане към втори HTML адрес. */
         function inlineFallback() {
@@ -354,7 +383,7 @@
               reject(new Error('timeout'));
             }, 15000);
           });
-          Promise.race([fetch(TARGET), guard])
+          Promise.race([fetch(targetUrl()), guard])
             .then(function (r) {
               if (!r.ok) throw new Error('HTTP ' + r.status);
               return r.text();
@@ -363,9 +392,27 @@
               var bodyMatch = text.match(/<body[^>]*>([\s\S]*?)<\/body>/i);
               var body = bodyMatch ? bodyMatch[1] : text;
               var styles = (text.match(/<style[^>]*>[\s\S]*?<\/style>/gi) || []).join('\n');
-              if (docEl) docEl.innerHTML = styles + '\n' + body;
-              if (hasDocument()) reveal();
-              else showUnavailable();
+              if (styles) {
+                injectDoc(styles, body);
+                return null;
+              }
+              /* 00 пази стиловете си във външен файл — вграждаме го и него,
+                 за да изглежда документът еднакво и извън пощенски клиент. */
+              var href = /<link[^>]+href\s*=\s*["']([^"']+\.css[^"']*)["']/i.exec(text);
+              if (!href) {
+                injectDoc('', body);
+                return null;
+              }
+              return fetch(href[1])
+                .then(function (r) {
+                  return r.ok ? r.text() : '';
+                })
+                .then(function (css) {
+                  injectDoc(css ? '<style type="text/css">\n' + css + '\n</style>' : '', body);
+                })
+                .catch(function () {
+                  injectDoc('', body);
+                });
             })
             .catch(function () {
               showUnavailable();
@@ -384,7 +431,7 @@
               'Отворете оригиналното съобщение или поискайте ново копие от PasevSU.';
             if (window.location && window.location.protocol === 'file:') {
               desc.innerHTML +=
-                '<br /><br /><a href="' + TARGET + '" style="color:#60a5fa">Отвори шаблона 00 за преглед →</a>';
+                '<br /><br /><a href="' + targetUrl() + '" style="color:#60a5fa">Отвори шаблона 00 за преглед →</a>';
             }
           }
         }
