@@ -120,13 +120,29 @@ a[x-apple-data-detectors] {
   box-shadow: 0 0.25em 0.75em rgba(0, 40, 80, 0.15);
   overflow: hidden;
   text-align: left;
+  box-sizing: border-box;
+}
+
+/* Геометрията е border-box: процентната подложка влиза В ширината,
+   вместо да я разширява. Без това .dsgvo-banner (width:100% +
+   padding:3.8%) става 107.6 % от картата и overflow:hidden отрязва
+   дясната част на текста. Word engine не разбира box-sizing, затова
+   напасването разчита и на width:auto по-долу. */
+.email-responsive,
+.dsgvo-banner,
+.content,
+.footer {
+  box-sizing: border-box;
 }
 
 /* ---------------------------------------------------------------------
    3. Банер
    --------------------------------------------------------------------- */
 .dsgvo-banner {
-  width: 100%;
+  /* width:auto — блокът сам запълва родителя минус подложката.
+     Така дори клиент без box-sizing (Outlook/Word) не прелива. */
+  width: auto;
+  max-width: 100%;
   padding: 3.4% 3.8%;
   color: #ffffff;
   background-color: #0a3d62;
@@ -188,6 +204,11 @@ a[x-apple-data-detectors] {
   line-height: 1.55;
   color: #ffffff;
   text-align: left;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+  -ms-word-break: break-word;
+  -webkit-hyphens: auto;
+  hyphens: auto;
 }
 
 .legal-text p {
@@ -229,6 +250,11 @@ a[x-apple-data-detectors] {
   font-size: 1em;
   line-height: 1.6;
   border-top: 3px solid #000000;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+  -ms-word-break: break-word;
+  -webkit-hyphens: auto;
+  hyphens: auto;
 }
 
 .content p {
@@ -299,6 +325,9 @@ a[x-apple-data-detectors] {
   color: #1e3a5f;
   line-height: 1.5;
   text-align: left;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+  -ms-word-break: break-word;
 }
 
 .footer .warning-title {
