@@ -1,0 +1,416 @@
+<!doctype html>
+<html lang="bg">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes"
+    />
+    <title>PasevSU • Съобщение със защитено съдържание</title>
+    <style>
+      :root {
+        --bg: #071324;
+        --card-bg: #0d1e38;
+        --accent: #2563eb;
+        --border: #1e3a8a;
+        --text: #e2e8f0;
+        --muted: #94a3b8;
+        --warn: #f59e0b;
+        --ok: #10b981;
+      }
+
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      html {
+        width: 100%;
+        min-height: 100%;
+        background-color: var(--bg);
+      }
+
+      /* По-висока специфичност от вградените стилове на документа (00),
+         за да не презаписват тъмната защитна тема на екрана.
+         ВАЖНО: без flex/100vh — в пощенски клиент това дава цял екран
+         празно място и писмото изглежда блокирано. */
+      html body {
+        width: 100%;
+        background-color: var(--bg);
+        color: var(--text);
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        line-height: 1.5;
+        padding: 16px;
+        -webkit-font-smoothing: antialiased;
+      }
+
+      .notice-card {
+        width: 100%;
+        max-width: 640px;
+        margin: 0 auto 14px;
+        background: var(--card-bg);
+        border: 1px solid var(--border);
+        border-radius: 14px;
+        box-shadow: 0 16px 40px rgba(0, 0, 0, 0.6);
+        padding: 22px 20px;
+        text-align: center;
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .notice-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: linear-gradient(90deg, #1d4ed8, #3b82f6, #60a5fa);
+      }
+
+      .badge-row {
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+        flex-wrap: wrap;
+      }
+
+      .badge {
+        font-size: 11px;
+        font-weight: 700;
+        letter-spacing: 0.6px;
+        text-transform: uppercase;
+        padding: 5px 14px;
+        border-radius: 20px;
+        background: rgba(37, 99, 235, 0.18);
+        border: 1px solid rgba(37, 99, 235, 0.45);
+        color: #93c5fd;
+      }
+
+      .badge.protected {
+        background: rgba(245, 158, 11, 0.18);
+        border-color: rgba(245, 158, 11, 0.45);
+        color: #fcd34d;
+      }
+
+      .icon-shield {
+        font-size: 48px;
+        filter: drop-shadow(0 4px 10px rgba(37, 99, 235, 0.4));
+        margin: 4px 0;
+      }
+
+      h1 {
+        font-size: 21px;
+        font-weight: 800;
+        color: #ffffff;
+        letter-spacing: 0.2px;
+        line-height: 1.35;
+      }
+
+      p.desc {
+        font-size: 14.5px;
+        color: #cbd5e1;
+        text-align: justify;
+        line-height: 1.6;
+      }
+
+      .countdown-box {
+        background: rgba(7, 19, 36, 0.75);
+        border: 1px solid #1e3a5f;
+        border-radius: 10px;
+        padding: 16px 20px;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        align-items: center;
+      }
+
+      .countdown-text {
+        font-size: 14px;
+        color: #94a3b8;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .countdown-timer {
+        font-size: 18px;
+        font-weight: 800;
+        color: #60a5fa;
+        font-variant-numeric: tabular-nums;
+      }
+
+      .countdown-unit {
+        font-size: 12px;
+        font-weight: 600;
+        color: #94a3b8;
+        margin-left: 4px;
+      }
+
+      .countdown-hint {
+        font-size: 12.5px;
+        line-height: 1.5;
+        color: var(--muted);
+        margin-top: 6px;
+      }
+
+      .progress-container {
+        width: 100%;
+        height: 6px;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 4px;
+        overflow: hidden;
+      }
+
+      .progress-bar {
+        height: 100%;
+        width: 100%;
+        background: linear-gradient(90deg, #2563eb, #60a5fa);
+        border-radius: 4px;
+        transition: width 1s linear;
+      }
+
+      .security-meta {
+        font-size: 12px;
+        color: #64748b;
+        text-align: center;
+        line-height: 1.5;
+        border-top: 1px solid #1e293b;
+        padding-top: 14px;
+      }
+
+      .meta-footer {
+        font-size: 12px;
+        color: var(--muted);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+
+      .meta-footer a {
+        color: #60a5fa;
+        text-decoration: none;
+      }
+
+      .meta-footer a:hover {
+        text-decoration: underline;
+      }
+
+      /* Документът е ВИДИМ по подразбиране — в пощенски клиент няма JS,
+         а блокиран/скрит документ изглежда като празно писмо. */
+      body.document-loaded #gatekeeper-notice {
+        display: none !important;
+      }
+
+      #secure-document {
+        display: block;
+        width: 100%;
+        max-width: 900px;
+        margin: 0 auto;
+      }
+
+      .btn-skip {
+        background: none;
+        border: none;
+        color: #60a5fa;
+        font-size: 12px;
+        cursor: pointer;
+        text-decoration: underline;
+        margin-top: 4px;
+        font-family: inherit;
+        padding: 2px 8px;
+      }
+
+      .btn-skip:hover {
+        color: #93c5fd;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="notice-card" id="gatekeeper-notice">
+      <div class="badge-row">
+        <span class="badge">PasevSU • Киберсигурност</span>
+        <span class="badge protected">🔒 Защитено съдържание</span>
+      </div>
+
+      <div class="icon-shield">🛡️</div>
+
+      <h1>Уведомление: Съобщение със защитено съдържание</h1>
+
+      <p class="desc">
+        Това съобщение съдържа поверителни данни и криптографски верифицирано съдържание на
+        организацията по киберсигурност <strong>PasevSU</strong>. Извършва се проверка на автентичността
+        и зареждане на защитения правен документ съгласно стандартите за информационна сигурност.
+      </p>
+
+      <div class="countdown-box">
+        <div class="countdown-text">
+          <span>📄 Документът е приложен <strong>по-долу</strong> в това съобщение.</span>
+          <span class="countdown-timer"><span id="countdown">30</span><span class="countdown-unit">сек.</span></span>
+        </div>
+        <div class="progress-container">
+          <div class="progress-bar" id="countdownProgress"></div>
+        </div>
+        <div class="countdown-hint" id="countdownHint">
+          Обратното броене (30 сек.) работи само когато файлът се отвори в браузър — в пощенски
+          клиент съдържанието е видимо веднага.
+        </div>
+        <button type="button" id="btnSkipWait" class="btn-skip">Скрий това съобщение &rarr;</button>
+      </div>
+
+      <div class="security-meta">
+        Криптографски хеш на съобщението и цифров подпис: <strong>SHA-256 / RSA / Ed25519</strong><br />
+        Защита от неоторизирана модификация и препращане &bull; eIDAS / GDPR Compliant
+      </div>
+
+      <div class="meta-footer">
+        <span>Организация: <strong>PasevSU</strong></span>
+        <div>
+          <a href="https://pasev.asuscomm.com" target="_blank" rel="noopener">https://pasev.asuscomm.com</a>
+          &bull;
+          <a href="https://pasevsu.github.io" target="_blank" rel="noopener">pasevsu.github.io</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Контейнер за динамичния 00 документ, компилиран за това писмо.
+         Без inline display:none — иначе при премахнат JS (пощенски клиент)
+         съдържанието остава скрито и писмото изглежда празно. -->
+    <div id="secure-document"></div>
+
+    <script>
+      (function () {
+        'use strict';
+
+        var TARGET = '00_dsgvo-universal-faktisch.html';
+        var seconds = 30;
+        var totalSeconds = seconds;
+        var timerEl = document.getElementById('countdown');
+        var barEl = document.getElementById('countdownProgress');
+        var hintEl = document.getElementById('countdownHint');
+        var noticeEl = document.getElementById('gatekeeper-notice');
+        var docEl = document.getElementById('secure-document');
+        var skipBtn = document.getElementById('btnSkipWait');
+        var interval = null;
+        var revealed = false;
+
+        /* Единствен източник на истина за показанието: цифра, лента и текст
+           се обновяват наведнъж, за да не може броячът да „замръзне“. */
+        function paint() {
+          var left = Math.max(0, seconds);
+          if (timerEl) timerEl.textContent = String(left);
+          if (barEl) barEl.style.width = (left / totalSeconds) * 100 + '%';
+          if (hintEl) {
+            hintEl.textContent = 'Оставащи секунди до скриване на това съобщение: ' + left;
+          }
+        }
+
+        function stopCountdown(message) {
+          if (interval) {
+            clearInterval(interval);
+            interval = null;
+          }
+          if (timerEl) timerEl.textContent = '0';
+          if (barEl) barEl.style.width = '0%';
+          if (message && hintEl) hintEl.textContent = message;
+        }
+
+        function hasDocument() {
+          return !!(docEl && docEl.children && docEl.children.length > 0);
+        }
+
+        /*
+         * Скрива САМО банера с обратното броене. Самият документ не се пипа —
+         * той е видим отначало, за да оцелее в пощенски клиент без JavaScript.
+         */
+        function reveal() {
+          if (revealed) return;
+          revealed = true;
+          stopCountdown();
+          document.body.classList.add('document-loaded');
+          if (noticeEl) noticeEl.style.display = 'none';
+        }
+
+        /* Няма вграден документ (например отворен самостоятелно 01 файл):
+           зареждаме го на място, без препращане към втори HTML адрес. */
+        function inlineFallback() {
+          if (hasDocument()) {
+            reveal();
+            return;
+          }
+          if (typeof fetch !== 'function') {
+            showUnavailable();
+            return;
+          }
+          if (hintEl) hintEl.textContent = 'Документът се зарежда…';
+          var guard = new Promise(function (_, reject) {
+            setTimeout(function () {
+              reject(new Error('timeout'));
+            }, 15000);
+          });
+          Promise.race([fetch(TARGET), guard])
+            .then(function (r) {
+              if (!r.ok) throw new Error('HTTP ' + r.status);
+              return r.text();
+            })
+            .then(function (text) {
+              var bodyMatch = text.match(/<body[^>]*>([\s\S]*?)<\/body>/i);
+              var body = bodyMatch ? bodyMatch[1] : text;
+              var styles = (text.match(/<style[^>]*>[\s\S]*?<\/style>/gi) || []).join('\n');
+              if (docEl) docEl.innerHTML = styles + '\n' + body;
+              if (hasDocument()) reveal();
+              else showUnavailable();
+            })
+            .catch(function () {
+              showUnavailable();
+            });
+        }
+
+        function showUnavailable() {
+          var title = document.querySelector('#gatekeeper-notice h1');
+          var desc = document.querySelector('#gatekeeper-notice .desc');
+          var box = document.querySelector('#gatekeeper-notice .countdown-box');
+          if (box) box.style.display = 'none';
+          if (title) title.textContent = 'Документът не е вграден в това копие';
+          if (desc) {
+            desc.textContent =
+              'Това копие на защитната обвивка не съдържа вградения поверителен документ. ' +
+              'Отворете оригиналното съобщение или поискайте ново копие от PasevSU.';
+            if (window.location && window.location.protocol === 'file:') {
+              desc.innerHTML +=
+                '<br /><br /><a href="' + TARGET + '" style="color:#60a5fa">Отвори шаблона 00 за преглед →</a>';
+            }
+          }
+        }
+
+        if (skipBtn) {
+          skipBtn.addEventListener('click', function () {
+            if (hasDocument()) reveal();
+            else inlineFallback();
+          });
+        }
+
+        var deadline = Date.now() + totalSeconds * 1000;
+        paint();
+
+        interval = setInterval(function () {
+          seconds = Math.max(0, Math.ceil((deadline - Date.now()) / 1000));
+          paint();
+          if (seconds <= 0) {
+            /* Документът е видим отначало — тук само махаме банера. Липсва ли
+               вграден документ, не оставяме брояча „замръзнал“ на 0. */
+            stopCountdown('Документът се зарежда…');
+            if (hasDocument()) reveal();
+            else inlineFallback();
+          }
+        }, 250);
+      })();
+    </script>
+  </body>
+</html>
