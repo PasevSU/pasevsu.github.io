@@ -1,0 +1,295 @@
+<!doctype html>
+<html lang="de">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="color-scheme" content="dark" />
+    <title>PasevSU PGP-Statusbrosche</title>
+    <style>
+      :root {
+        color-scheme: dark;
+        font-family: Arial, sans-serif;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        width: 100%;
+        min-width: 100%;
+        height: 100%;
+        min-height: 100%;
+        margin: 0;
+        background: transparent;
+      }
+
+      body {
+        color: #fee2e2;
+      }
+
+      .brooch-status {
+        display: block;
+        width: 100%;
+        min-height: 70px;
+        padding: 14px 18px;
+        border: 1px solid #ef4444;
+        border-radius: 12px;
+        background: #3b1016;
+        color: #fecaca;
+        box-shadow: 0 0 14px rgba(239, 68, 68, .5), inset 0 0 12px rgba(239, 68, 68, .12);
+        font: 700 14px/1.5 Arial, sans-serif;
+        text-align: center;
+        cursor: pointer;
+      }
+
+      .brooch-status.is-valid {
+        border-color: #22c55e;
+        background: #062b1d;
+        color: #bbf7d0;
+        box-shadow: 0 0 12px rgba(34, 197, 94, .55), inset 0 0 12px rgba(34, 197, 94, .12);
+        animation: signature-glow 1.8s ease-in-out infinite alternate;
+      }
+
+      @keyframes signature-glow {
+        from {
+          box-shadow: 0 0 8px rgba(34, 197, 94, .35), inset 0 0 8px rgba(34, 197, 94, .08);
+        }
+        to {
+          box-shadow: 0 0 24px rgba(34, 197, 94, .85), inset 0 0 14px rgba(34, 197, 94, .2);
+        }
+      }
+
+      .brooch-backdrop[hidden] {
+        display: none !important;
+      }
+
+      .brooch-backdrop {
+        position: fixed;
+        inset: 0;
+        z-index: 1;
+        display: grid;
+        place-items: center;
+        padding: 20px;
+        background: rgba(2, 6, 15, .78);
+      }
+
+      .brooch-dialog {
+        width: min(100%, 560px);
+        padding: 24px;
+        border: 2px solid #ef4444;
+        border-radius: 16px;
+        background: #260d13;
+        color: #fee2e2;
+        box-shadow: 0 0 28px rgba(239, 68, 68, .45), 0 24px 70px rgba(0, 0, 0, .65);
+        font: 15px/1.6 Arial, sans-serif;
+      }
+
+      .brooch-dialog.is-valid {
+        border-color: #22c55e;
+        background: #062b1d;
+        color: #dcfce7;
+        box-shadow: 0 0 28px rgba(34, 197, 94, .4), 0 24px 70px rgba(0, 0, 0, .65);
+      }
+
+      .brooch-dialog h1 {
+        margin: 0 0 12px;
+        color: #fca5a5;
+        font-size: 21px;
+      }
+
+      .brooch-dialog.is-valid h1 {
+        color: #86efac;
+      }
+
+      .brooch-dialog p {
+        margin: 10px 0;
+      }
+
+      .brooch-dialog button {
+        display: block;
+        margin: 18px auto 0;
+        padding: 9px 18px;
+        border: 1px solid #f87171;
+        border-radius: 8px;
+        background: #7f1d1d;
+        color: #fff;
+        font: inherit;
+        cursor: pointer;
+      }
+
+      .brooch-dialog button[hidden] {
+        display: none !important;
+      }
+
+      .brooch-dialog.is-valid button {
+        border-color: #4ade80;
+        background: #166534;
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        .brooch-status.is-valid {
+          animation: none;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <button id="broochStatus" class="brooch-status" type="button" aria-live="polite">
+      PGP-Endmarkierung wird geprüft …
+    </button>
+    <div id="broochBackdrop" class="brooch-backdrop" hidden>
+      <section
+        id="broochDialog"
+        class="brooch-dialog"
+        role="alertdialog"
+        aria-modal="true"
+        aria-labelledby="broochTitle"
+      >
+        <h1 id="broochTitle"></h1>
+        <p id="broochMessage"></p>
+        <p>
+          Beim Weiterleiten wird der Inhalt dieser Nachricht in dieser Ansicht als zerstört behandelt
+          und ausgeblendet. Bereits zugestellte oder gespeicherte Kopien werden dadurch nicht gelöscht.
+        </p>
+        <p>
+          Das signierte PGP-Original befindet sich als Anlage. Nur der Eigentümer kann es
+          wiederherstellen, sofern der passende private PGP-Schlüssel ausschließlich ihm vorliegt.
+        </p>
+        <p>
+          Prüfsummen des Nachrichtentextes und der Anlagen befinden sich in den Nachrichtenkopfzeilen
+          (Header). Das Vorhandensein des Endmarkers allein bestätigt keine gültige Signatur.
+        </p>
+        <button id="broochDismiss" type="button" hidden>Hinweis schließen</button>
+      </section>
+    </div>
+    <script>
+      (function () {
+        'use strict';
+
+        var status = document.getElementById('broochStatus');
+        var backdrop = document.getElementById('broochBackdrop');
+        var dialog = document.getElementById('broochDialog');
+        var title = document.getElementById('broochTitle');
+        var message = document.getElementById('broochMessage');
+        var dismiss = document.getElementById('broochDismiss');
+        var previousResult = null;
+        var previousUnavailable = false;
+        var dismissed = false;
+        var embedded = window.parent !== window;
+        var accessErrorReported = false;
+
+        function setOverlay(open) {
+          if (embedded) {
+            window.parent.postMessage({
+              type: 'pasevsu-brooch:overlay',
+              open: open
+            }, '*');
+          }
+        }
+
+        function setStatus(found, unavailable) {
+          status.classList.toggle('is-valid', found);
+          status.textContent = unavailable
+            ? 'Nachrichteninhalt kann nicht gelesen werden.'
+            : found
+              ? 'PGP-Endmarkierung erkannt — hier klicken für Details.'
+              : 'PGP-Endmarkierung fehlt — Signaturstatus nicht bestätigt. Hier klicken.';
+
+          dialog.classList.toggle('is-valid', found);
+          title.textContent = found
+            ? 'PGP-Endmarkierung erkannt'
+            : unavailable
+              ? 'Nachrichteninhalt nicht verfügbar'
+              : 'PGP-Signatur fehlt oder ist beschädigt';
+          message.textContent = found
+            ? 'Der PGP-Endmarker ist im Nachrichtentext vorhanden. Das Vorhandensein des Markers allein bestätigt keine gültige kryptografische Signatur.'
+            : unavailable
+              ? 'Die eigenständige Brosche kann den Inhalt des übergeordneten Dokuments nicht lesen — etwa bei file:// oder in einer Sandbox. Prüfen Sie, ob beide Dateien über denselben Ursprung (http://localhost) geladen werden. Das ist keine Aussage über die Signatur.'
+              : 'Der sichtbare Endmarker des PGP-Blocks wurde im Nachrichtentext nicht gefunden.';
+          /* Nicht lesbar ist nicht dasselbe wie „Signatur fehlt“: средата
+             ограничава проверката, затова бележката може да се затвори.
+             При наистина липсващ маркер бутон няма. */
+          dismiss.hidden = !(found || unavailable);
+
+          var changed = previousResult !== found || previousUnavailable !== !!unavailable;
+          if (changed || (!found && !unavailable)) {
+            backdrop.hidden = false;
+            dismissed = false;
+            setOverlay(true);
+          } else if (dismissed) {
+            backdrop.hidden = true;
+          }
+          previousResult = found;
+          previousUnavailable = !!unavailable;
+        }
+
+        /* Къде живее текстът на писмото зависи от варианта:
+           • 00 … secret (браузърен) — съобщението е в #viewerScroll;
+           • сглобено 01 + 00 (.eml) — съобщението е направо в #secure-document.
+           Затова търсим #viewerScroll, а при липса сканираме контейнера.
+           Празен контейнер значи „още се зарежда“, не „няма маркер“. */
+        function hasContent(node) {
+          if (!node) return false;
+          if (node.children && typeof node.children.length === 'number') {
+            return node.children.length > 0;
+          }
+          return String(node.textContent || '').length > 0;
+        }
+
+        function findMessage() {
+          if (!embedded) return false;
+          try {
+            var parentDocument = window.parent.document;
+            var secureDocument = parentDocument.getElementById('secure-document');
+            if (secureDocument) {
+              if (!hasContent(secureDocument)) return null;
+              var viewer = secureDocument.querySelector('#viewerScroll');
+              return hasContent(viewer) ? viewer : secureDocument;
+            }
+            return parentDocument.getElementById('viewerScroll');
+          } catch (error) {
+            if (!accessErrorReported && window.console && typeof window.console.error === 'function') {
+              window.console.error('PasevSU brooch cannot read the parent message.', error);
+              accessErrorReported = true;
+            }
+            return false;
+          }
+        }
+
+        function checkMessage() {
+          var source = findMessage();
+          if (source === null) {
+            status.textContent = 'Писмото се зарежда — проверката ще започне автоматично.';
+            return;
+          }
+          if (source === false) {
+            setStatus(false, true);
+            return;
+          }
+          /* innerText не включва текста на <style>/<script> — иначе CSS на
+             документа би участвал в проверката. */
+          var text = typeof source.innerText === 'string' ? source.innerText : source.textContent;
+          setStatus(/----+END PGP/.test(text || ''), false);
+        }
+
+        dismiss.addEventListener('click', function () {
+          if (previousResult !== true && previousUnavailable !== true) return;
+          backdrop.hidden = true;
+          dismissed = true;
+          setOverlay(false);
+        });
+
+        status.addEventListener('click', function () {
+          backdrop.hidden = false;
+          dismissed = false;
+          setOverlay(true);
+        });
+
+        window.setInterval(checkMessage, 1500);
+        checkMessage();
+      })();
+    </script>
+  </body>
+</html>
